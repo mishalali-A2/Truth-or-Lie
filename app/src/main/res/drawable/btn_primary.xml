@@ -1,0 +1,39 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+<!-- Focused (TV highlight) -->
+<item android:state_focused="true">
+    <shape android:shape="rectangle">
+        <gradient
+            android:startColor="#7B5CFF"
+            android:endColor="#5A3FFF"
+            android:angle="0"/>
+        <corners android:radius="50dp"/>
+        <stroke
+            android:width="2dp"
+            android:color="#A29BFE"/>
+    </shape>
+</item>
+
+<!-- Pressed -->
+<item android:state_pressed="true">
+    <shape android:shape="rectangle">
+        <gradient
+            android:startColor="#6C4BFF"
+            android:endColor="#4B35CC"
+            android:angle="0"/>
+        <corners android:radius="50dp"/>
+    </shape>
+</item>
+
+<!-- Default -->
+<item>
+    <shape android:shape="rectangle">
+        <gradient
+            android:startColor="#6C5CE7"
+            android:endColor="#5A4AE3"
+            android:angle="0"/>
+        <corners android:radius="50dp"/>
+    </shape>
+</item>
+
+</selector>

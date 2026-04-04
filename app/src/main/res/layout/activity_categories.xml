@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:background="#0B0F1A">
+
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:paddingBottom="40dp">
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:text="PICK A CATEGORY"
+            android:textColor="#E5E7EB"
+            android:textSize="36sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.05"/>
+
+        <!-- Grid -->
+        <GridLayout
+            android:id="@+id/grid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:columnCount="3"
+            android:rowCount="3"
+            android:useDefaultMargins="true"
+            android:layout_marginTop="30dp"
+            android:padding="20dp">
+
+            <!-- ACTIVE CARD TEMPLATE -->
+            <LinearLayout
+                android:id="@+id/card_general"
+                style="@style/CategoryCard"
+                android:focusable="true"
+                android:clickable="true">
+
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/general_knowledge"
+                    android:layout_marginBottom="12dp"/>
+
+                <TextView
+                    style="@style/CategoryText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="General Knowledge"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/card_science"
+                style="@style/CategoryCard"
+                android:focusable="true"
+                android:clickable="true">
+
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/science"
+                    android:layout_marginBottom="12dp"/>
+
+                <TextView
+                    style="@style/CategoryText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Science" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/card_animals"
+                style="@style/CategoryCard"
+                android:focusable="true"
+                android:clickable="true">
+
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/animals"
+                    android:layout_marginBottom="12dp"/>
+
+                <TextView
+                    style="@style/CategoryText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Animals"/>
+            </LinearLayout>
+
+            <!-- LOCKED CARD TEMPLATE -->
+            <FrameLayout
+                android:layout_width="260dp"
+                android:layout_height="180dp"
+                android:focusable="false">
+
+                <LinearLayout
+                    style="@style/CategoryCardDisabled"
+                    android:alpha="0.5">
+
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/history"
+                        android:layout_marginBottom="12dp"/>
+
+                    <TextView
+                        style="@style/CategoryTextLocked"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="History"/>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#66000000"/>
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/locked"
+                    android:layout_gravity="center"/>
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="260dp"
+                android:layout_height="180dp"
+                android:focusable="false">
+
+                <LinearLayout
+                    style="@style/CategoryCardDisabled"
+
+                    android:alpha="0.5">
+
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="50dp"
+                        android:layout_marginBottom="12dp"
+                        android:src="@drawable/space" />
+
+                    <TextView
+                        style="@style/CategoryTextLocked"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Space"/>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#66000000"/>
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/locked"
+                    android:layout_gravity="center"/>
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="260dp"
+                android:layout_height="180dp"
+                android:focusable="false">
+
+                <LinearLayout
+                    style="@style/CategoryCardDisabled"
+                    android:alpha="0.5">
+
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/technology"
+                        android:layout_marginBottom="12dp"/>
+
+                    <TextView
+                        style="@style/CategoryTextLocked"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Technology"/>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#66000000"/>
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/locked"
+                    android:layout_gravity="center"/>
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="260dp"
+                android:layout_height="180dp"
+                android:focusable="false">
+
+                <LinearLayout
+                    style="@style/CategoryCardDisabled"
+                    android:alpha="0.5">
+
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/human_body"
+                        android:layout_marginBottom="12dp"/>
+
+                    <TextView
+                        style="@style/CategoryTextLocked"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Human Body"/>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#66000000"/>
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/locked"
+                    android:layout_gravity="center"/>
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="260dp"
+                android:layout_height="180dp"
+                android:focusable="false">
+
+                <LinearLayout
+                    style="@style/CategoryCardDisabled"
+                    android:alpha="0.5">
+
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/crazy_facts"
+                        android:layout_marginBottom="12dp"/>
+
+                    <TextView
+                        style="@style/CategoryTextLocked"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Crazy Facts"/>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#66000000"/>
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/locked"
+                    android:layout_gravity="center"/>
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="260dp"
+                android:layout_height="180dp"
+                android:focusable="false">
+
+                <LinearLayout
+                    style="@style/CategoryCardDisabled"
+                    android:alpha="0.5">
+
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/mixed_facts"
+                        android:layout_marginBottom="12dp"/>
+
+                    <TextView
+                        style="@style/CategoryTextLocked"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Mixed Facts"/>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#66000000"/>
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/locked"
+                    android:layout_gravity="center"/>
+            </FrameLayout>
+
+        </GridLayout>
+
+    </LinearLayout>
+</ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
