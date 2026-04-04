@@ -1,0 +1,70 @@
+<resources>
+
+    <!-- Enabled Card -->
+    <style name="CategoryCard">
+        <item name="android:layout_width">260dp</item>
+        <item name="android:layout_height">180dp</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:layout_margin">12dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:background">@drawable/card_bg</item>
+        <item name="android:focusable">true</item>
+        <item name="android:focusableInTouchMode">true</item>
+    </style>
+
+    <!-- Disabled Card -->
+    <style name="CategoryCardDisabled">
+        <item name="android:layout_width">260dp</item>
+        <item name="android:layout_height">180dp</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:gravity">center</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:background">@drawable/card_bg_locked</item>
+    </style>
+
+    <!-- Icon -->
+    <style name="CategoryIcon">
+        <item name="android:textSize">40sp</item>
+        <item name="android:layout_marginBottom">12dp</item>
+    </style>
+
+    <!-- Enabled Text -->
+    <style name="CategoryText">
+        <item name="android:textColor"> #FFFFFF</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Locked Text -->
+    <style name="CategoryTextLocked">
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:alpha">0.8</item>
+    </style>
+
+    <style name="TVOptionButton">
+        <item name="android:layout_width">90dp</item>
+        <item name="android:layout_height">90dp</item>
+        <item name="android:layout_margin">12dp</item>
+        <item name="android:background">@drawable/tv_option_bg</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">22sp</item>
+    </style>
+
+    <style name="TVControlButton">
+        <item name="android:layout_width">80dp</item>
+        <item name="android:layout_height">80dp</item>
+        <item name="android:background">@drawable/round_btn</item>
+        <item name="android:textSize">28sp</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="TVEditText">
+        <item name="android:layout_width">300dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:padding">12dp</item>
+    </style>
+
+</resources>
