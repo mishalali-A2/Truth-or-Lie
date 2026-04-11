@@ -40,8 +40,8 @@ class RoundsActivity : AppCompatActivity() {
 
             if (hasFocus) {
                 v.animate()
-                    .scaleX(1.04f)
-                    .scaleY(1.04f)
+                    .scaleX(1.06f)
+                    .scaleY(1.06f)
                     .translationZ(20f)
                     .setDuration(150)
                     .start()
@@ -70,8 +70,9 @@ class RoundsActivity : AppCompatActivity() {
                 buttons.forEach { it.isSelected = false }
                 button.isSelected = true
 
+               GameSession.totalRounds = selectedRounds
+
                 val intent = Intent(this, PlayerCountActivity::class.java)
-                intent.putExtra("ROUNDS", selectedRounds)
                 startActivity(intent)
             }
         }

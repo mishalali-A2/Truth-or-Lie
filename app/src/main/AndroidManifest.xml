@@ -16,6 +16,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TruthorLieTV">
         <activity
+            android:name=".FinalResultsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ResultsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".VotingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".FactsActivity"
+            android:exported="false" />
+        <activity
             android:name=".PlayerNamesActivity"
             android:exported="false" />
         <activity

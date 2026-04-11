@@ -52,8 +52,8 @@ class PlayerCountActivity : AppCompatActivity() {
         }
 //set name screen
         btnPlayers.setOnClickListener {
+            GameSession.playerCount = playerCount
             val intent = Intent(this, PlayerNamesActivity::class.java)
-            intent.putExtra("PLAYER_COUNT", playerCount)
             startActivity(intent)
         }
     }
