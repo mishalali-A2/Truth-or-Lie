@@ -46,7 +46,7 @@ class CategoriesActivity : AppCompatActivity() {
 
         // Card -> Category
         val categoryMap = mapOf(
-            R.id.card_general to "general",
+            R.id.card_general to "general_knowledge",
             R.id.card_science to "science",
             R.id.card_animals to "animals"
             // Add more ONLY if they are unlocked
@@ -63,8 +63,8 @@ class CategoriesActivity : AppCompatActivity() {
 
                 // to rounds screen
                 setOnClickListener {
+                    GameSession.category = categoryName
                     val intent = Intent(this@CategoriesActivity, RoundsActivity::class.java)
-                    intent.putExtra("CATEGORY", categoryName)
                     startActivity(intent)
                 }
             }

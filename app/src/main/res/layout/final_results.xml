@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rootResults"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0B0F1A">
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <!-- Content -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="60dp">
+
+        <!-- WINNER -->
+        <TextView
+            android:id="@+id/tvWinnerLabel"
+            android:text="WINNER"
+            android:textColor="#AAAAAA"
+            android:textSize="18sp"
+            android:letterSpacing="0.2"
+            android:layout_marginBottom="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <!-- BIG NAME -->
+        <TextView
+            android:id="@+id/tvWinnerName"
+            android:text="Player 2"
+            android:textColor="#FFA500"
+            android:textSize="72sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <!-- POINTS -->
+        <TextView
+            android:id="@+id/tvWinnerPoints"
+            android:text="300 pts"
+            android:textColor="#7F3FFF"
+            android:textSize="28sp"
+            android:layout_marginBottom="50dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <!-- LEADERBOARD -->
+        <LinearLayout
+            android:id="@+id/leaderboardContainer"
+            android:layout_width="700dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="60dp"/>
+
+        <!-- PLAY AGAIN -->
+        <Button
+            android:id="@+id/btnPlayAgain"
+            android:layout_width="320dp"
+            android:layout_height="70dp"
+            android:text="Play Again"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:background="@drawable/btn_primary"
+            android:textColor="#FFFFFF"
+            android:focusable="true"
+            android:focusableInTouchMode="false"/>
+
+    </LinearLayout>
+</ScrollView>
+
+    <!-- FULLSCREEN CONFETTI -->
+    <nl.dionsegijn.konfetti.xml.KonfettiView
+        android:id="@+id/konfettiView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</FrameLayout>

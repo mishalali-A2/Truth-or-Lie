@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0B0F1A"
+    android:padding="40dp">
+
+    <!-- Category -->
+    <TextView
+        android:id="@+id/tvCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CATEGORY"
+        android:textColor="#8A94A6"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:letterSpacing="0.1"/>
+
+    <!-- Round -->
+    <TextView
+        android:id="@+id/tvRound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ROUND 1/5"
+        android:textColor="#8A94A6"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_alignParentEnd="true"
+        android:letterSpacing="0.1"/>
+
+    <!-- Statement -->
+    <TextView
+        android:id="@+id/tvStatement"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:text="Statement appears here"
+        android:textColor="@android:color/white"
+        android:textSize="44sp"
+        android:textStyle="bold"
+        android:lineSpacingExtra="8dp"
+        android:paddingStart="80dp"
+        android:paddingEnd="80dp"/>
+
+    <!-- Start Voting -->
+    <Button
+        android:id="@+id/btnStartVoting"
+        android:layout_width="260dp"
+        android:layout_height="80dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/tvStatement"
+        android:layout_marginTop="50dp"
+        android:text="Start Voting"
+        android:textSize="20sp"
+        android:textColor="@android:color/white"
+        android:background="@drawable/btn_primary"
+        android:focusable="true"
+        android:focusableInTouchMode="true"/>
+
+</RelativeLayout>

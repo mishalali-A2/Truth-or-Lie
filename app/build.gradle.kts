@@ -46,4 +46,5 @@ dependencies {
     implementation("com.google.android.material:material:1.13.0")
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation("nl.dionsegijn:konfetti-xml:2.0.2")
 }
