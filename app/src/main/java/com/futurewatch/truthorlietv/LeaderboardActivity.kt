@@ -31,6 +31,9 @@ class LeaderboardActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.leaderboard)
 
+        MusicManager.resumeMusic()
+        MusicManager.resumeMusic()
+
         backBtn = findViewById(R.id.btnBack)
         messageContainer = findViewById(R.id.messageContainer)
         leaderboardContainer = findViewById(R.id.leaderboardContainer)
@@ -217,9 +220,9 @@ class LeaderboardActivity : AppCompatActivity() {
         row.setPadding(48, 24, 48, 24)
 
         if (position % 2 == 0) {
-            row.setBackgroundResource(com.futurewatch.truthorlietv.R.drawable.row_normal)
+            row.setBackgroundResource(R.drawable.row_normal)
         } else {
-            row.setBackgroundResource(com.futurewatch.truthorlietv.R.drawable.row_normal_dark)
+            row.setBackgroundResource(R.drawable.row_normal_dark)
         }
 
         val leftText = TextView(this)
@@ -227,7 +230,7 @@ class LeaderboardActivity : AppCompatActivity() {
             0 -> "🥇 "
             1 -> "🥈 "
             2 -> "🥉 "
-            else -> "#${position + 1}  "
+            else -> "${position + 1}  "
         }
         leftText.text = "$rankIcon${player.name}"
         leftText.textSize = 20f

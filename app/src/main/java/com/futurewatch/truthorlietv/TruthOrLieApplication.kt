@@ -4,7 +4,7 @@ import android.app.Application
 import android.content.SharedPreferences
 
 class TruthOrLieApplication : Application() {
-//as global obj for music inst
+
     companion object {
         lateinit var instance: TruthOrLieApplication
             private set
@@ -17,6 +17,8 @@ class TruthOrLieApplication : Application() {
         prefs = getSharedPreferences("app_settings", MODE_PRIVATE)
 
         MusicManager.init(this)
+
+        TimerManager.init(this)
     }
 
     override fun onTerminate() {

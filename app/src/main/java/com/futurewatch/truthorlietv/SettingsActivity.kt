@@ -17,11 +17,12 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.settings)
 
-        // Initialize views
+        MusicManager.resumeMusic()
+
         switchMusic = findViewById(R.id.switchMusic)
         backBtn = findViewById(R.id.btnBack)
 
-        // Get all music chip buttons
+
         musicChips = listOf(
             findViewById(R.id.chipFunkyGroove) ?: findChipByText("Party Vibes"),
             findViewById(R.id.chipChillLounge) ?: findChipByText("Chill Lounge"),
@@ -30,7 +31,6 @@ class SettingsActivity : AppCompatActivity() {
             findViewById(R.id.chipEpicAdventure) ?: findChipByText("Funky Groove")
         ).filterNotNull()
 
-        // Setup music switch
         switchMusic.isChecked = MusicManager.isEnabled()
         switchMusic.setOnCheckedChangeListener { _, isChecked ->
             MusicManager.setEnabled(isChecked)
@@ -38,53 +38,41 @@ class SettingsActivity : AppCompatActivity() {
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
         }
 
-        // Setup music genre selection
         setupMusicGenreSelection()
-
-        // Setup other settings (optional)
         setupOtherSettings()
-
-        // Back button with focus animation
         setupFocusAnimation()
 
         backBtn.setOnClickListener {
             finish()
         }
 
-        // Default focus
-        backBtn.requestFocus()
+        switchMusic.requestFocus()
     }
 
     private fun setupMusicGenreSelection() {
         val currentGenre = MusicManager.getCurrentGenre()
 
-        // Find all music genre buttons by their text
         val musicContainer = findViewById<View>(R.id.musicContainer) ?: return
 
-        // Get all buttons within the music card
         val allButtons = getAllButtonsInContainer(musicContainer)
 
         allButtons.forEach { button ->
             if (button is Button) {
                 val buttonText = button.text.toString()
 
-                // Check if this is a music genre button
                 if (isMusicGenre(buttonText)) {
-                    // Highlight current selection
                     if (buttonText == currentGenre) {
                         button.setBackgroundResource(R.drawable.chip_selected)
                     } else {
                         button.setBackgroundResource(R.drawable.chip_bg)
                     }
 
-                    // Set click listener
                     button.setOnClickListener {
                         MusicManager.changeGenre(buttonText)
                         updateGenreSelection(buttonText)
                         Toast.makeText(this, "Music changed to: $buttonText", Toast.LENGTH_SHORT).show()
                     }
 
-                    // Add focus animation for TV
                     button.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
                         if (hasFocus) {
                             v.animate().scaleX(1.08f).scaleY(1.08f).setDuration(150).start()
@@ -136,7 +124,6 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun findChipByText(text: String): Button? {
-        // Find button by text content
         val musicContainer = findViewById<View>(R.id.musicContainer)
         if (musicContainer != null) {
             return findButtonByText(musicContainer, text)
@@ -160,10 +147,8 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun setupOtherSettings() {
-        // Timer selection
         setupTimerSelection()
 
-        // Network SDK switch
         val switchNetwork = findViewById<SwitchCompat>(R.id.switchNetwork)
         val prefs = getSharedPreferences("app_settings", MODE_PRIVATE)
 
@@ -173,12 +158,12 @@ class SettingsActivity : AppCompatActivity() {
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
         }
 
-        // Remove Ads (placeholder)
+        // Remove Ads
         findViewById<View>(R.id.removeAds)?.setOnClickListener {
             Toast.makeText(this, "Remove Ads - Coming soon!", Toast.LENGTH_SHORT).show()
         }
 
-        // Restore Purchases (placeholder)
+        // Restore Purchases
         findViewById<View>(R.id.restorePurchases)?.setOnClickListener {
             Toast.makeText(this, "Restore Purchases - Coming soon!", Toast.LENGTH_SHORT).show()
         }
@@ -186,7 +171,7 @@ class SettingsActivity : AppCompatActivity() {
         // Rate App
         findViewById<View>(R.id.rateApp)?.setOnClickListener {
             Toast.makeText(this, "Thank you for rating!", Toast.LENGTH_SHORT).show()
-            // TODO: Open Google Play rating dialog
+
         }
 
         // Terms & Privacy
@@ -196,60 +181,57 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun setupTimerSelection() {
-        val timerContainer = findViewById<View>(R.id.timerContainer) ?: return
+        val timer10 = findViewById<Button>(R.id.timer10)
+        val timer20 = findViewById<Button>(R.id.timer20)
+        val timer30 = findViewById<Button>(R.id.timer30)
+        val timer40 = findViewById<Button>(R.id.timer40)
+        val timer50 = findViewById<Button>(R.id.timer50)
+
+        val timerButtons = listOf(timer10, timer20, timer30, timer40, timer50).filterNotNull()
+
         val prefs = getSharedPreferences("app_settings", MODE_PRIVATE)
         val currentTimer = prefs.getInt("timer_seconds", 20)
 
-        val allButtons = getAllButtonsInContainer(timerContainer)
+        timerButtons.forEach { button ->
+            val seconds = button.text.toString().toIntOrNull()
+            if (seconds != null) {
+                if (seconds == currentTimer) {
+                    button.setBackgroundResource(R.drawable.chip_selected)
+                } else {
+                    button.setBackgroundResource(R.drawable.chip_bg)
+                }
 
-        allButtons.forEach { button ->
-            if (button is Button) {
-                val seconds = button.text.toString().toIntOrNull()
-                if (seconds != null) {
-                    // Highlight current selection
-                    if (seconds == currentTimer) {
-                        button.setBackgroundResource(R.drawable.chip_selected)
+                button.setOnClickListener {
+                    prefs.edit().putInt("timer_seconds", seconds).apply()
+                    updateTimerSelection(seconds, timerButtons)
+                    Toast.makeText(this, "Timer set to $seconds seconds", Toast.LENGTH_SHORT).show()
+                }
+
+                button.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
+                    if (hasFocus) {
+                        v.animate().scaleX(1.05f).scaleY(1.05f).setDuration(150).start()
+                        v.translationZ = 20f
                     } else {
-                        button.setBackgroundResource(R.drawable.chip_bg)
-                    }
-
-                    button.setOnClickListener {
-                        prefs.edit().putInt("timer_seconds", seconds).apply()
-                        updateTimerSelection(seconds)
-                        Toast.makeText(this, "Timer set to $seconds seconds", Toast.LENGTH_SHORT).show()
-                    }
-
-                    // Focus animation
-                    button.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
-                        if (hasFocus) {
-                            v.animate().scaleX(1.05f).scaleY(1.05f).setDuration(150).start()
-                        } else {
-                            v.animate().scaleX(1f).scaleY(1f).setDuration(150).start()
-                        }
+                        v.animate().scaleX(1f).scaleY(1f).setDuration(150).start()
+                        v.translationZ = 0f
                     }
                 }
             }
         }
     }
 
-    private fun updateTimerSelection(selectedSeconds: Int) {
-        val timerContainer = findViewById<View>(R.id.timerContainer) ?: return
-        val allButtons = getAllButtonsInContainer(timerContainer)
-
-        allButtons.forEach { button ->
-            if (button is Button) {
-                val seconds = button.text.toString().toIntOrNull()
-                if (seconds != null) {
-                    if (seconds == selectedSeconds) {
-                        button.setBackgroundResource(R.drawable.chip_selected)
-                    } else {
-                        button.setBackgroundResource(R.drawable.chip_bg)
-                    }
+    private fun updateTimerSelection(selectedSeconds: Int, buttons: List<Button>) {
+        buttons.forEach { button ->
+            val seconds = button.text.toString().toIntOrNull()
+            if (seconds != null) {
+                if (seconds == selectedSeconds) {
+                    button.setBackgroundResource(R.drawable.chip_selected)
+                } else {
+                    button.setBackgroundResource(R.drawable.chip_bg)
                 }
             }
         }
     }
-
     private fun setupFocusAnimation() {
         val focusListener = View.OnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
@@ -263,6 +245,16 @@ class SettingsActivity : AppCompatActivity() {
 
         backBtn.onFocusChangeListener = focusListener
         switchMusic.onFocusChangeListener = focusListener
+    }
+
+    override fun onPause() {
+        super.onPause()
+        MusicManager.pauseMusic()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        MusicManager.resumeMusic()
     }
 
     override fun onDestroy() {

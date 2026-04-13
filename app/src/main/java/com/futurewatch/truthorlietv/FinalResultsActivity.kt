@@ -25,6 +25,8 @@ class FinalResultsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.final_results)
 
+        MusicManager.resumeMusic()
+
         AdManager.showInterstitial(this)
 
         tvWinnerName = findViewById(R.id.tvWinnerName)

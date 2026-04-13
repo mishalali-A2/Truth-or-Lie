@@ -23,6 +23,8 @@ class FactsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.display_facts)
 
+        MusicManager.resumeMusic()
+
         val tvCategory = findViewById<TextView>(R.id.tvCategory)
         val tvRound = findViewById<TextView>(R.id.tvRound)
         val tvStatement = findViewById<TextView>(R.id.tvStatement)

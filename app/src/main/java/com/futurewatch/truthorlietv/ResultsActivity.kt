@@ -5,10 +5,12 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import android.view.ViewGroup
 
 class ResultsActivity : AppCompatActivity() {
 
@@ -16,6 +18,8 @@ class ResultsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.results)
+
+        MusicManager.resumeMusic()
 
         val tvResult = findViewById<TextView>(R.id.tvResult)
         val tvStatement = findViewById<TextView>(R.id.tvStatement)
@@ -62,18 +66,24 @@ class ResultsActivity : AppCompatActivity() {
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     1f
                 )
+                setPadding(8, 0, 8, 0)
             }
 
-            val icon = TextView(this).apply {
-                text = if (isCorrect) "✔" else "✖"
-                textSize = 28f
-                setTextColor(
-                    if (isCorrect)
-                        Color.parseColor("#00FF88")
-                    else
-                        Color.parseColor("#FF4444")
+
+            val icon = ImageView(this).apply {
+
+                if (isCorrect) {
+                    setImageResource(R.drawable.right)
+                } else {
+                    setImageResource(R.drawable.wrong)
+                }
+                layoutParams = LinearLayout.LayoutParams(
+                    dpToPx(52),
+                    dpToPx(52)
                 )
-                gravity = Gravity.CENTER
+
+                scaleType = ImageView.ScaleType.FIT_CENTER
+                setPadding(dpToPx(8), dpToPx(8), dpToPx(8), dpToPx(8))
             }
 
             val name = TextView(this).apply {
@@ -81,13 +91,18 @@ class ResultsActivity : AppCompatActivity() {
                 textSize = 16f
                 setTextColor(Color.WHITE)
                 gravity = Gravity.CENTER
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+                setPadding(0, dpToPx(8), 0, dpToPx(4))
             }
 
             val score = TextView(this).apply {
-                val gained = if (isCorrect) "+100" else "+0"
+                val gained = if (isCorrect) "+1" else "+0"
                 text = gained
                 textSize = 14f
-                setTextColor(Color.LTGRAY)
+                setTextColor(if (isCorrect) Color.parseColor("#00FF88") else Color.LTGRAY)
                 gravity = Gravity.CENTER
             }
 
@@ -102,20 +117,17 @@ class ResultsActivity : AppCompatActivity() {
         btnNext.setOnClickListener {
 
             if (isFinal) {
-                // Game finished - go to final scores screen
                 startActivity(Intent(this, FinalResultsActivity::class.java))
                 finish()
             } else {
-                // Move to next round
                 if (GameSession.currRound >= GameSession.totalRounds) {
-                    // All rounds done, show final results
+                    //final round to result
                     val finalIntent = Intent(this, ResultsActivity::class.java)
                     finalIntent.putExtra("STATEMENT", statement)
                     finalIntent.putExtra("ANSWER", correctAnswer)
                     finalIntent.putExtra("IS_FINAL", true)
                     startActivity(finalIntent)
                 } else {
-                    // Continue to next round
                     GameSession.currRound++
                     GameSession.currPlayerTurn = 0
                     startActivity(Intent(this, FactsActivity::class.java))
@@ -123,5 +135,20 @@ class ResultsActivity : AppCompatActivity() {
                 finish()
             }
         }
+    }
+
+
+    private fun dpToPx(dp: Int): Int {
+        return (dp * resources.displayMetrics.density).toInt()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        MusicManager.pauseMusic()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        MusicManager.resumeMusic()
     }
 }
