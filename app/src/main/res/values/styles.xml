@@ -31,7 +31,7 @@
 
     <!-- Enabled Text -->
     <style name="CategoryText">
-        <item name="android:textColor"> #FFFFFF</item>
+        <item name="android:textColor">#FFFFFF</item>
         <item name="android:textSize">18sp</item>
         <item name="android:textStyle">bold</item>
     </style>
@@ -67,4 +67,39 @@
         <item name="android:padding">12dp</item>
     </style>
 
+    <!-- Chips (Music / Timer buttons) -->
+    <style name="chip">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">45dp</item>
+        <item name="android:layout_margin">6dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textColor">#D1D5DB</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:background">@drawable/chip_bg</item>
+        <item name="android:focusable">true</item>
+    </style>
+
+    <style name="chip_selected">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">45dp</item>
+        <item name="android:layout_margin">6dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:background">@drawable/btn_primary</item>
+        <item name="android:focusable">true</item>
+    </style>
+
+    <!-- Option Text -->
+    <style name="optionText">
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:layout_marginTop">6dp</item>
+    </style>
+
+    <style name="optionSub">
+        <item name="android:textColor">#6B7280</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+    </style>
 </resources>

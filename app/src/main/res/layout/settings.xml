@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0B0F1A">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:padding="40dp">
+
+        <!-- TITLE -->
+        <TextView
+            android:text="SETTINGS"
+            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:textColor="#FFFFFF"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="30dp"/>
+
+        <!-- MUSIC CARD -->
+        <LinearLayout
+            android:layout_width="600dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/card_bg"
+            android:padding="20dp"
+            android:layout_marginBottom="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/music" />
+
+                <TextView
+                    android:text=" Music"
+                    android:layout_height="match_parent"
+                    android:layout_width="0dp"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:layout_weight="1"/>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchMusic"
+                    android:layout_width="67dp"
+                    android:layout_height="wrap_content"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true" />
+            </LinearLayout>
+
+            <!-- Chips -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <Button style="@style/chip" android:text="Party Vibes"/>
+                <Button style="@style/chip_selected" android:text="Chill Lounge"/>
+                <Button style="@style/chip" android:text="Retro Arcade"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp">
+
+                <Button style="@style/chip" android:text="Epic Adventure"/>
+                <Button style="@style/chip" android:text="Funky Groove"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- TIMER CARD -->
+        <LinearLayout
+            android:layout_width="600dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@drawable/card_bg"
+            android:padding="20dp"
+            android:layout_marginBottom="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/timer" />
+                <TextView
+                    android:text=" Timer (seconds)"
+                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginTop="15dp"
+                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:orientation="horizontal">
+
+                <Button style="@style/chip" android:text="10"/>
+                <Button style="@style/chip_selected" android:text="20"/>
+                <Button style="@style/chip" android:text="30"/>
+                <Button style="@style/chip" android:text="40"/>
+                <Button style="@style/chip" android:text="50"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="600dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/card_bg"
+            android:padding="20dp">
+
+            <!-- Remove Ads -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="12dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/star"/>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1">
+
+                    <TextView
+                        style="@style/optionText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="Remove Ads"/>
+
+                    <TextView
+                        style="@style/optionSub"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="One-time purchase"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Restore Purchases -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="12dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/sheild"/>
+
+                <TextView
+                    style="@style/optionText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Restore Purchases"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+
+            <!-- Network SDK -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="12dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/network"/>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1">
+
+                    <TextView
+                        style="@style/optionText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="Network SDK"/>
+
+                    <TextView
+                        style="@style/optionSub"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="Analytics &amp; ad network" />
+                </LinearLayout>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchNetwork"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+            <!-- Rate App -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="12dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/rate"/>
+
+                <TextView
+                    style="@style/optionText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:text="Rate App" />
+            </LinearLayout>
+
+            <!-- Terms & Privacy -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="12dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/sheild"/>
+
+                <TextView
+                    style="@style/optionText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Terms &amp; Privacy"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+
+            <!-- Version -->
+            <TextView
+                android:text="Version 1.0.0"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#6B7280"
+                android:textSize="12sp"
+                android:layout_marginTop="12dp"/>
+
+        </LinearLayout>
+
+        <!-- BACK BUTTON -->
+        <Button
+            android:id="@+id/btnBack"
+            android:layout_width="253dp"
+            android:layout_height="57dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/btn_secondary"
+            android:text="Back to Menu"
+            android:textColor="#FFFFFF" />
+
+    </LinearLayout>
+
+</ScrollView>

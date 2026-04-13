@@ -5,16 +5,20 @@ import android.animation.ValueAnimator
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import com.unity3d.ads.UnityAds
 
 class MainActivity : AppCompatActivity() {
+    //id for unity ads as per doc
+    private val gameID="6069840"
+    private val testMode= true
 
     private lateinit var floatAnim: ObjectAnimator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        UnityAds.initialize(this, gameID, testMode)
         setContentView(R.layout.activity_main)
 
         val title = findViewById<View>(R.id.app_title)
@@ -43,8 +47,8 @@ class MainActivity : AppCompatActivity() {
 
             if (hasFocus) {
                 v.animate()
-                    .scaleX(1.04f)
-                    .scaleY(1.04f)
+                    .scaleX(1.08f)
+                    .scaleY(1.08f)
                     .translationZ(20f)
                     .setDuration(150)
                     .start()
@@ -60,9 +64,13 @@ class MainActivity : AppCompatActivity() {
 
         val startBtn = findViewById<Button>(R.id.btnStart)
         val howToPlayBtn = findViewById<Button>(R.id.btnHowToPlay)
+        val leaderboardBtn = findViewById<Button>(R.id.btnLeaderboard)
+        val settingsBtn = findViewById<Button>(R.id.btnSettings)
 
         startBtn.onFocusChangeListener = focusListener
         howToPlayBtn.onFocusChangeListener = focusListener
+        leaderboardBtn.onFocusChangeListener = focusListener
+        settingsBtn.onFocusChangeListener = focusListener
 
         startBtn.setOnClickListener {
             startActivity(Intent(this, CategoriesActivity::class.java))
@@ -70,6 +78,13 @@ class MainActivity : AppCompatActivity() {
 
         howToPlayBtn.setOnClickListener {
             startActivity(Intent(this, HowToPlayActivity::class.java))
+        }
+        leaderboardBtn.setOnClickListener {
+            startActivity(Intent(this, LeaderboardActivity::class.java))
+        }
+
+        settingsBtn.setOnClickListener {
+            startActivity(Intent(this, SettingsActivity::class.java))
         }
 
         // Default

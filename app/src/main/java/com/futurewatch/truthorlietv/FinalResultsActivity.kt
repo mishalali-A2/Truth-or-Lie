@@ -3,13 +3,14 @@ package com.futurewatch.truthorlietv
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import nl.dionsegijn.konfetti.xml.KonfettiView
-import nl.dionsegijn.konfetti.core.models.Shape
-import nl.dionsegijn.konfetti.core.models.Size
+import com.futurewatch.truthorlietv.database.PlayerRepository
+import kotlin.concurrent.thread
 
 class FinalResultsActivity : AppCompatActivity() {
 
@@ -18,22 +19,28 @@ class FinalResultsActivity : AppCompatActivity() {
     private lateinit var leaderboardContainer: LinearLayout
     private lateinit var btnPlayAgain: Button
     private lateinit var konfettiView: KonfettiView
+    private lateinit var playerRepository: PlayerRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.final_results)
+
+        AdManager.showInterstitial(this)
 
         tvWinnerName = findViewById(R.id.tvWinnerName)
         tvWinnerPoints = findViewById(R.id.tvWinnerPoints)
         leaderboardContainer = findViewById(R.id.leaderboardContainer)
         btnPlayAgain = findViewById(R.id.btnPlayAgain)
         konfettiView = findViewById(R.id.konfettiView)
+        playerRepository = PlayerRepository(this)
 
+        saveScoresToDatabase()
+        
         showResults()
         startConfetti()
 
         btnPlayAgain.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, SplashActivity::class.java)
             startActivity(intent)
             finish()
         }
@@ -81,6 +88,24 @@ class FinalResultsActivity : AppCompatActivity() {
         }
     }
 
+    private fun saveScoresToDatabase() {
+        Log.d("FinalResultsActivity", "Saving ${GameSession.players.size} players to database: ${GameSession.players.map { "${it.name}: ${it.score}" }}")
+        
+        //for async -> db update b4 screen ended
+        thread {
+            try {
+                GameSession.players.forEach { player ->
+                    Log.d("FinalResultsActivity", "Saving player: ${player.name} with score ${player.score}")
+                    playerRepository.updatePlayerScore(player.name, player.score)
+                }
+                Log.d("FinalResultsActivity", "✓ Finished saving all ${GameSession.players.size} players to database successfully")
+            } catch (e: Exception) {
+                Log.e("FinalResultsActivity", "✗ Error saving scores to database", e)
+                e.printStackTrace()
+            }
+        }.join()
+    }
+
     private fun startConfetti() {
         konfettiView.post {
 
@@ -91,7 +116,7 @@ class FinalResultsActivity : AppCompatActivity() {
                 val party = nl.dionsegijn.konfetti.core.Party(
                     speed = 2f,
                     maxSpeed = 6f,
-                    damping = 0.5f,
+                    damping = 0.9f,
                     spread = 360,
                     colors = listOf(
                         Color.YELLOW,
@@ -102,7 +127,7 @@ class FinalResultsActivity : AppCompatActivity() {
                     ),
                     emitter = nl.dionsegijn.konfetti.core.emitter.Emitter(
                         duration = 8000
-                    ).perSecond(60),
+                    ).perSecond(90),
 
                     position = nl.dionsegijn.konfetti.core.Position.Relative(xPos, 0.0)
                 )

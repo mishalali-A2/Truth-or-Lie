@@ -100,9 +100,11 @@ android:background="#0B0F1A">
 
             <!-- LOCKED CARD TEMPLATE -->
             <FrameLayout
+                android:id="@+id/card_history"
                 android:layout_width="260dp"
                 android:layout_height="180dp"
-                android:focusable="false">
+                android:focusable="true"
+                android:clickable="true">
 
                 <LinearLayout
                     style="@style/CategoryCardDisabled"
@@ -134,9 +136,11 @@ android:background="#0B0F1A">
             </FrameLayout>
 
             <FrameLayout
+                android:id="@+id/card_space"
                 android:layout_width="260dp"
                 android:layout_height="180dp"
-                android:focusable="false">
+                android:focusable="true"
+                android:clickable="true">
 
                 <LinearLayout
                     style="@style/CategoryCardDisabled"
@@ -169,9 +173,11 @@ android:background="#0B0F1A">
             </FrameLayout>
 
             <FrameLayout
+                android:id="@+id/card_technology"
                 android:layout_width="260dp"
                 android:layout_height="180dp"
-                android:focusable="false">
+                android:focusable="true"
+                android:clickable="true">
 
                 <LinearLayout
                     style="@style/CategoryCardDisabled"
@@ -203,9 +209,11 @@ android:background="#0B0F1A">
             </FrameLayout>
 
             <FrameLayout
+                android:id="@+id/card_human_body"
                 android:layout_width="260dp"
                 android:layout_height="180dp"
-                android:focusable="false">
+                android:focusable="true"
+                android:clickable="true">
 
                 <LinearLayout
                     style="@style/CategoryCardDisabled"
@@ -237,9 +245,11 @@ android:background="#0B0F1A">
             </FrameLayout>
 
             <FrameLayout
+                android:id="@+id/card_crazy_facts"
                 android:layout_width="260dp"
                 android:layout_height="180dp"
-                android:focusable="false">
+                android:focusable="true"
+                android:clickable="true">
 
                 <LinearLayout
                     style="@style/CategoryCardDisabled"
@@ -271,9 +281,11 @@ android:background="#0B0F1A">
             </FrameLayout>
 
             <FrameLayout
+                android:id="@+id/card_mixed_facts"
                 android:layout_width="260dp"
                 android:layout_height="180dp"
-                android:focusable="false">
+                android:focusable="true"
+                android:clickable="true">
 
                 <LinearLayout
                     style="@style/CategoryCardDisabled"
