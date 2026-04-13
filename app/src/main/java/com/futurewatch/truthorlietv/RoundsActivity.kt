@@ -19,6 +19,8 @@ class RoundsActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.rounds)
 
+        MusicManager.resumeMusic()
+
         val main = findViewById<View>(R.id.main)
 
         ViewCompat.setOnApplyWindowInsetsListener(main) { v, insets ->
@@ -45,8 +47,6 @@ class RoundsActivity : AppCompatActivity() {
                     .translationZ(20f)
                     .setDuration(150)
                     .start()
-
-               // v.setBackgroundColor(Color.parseColor("#6C5CE7")) // focused color
             } else {
                 v.animate()
                     .scaleX(1f)
@@ -54,8 +54,6 @@ class RoundsActivity : AppCompatActivity() {
                     .translationZ(0f)
                     .setDuration(150)
                     .start()
-
-              //  v.setBackgroundColor(Color.parseColor("#1A2238"))
             }
         }
 
@@ -79,5 +77,15 @@ class RoundsActivity : AppCompatActivity() {
 
         // def
         btn5.requestFocus()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        MusicManager.pauseMusic()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        MusicManager.resumeMusic()
     }
 }

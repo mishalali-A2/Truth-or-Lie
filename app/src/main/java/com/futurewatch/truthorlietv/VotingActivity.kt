@@ -36,13 +36,22 @@ class VotingActivity : AppCompatActivity() {
     private var currentStatement: String = ""
     private var correctAnswer = false
 
-    private val totalTime = 20000L
-    private var timeLeft = totalTime
+    // Dynamic timer values - read from settings
+    private var totalTime: Long = 20000L  // Will be set from TimerManager
+    private var timeLeft: Long = 20000L
     private lateinit var timer: CountDownTimer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.voting)
+
+        MusicManager.resumeMusic()
+
+        // Get timer duration from settings
+        totalTime = TimerManager.getTimerMillis()
+        timeLeft = totalTime
+
+        android.util.Log.d("VotingActivity", "Timer duration: ${totalTime / 1000} seconds")
 
         tvStatement  = findViewById(R.id.tvStatement)
         tvTimer      = findViewById(R.id.tvTimer)
@@ -76,8 +85,6 @@ class VotingActivity : AppCompatActivity() {
             return
         }
 
-//        val currentRound   = GameSession.getActualRound()
-//        val totalRounds   = GameSession.totalRounds
         val currentPlayer = GameSession.getCurrentPlayer()
 
         tvStatement.text = currentStatement
@@ -100,16 +107,32 @@ class VotingActivity : AppCompatActivity() {
 
     private fun startTimer(duration: Long) {
         if (duration <= 0L) return
+
         timer = object : CountDownTimer(duration, 100) {
             override fun onTick(millisUntilFinished: Long) {
                 timeLeft = millisUntilFinished
-                tvTimer.text = "${millisUntilFinished / 1000}s"
+                val secondsRemaining = (millisUntilFinished / 1000).toInt()
+                tvTimer.text = "${secondsRemaining}s"
+
+                // Update progress bar
                 barTimer.scaleX = millisUntilFinished.toFloat() / totalTime
+
+                // Warning when time is low (last 3 seconds)
+                if (secondsRemaining <= 3 && secondsRemaining > 0) {
+                    tvTimer.setTextColor(resources.getColor(android.R.color.holo_red_light))
+                } else {
+                    tvTimer.setTextColor(resources.getColor(android.R.color.holo_orange_light))
+                }
             }
 
             override fun onFinish() {
                 if (isLocked || isPaused) return
-//                if (selectedAnswer == null) selectAnswer(true)
+                // Time's up - auto-lock with default answer?
+                // You can decide: either lock as incorrect or pick a default
+                if (selectedAnswer == null) {
+                    // Default to false (Lie) when time runs out
+                    selectAnswer(false)
+                }
                 lockAnswer()
             }
         }.start()
@@ -119,6 +142,7 @@ class VotingActivity : AppCompatActivity() {
     private fun pauseGame() {
         if (isPaused) return
         isPaused = true
+        MusicManager.pauseMusic()
         if (::timer.isInitialized) timer.cancel()
         pauseOverlay.visibility = View.VISIBLE
         btnResume.requestFocus()
@@ -127,6 +151,7 @@ class VotingActivity : AppCompatActivity() {
     private fun resumeGame() {
         if (!isPaused) return
         isPaused = false
+        MusicManager.resumeMusic()
         pauseOverlay.visibility = View.GONE
         isPauseFocused = false
         highlightPauseButton(false)
@@ -158,35 +183,22 @@ class VotingActivity : AppCompatActivity() {
             }
 
             KeyEvent.KEYCODE_DPAD_UP -> {
-//                btnPause.requestFocus()
-//                highlightPauseButton(true)
                 pauseGame() //pause on up
                 true
             }
 
-//            KeyEvent.KEYCODE_DPAD_DOWN -> {
-//                // Move focus back to game area
-//                focusAnchor.requestFocus()
-//                highlightPauseButton(false)
-//                true
-//            }
-
-//            KeyEvent.KEYCODE_DPAD_CENTER,
-//            KeyEvent.KEYCODE_BUTTON_A -> {
-//                if (btnResume.hasFocus()) {
-//                    resumeGame()
-//                } else {
-//                    lockAnswer()
-//                }
             KeyEvent.KEYCODE_DPAD_CENTER,
             KeyEvent.KEYCODE_BUTTON_A ->{
-                lockAnswer()
+                if (selectedAnswer != null) {
+                    lockAnswer()
+                }
                 true
             }
 
             else -> super.onKeyDown(keyCode, event)
         }
     }
+
     private fun highlightPauseButton(highlighted: Boolean) {
         btnPause.alpha = if (highlighted) 1.0f else 0.6f
     }
@@ -208,12 +220,21 @@ class VotingActivity : AppCompatActivity() {
         frameLie.layoutParams   = lieParams
         frameTruth.requestLayout()
         frameLie.requestLayout()
+
+        // Auto-lock after selection with a small delay (optional)
+        // This gives visual feedback before moving on
+        btnResume.postDelayed({
+            if (!isLocked && selectedAnswer != null) {
+                lockAnswer()
+            }
+        }, 500)
     }
 
     private fun lockAnswer() {
         isLocked = true
         if (::timer.isInitialized) timer.cancel()
-//visual foc
+
+        //visual feedback
         if (selectedAnswer == true) {
             frameTruth.alpha = 1.0f
             frameLie.alpha = 0.3f
@@ -231,6 +252,8 @@ class VotingActivity : AppCompatActivity() {
         val nextTurn = GameSession.currPlayerTurn + 1
         val isLast = nextTurn % totalPlayers == 0
         GameSession.currPlayerTurn = nextTurn
+
+        android.util.Log.d("VotingActivity", "Answer: ${selectedAnswer}, Correct: $correctAnswer, Score: ${player.score}")
 
         val intent = if (isLast) {
             Intent(this, ResultsActivity::class.java).apply {
@@ -250,6 +273,16 @@ class VotingActivity : AppCompatActivity() {
 
         startActivity(intent)
         finish()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        MusicManager.pauseMusic()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        MusicManager.resumeMusic()
     }
 
     override fun onDestroy() {

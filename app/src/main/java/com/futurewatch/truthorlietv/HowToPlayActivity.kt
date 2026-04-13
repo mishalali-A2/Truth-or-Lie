@@ -11,6 +11,8 @@ class HowToPlayActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.how_to_play)
 
+        MusicManager.resumeMusic()
+
         // Back to Menu Button
         val backBtn = findViewById<Button>(R.id.btnBacktoMenu)
         backBtn.isFocusable = true
@@ -39,7 +41,7 @@ class HowToPlayActivity : AppCompatActivity() {
         }
 
         backBtn.setOnClickListener {
-            val intent = Intent(this, SplashActivity::class.java)
+            val intent = Intent(this, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
             startActivity(intent)
             finish()

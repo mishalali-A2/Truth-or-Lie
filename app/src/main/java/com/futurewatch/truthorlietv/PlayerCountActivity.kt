@@ -21,6 +21,8 @@ class PlayerCountActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.player_count)
 
+        MusicManager.resumeMusic()
+
         val main = findViewById<android.view.View>(R.id.main)
 
         ViewCompat.setOnApplyWindowInsetsListener(main) { v, insets ->
@@ -56,5 +58,15 @@ class PlayerCountActivity : AppCompatActivity() {
             val intent = Intent(this, PlayerNamesActivity::class.java)
             startActivity(intent)
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        MusicManager.pauseMusic()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        MusicManager.resumeMusic()
     }
 }

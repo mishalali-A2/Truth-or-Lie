@@ -14,8 +14,8 @@
         <!-- TITLE -->
         <TextView
             android:text="SETTINGS"
-            android:layout_height="match_parent"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:textColor="#FFFFFF"
             android:textSize="28sp"
             android:textStyle="bold"
@@ -23,6 +23,7 @@
 
         <!-- MUSIC CARD -->
         <LinearLayout
+            android:id="@+id/musicContainer"
             android:layout_width="600dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -42,8 +43,8 @@
 
                 <TextView
                     android:text=" Music"
-                    android:layout_height="match_parent"
                     android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:textColor="#FFFFFF"
                     android:textSize="18sp"
                     android:layout_weight="1"/>
@@ -56,7 +57,7 @@
                     android:focusableInTouchMode="true" />
             </LinearLayout>
 
-            <!-- Chips -->
+            <!-- Music Genre Chips -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -64,9 +65,23 @@
                 android:orientation="horizontal"
                 android:weightSum="3">
 
-                <Button style="@style/chip" android:text="Party Vibes"/>
-                <Button style="@style/chip_selected" android:text="Chill Lounge"/>
-                <Button style="@style/chip" android:text="Retro Arcade"/>
+                <Button
+                    android:id="@+id/chipPartyVibes"
+                    style="@style/chip"
+                    android:text="Party Vibes"
+                    android:layout_weight="1"/>
+
+                <Button
+                    android:id="@+id/chipChillLounge"
+                    style="@style/chip_selected"
+                    android:text="Chill Lounge"
+                    android:layout_weight="1"/>
+
+                <Button
+                    android:id="@+id/chipRetroArcade"
+                    style="@style/chip"
+                    android:text="Retro Arcade"
+                    android:layout_weight="1"/>
 
             </LinearLayout>
 
@@ -75,8 +90,17 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp">
 
-                <Button style="@style/chip" android:text="Epic Adventure"/>
-                <Button style="@style/chip" android:text="Funky Groove"/>
+                <Button
+                    android:id="@+id/chipEpicAdventure"
+                    style="@style/chip"
+                    android:text="Epic Adventure"
+                    android:layout_weight="1"/>
+
+                <Button
+                    android:id="@+id/chipFunkyGroove"
+                    style="@style/chip"
+                    android:text="Funky Groove"
+                    android:layout_weight="1"/>
 
             </LinearLayout>
 
@@ -84,8 +108,9 @@
 
         <!-- TIMER CARD -->
         <LinearLayout
+            android:id="@+id/timerContainer"
             android:layout_width="600dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="@drawable/card_bg"
             android:padding="20dp"
@@ -100,30 +125,51 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/timer" />
+
                 <TextView
                     android:text=" Timer (seconds)"
-                    android:layout_height="match_parent"
                     android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:textColor="#FFFFFF"
                     android:textSize="18sp"/>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_marginTop="15dp"
-                android:layout_height="match_parent"
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <Button style="@style/chip" android:text="10"/>
-                <Button style="@style/chip_selected" android:text="20"/>
-                <Button style="@style/chip" android:text="30"/>
-                <Button style="@style/chip" android:text="40"/>
-                <Button style="@style/chip" android:text="50"/>
+                <Button
+                    android:id="@+id/timer10"
+                    style="@style/chip"
+                    android:text="10"/>
+
+                <Button
+                    android:id="@+id/timer20"
+                    style="@style/chip_selected"
+                    android:text="20"/>
+
+                <Button
+                    android:id="@+id/timer30"
+                    style="@style/chip"
+                    android:text="30"/>
+
+                <Button
+                    android:id="@+id/timer40"
+                    style="@style/chip"
+                    android:text="40"/>
+
+                <Button
+                    android:id="@+id/timer50"
+                    style="@style/chip"
+                    android:text="50"/>
 
             </LinearLayout>
 
         </LinearLayout>
 
+        <!-- OTHER SETTINGS CARD -->
         <LinearLayout
             android:layout_width="600dp"
             android:layout_height="wrap_content"
@@ -133,11 +179,14 @@
 
             <!-- Remove Ads -->
             <LinearLayout
+                android:id="@+id/removeAds"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_marginBottom="12dp">
+                android:layout_marginBottom="12dp"
+                android:focusable="true"
+                android:clickable="true">
 
                 <ImageView
                     android:layout_width="24dp"
@@ -154,24 +203,27 @@
                     <TextView
                         style="@style/optionText"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:text="Remove Ads"/>
 
                     <TextView
                         style="@style/optionSub"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:text="One-time purchase"/>
                 </LinearLayout>
             </LinearLayout>
 
             <!-- Restore Purchases -->
             <LinearLayout
+                android:id="@+id/restorePurchases"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_marginBottom="12dp">
+                android:layout_marginBottom="12dp"
+                android:focusable="true"
+                android:clickable="true">
 
                 <ImageView
                     android:layout_width="24dp"
@@ -210,13 +262,13 @@
                     <TextView
                         style="@style/optionText"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:text="Network SDK"/>
 
                     <TextView
                         style="@style/optionSub"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:text="Analytics &amp; ad network" />
                 </LinearLayout>
 
@@ -228,11 +280,14 @@
 
             <!-- Rate App -->
             <LinearLayout
+                android:id="@+id/rateApp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_marginBottom="12dp">
+                android:layout_marginBottom="12dp"
+                android:focusable="true"
+                android:clickable="true">
 
                 <ImageView
                     android:layout_width="24dp"
@@ -250,11 +305,14 @@
 
             <!-- Terms & Privacy -->
             <LinearLayout
+                android:id="@+id/termsPrivacy"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_marginBottom="12dp">
+                android:layout_marginBottom="12dp"
+                android:focusable="true"
+                android:clickable="true">
 
                 <ImageView
                     android:layout_width="24dp"

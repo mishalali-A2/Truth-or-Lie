@@ -11,6 +11,7 @@ class CategoriesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_categories)
 
+        MusicManager.resumeMusic()
 //        caused flickering -> parent in XML steals the focus
 //        val focusListener = View.OnFocusChangeListener { v, hasFocus ->
 //            if (hasFocus) {

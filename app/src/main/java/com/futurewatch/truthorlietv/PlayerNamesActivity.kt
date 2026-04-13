@@ -19,6 +19,8 @@ class PlayerNamesActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.player_names)
 
+        MusicManager.resumeMusic()
+
         val container = findViewById<LinearLayout>(R.id.containerPlayers)
         val playerCount = GameSession.playerCount
         val startBtn = findViewById<Button>(R.id.btnStart)
@@ -109,5 +111,15 @@ class PlayerNamesActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        MusicManager.pauseMusic()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        MusicManager.resumeMusic()
     }
 }

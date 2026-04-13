@@ -8,6 +8,10 @@ import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.unity3d.ads.UnityAds
+import android.os.Looper
+import android.os.Handler
+import android.util.Log
+
 
 class MainActivity : AppCompatActivity() {
     //id for unity ads as per doc
@@ -20,6 +24,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         UnityAds.initialize(this, gameID, testMode)
         setContentView(R.layout.activity_main)
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            MusicManager.startMusic()
+            Log.d("MainActivity", "Music started")
+        }, 100)
+
 
         val title = findViewById<View>(R.id.app_title)
         val subtitle= findViewById<View>(R.id.app_subtitle)
@@ -96,5 +106,14 @@ class MainActivity : AppCompatActivity() {
         if (::floatAnim.isInitialized) {
             floatAnim.cancel()
         }
+        MusicManager.pauseMusic()
+    }
+    override fun onResume() {
+        super.onResume()
+        MusicManager.resumeMusic()
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        MusicManager.stopMusic()
     }
 }
