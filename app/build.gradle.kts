@@ -46,5 +46,7 @@ dependencies {
     implementation("com.google.android.material:material:1.13.0")
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation("com.unity3d.ads:unity-ads:4.9.2")
     implementation("nl.dionsegijn:konfetti-xml:2.0.2")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
 }
