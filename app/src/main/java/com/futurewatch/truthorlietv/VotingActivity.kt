@@ -119,6 +119,7 @@ class VotingActivity : AppCompatActivity() {
     private fun pauseGame() {
         if (isPaused) return
         isPaused = true
+        MusicManager.pauseMusic()
         if (::timer.isInitialized) timer.cancel()
         pauseOverlay.visibility = View.VISIBLE
         btnResume.requestFocus()
@@ -127,6 +128,7 @@ class VotingActivity : AppCompatActivity() {
     private fun resumeGame() {
         if (!isPaused) return
         isPaused = false
+        MusicManager.resumeMusic()
         pauseOverlay.visibility = View.GONE
         isPauseFocused = false
         highlightPauseButton(false)

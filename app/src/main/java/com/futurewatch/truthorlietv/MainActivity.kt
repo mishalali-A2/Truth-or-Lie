@@ -20,6 +20,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         UnityAds.initialize(this, gameID, testMode)
         setContentView(R.layout.activity_main)
+        MusicManager.resumeMusic()
+
 
         val title = findViewById<View>(R.id.app_title)
         val subtitle= findViewById<View>(R.id.app_subtitle)
@@ -96,5 +98,9 @@ class MainActivity : AppCompatActivity() {
         if (::floatAnim.isInitialized) {
             floatAnim.cancel()
         }
+    }
+    override fun onResume() {
+        super.onResume()
+        MusicManager.resumeMusic()
     }
 }
