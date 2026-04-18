@@ -1,7 +1,6 @@
 package com.futurewatch.truthorlietv
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -81,7 +80,7 @@ class RoundsActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        MusicManager.pauseMusic()
+        //MusicManager.pauseMusic()
     }
 
     override fun onResume() {

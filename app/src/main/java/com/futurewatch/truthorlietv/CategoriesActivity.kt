@@ -3,6 +3,7 @@ package com.futurewatch.truthorlietv
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
 class CategoriesActivity : AppCompatActivity() {
@@ -85,23 +86,41 @@ class CategoriesActivity : AppCompatActivity() {
     }
 
     private fun showUnlockDialog(category: String) {
+        // Check if ad is ready first
+        if (!AdManager.isInitialized()) {
+            Toast.makeText(this, "Ads loading, please wait...", Toast.LENGTH_SHORT).show()
+            return
+        }
 
         val dialog = android.app.AlertDialog.Builder(this)
             .setTitle("Unlock Category")
             .setMessage("Watch an ad to unlock for this session or buy full access.")
             .setPositiveButton("Watch Ad") { _, _ ->
+                // Show loading indicator
+                Toast.makeText(this, "Loading ad...", Toast.LENGTH_SHORT).show()
 
-                AdManager.showRewardedAd(this) {
-                    // Unlock after ad
-                    CategoryManager.unlockTemporarily(category)
-
-                    // Start game immediately
-                    GameSession.category = category
-                    startActivity(Intent(this, FactsActivity::class.java))
-                }
+                AdManager.showRewardedAd(
+                    activity = this,
+                    onRewardEarned = {
+                        //reward on completion
+                        runOnUiThread {
+                            CategoryManager.unlockTemporarily(category)
+                            Toast.makeText(this, "Category Unlocked! ✓", Toast.LENGTH_SHORT).show()
+                            // Start game immediately
+                            GameSession.category = category
+                            startActivity(Intent(this, RoundsActivity::class.java))
+                        }
+                    },
+                    onFailed = {
+                        runOnUiThread {
+                            Toast.makeText(this, "Ad not available. Please try again.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                )
             }
             .setNegativeButton("Buy ($2.99)") { _, _ ->
                 // Google Play Billing
+                Toast.makeText(this, "Purchase coming soon!", Toast.LENGTH_SHORT).show()
             }
             .setNeutralButton("Cancel", null)
             .create()
@@ -109,7 +128,16 @@ class CategoriesActivity : AppCompatActivity() {
         dialog.setOnDismissListener {
             findViewById<View>(R.id.card_general)?.requestFocus()
         }
-
         dialog.show()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        //MusicManager.pauseMusic()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        MusicManager.resumeMusic()
     }
 }

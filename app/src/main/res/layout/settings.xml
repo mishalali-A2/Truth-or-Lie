@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0B0F1A">
+    android:background="#0B0F1A"
+    android:clipChildren="false"
+    android:clipToPadding="false">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center_horizontal"
-        android:padding="40dp">
+        android:padding="40dp"
+        android:clipChildren="false"
+        android:clipToPadding="false">
 
         <!-- TITLE -->
         <TextView
@@ -29,12 +34,15 @@
             android:orientation="vertical"
             android:background="@drawable/card_bg"
             android:padding="20dp"
-            android:layout_marginBottom="20dp">
+            android:layout_marginBottom="20dp"
+            android:clipChildren="false"
+            android:clipToPadding="false">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:clipChildren="false">
 
                 <ImageView
                     android:layout_width="24dp"
@@ -63,44 +71,51 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:orientation="horizontal"
-                android:weightSum="3">
+                android:weightSum="3"
+                android:clipChildren="false">
 
                 <Button
                     android:id="@+id/chipPartyVibes"
                     style="@style/chip"
                     android:text="Party Vibes"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1"
+                    android:layout_margin="4dp"/>
 
                 <Button
                     android:id="@+id/chipChillLounge"
                     style="@style/chip_selected"
                     android:text="Chill Lounge"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1"
+                    android:layout_margin="4dp"/>
 
                 <Button
                     android:id="@+id/chipRetroArcade"
                     style="@style/chip"
                     android:text="Retro Arcade"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1"
+                    android:layout_margin="4dp"/>
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp">
+                android:layout_marginTop="10dp"
+                android:clipChildren="false">
 
                 <Button
                     android:id="@+id/chipEpicAdventure"
                     style="@style/chip"
                     android:text="Epic Adventure"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1"
+                    android:layout_margin="4dp"/>
 
                 <Button
                     android:id="@+id/chipFunkyGroove"
                     style="@style/chip"
                     android:text="Funky Groove"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1"
+                    android:layout_margin="4dp"/>
 
             </LinearLayout>
 
@@ -114,12 +129,15 @@
             android:orientation="vertical"
             android:background="@drawable/card_bg"
             android:padding="20dp"
-            android:layout_marginBottom="20dp">
+            android:layout_marginBottom="20dp"
+            android:clipChildren="false"
+            android:clipToPadding="false">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:clipChildren="false">
 
                 <ImageView
                     android:layout_width="24dp"
@@ -138,32 +156,38 @@
                 android:layout_marginTop="15dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:clipChildren="false">
 
                 <Button
                     android:id="@+id/timer10"
                     style="@style/chip"
-                    android:text="10"/>
+                    android:text="10"
+                    android:layout_margin="4dp"/>
 
                 <Button
                     android:id="@+id/timer20"
                     style="@style/chip_selected"
-                    android:text="20"/>
+                    android:text="20"
+                    android:layout_margin="4dp"/>
 
                 <Button
                     android:id="@+id/timer30"
                     style="@style/chip"
-                    android:text="30"/>
+                    android:text="30"
+                    android:layout_margin="4dp"/>
 
                 <Button
                     android:id="@+id/timer40"
                     style="@style/chip"
-                    android:text="40"/>
+                    android:text="40"
+                    android:layout_margin="4dp"/>
 
                 <Button
                     android:id="@+id/timer50"
                     style="@style/chip"
-                    android:text="50"/>
+                    android:text="50"
+                    android:layout_margin="4dp"/>
 
             </LinearLayout>
 
@@ -175,7 +199,9 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="@drawable/card_bg"
-            android:padding="20dp">
+            android:padding="20dp"
+            android:clipChildren="false"
+            android:clipToPadding="false">
 
             <!-- Remove Ads -->
             <LinearLayout
@@ -186,7 +212,9 @@
                 android:gravity="center_vertical"
                 android:layout_marginBottom="12dp"
                 android:focusable="true"
-                android:clickable="true">
+                android:clickable="true"
+                android:padding="8dp"
+                android:clipChildren="false">
 
                 <ImageView
                     android:layout_width="24dp"
@@ -223,7 +251,9 @@
                 android:gravity="center_vertical"
                 android:layout_marginBottom="12dp"
                 android:focusable="true"
-                android:clickable="true">
+                android:clickable="true"
+                android:padding="8dp"
+                android:clipChildren="false">
 
                 <ImageView
                     android:layout_width="24dp"
@@ -245,7 +275,9 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_marginBottom="12dp">
+                android:layout_marginBottom="12dp"
+                android:padding="8dp"
+                android:clipChildren="false">
 
                 <ImageView
                     android:layout_width="24dp"
@@ -287,7 +319,9 @@
                 android:gravity="center_vertical"
                 android:layout_marginBottom="12dp"
                 android:focusable="true"
-                android:clickable="true">
+                android:clickable="true"
+                android:padding="8dp"
+                android:clipChildren="false">
 
                 <ImageView
                     android:layout_width="24dp"
@@ -312,7 +346,9 @@
                 android:gravity="center_vertical"
                 android:layout_marginBottom="12dp"
                 android:focusable="true"
-                android:clickable="true">
+                android:clickable="true"
+                android:padding="8dp"
+                android:clipChildren="false">
 
                 <ImageView
                     android:layout_width="24dp"
@@ -347,7 +383,8 @@
             android:layout_marginTop="30dp"
             android:background="@drawable/btn_secondary"
             android:text="Back to Menu"
-            android:textColor="#FFFFFF" />
+            android:textColor="#FFFFFF"
+            android:padding="16dp"/>
 
     </LinearLayout>
 
