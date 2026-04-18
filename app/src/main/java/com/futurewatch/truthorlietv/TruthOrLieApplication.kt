@@ -2,6 +2,9 @@ package com.futurewatch.truthorlietv
 
 import android.app.Application
 import android.content.SharedPreferences
+import com.unity3d.ads.UnityAds
+import android.util.Log
+import com.unity3d.ads.IUnityAdsInitializationListener
 
 class TruthOrLieApplication : Application() {
 
@@ -16,6 +19,18 @@ class TruthOrLieApplication : Application() {
         instance = this
         prefs = getSharedPreferences("app_settings", MODE_PRIVATE)
 
+        UnityAds.initialize(this, "6069840", true, object : IUnityAdsInitializationListener {
+            override fun onInitializationComplete() {
+                Log.d("UnityAds", "SDK Initialized Successfully")
+            }
+
+            override fun onInitializationFailed(
+                error: UnityAds.UnityAdsInitializationError,
+                message: String
+            ) {
+                Log.e("UnityAds", "SDK Initialization Failed: $error - $message")
+            }
+        })
         MusicManager.init(this)
 
         TimerManager.init(this)

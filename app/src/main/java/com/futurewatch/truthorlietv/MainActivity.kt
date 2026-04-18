@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import com.unity3d.ads.UnityAds
 import android.os.Looper
 import android.os.Handler
 import android.util.Log
@@ -22,7 +21,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        UnityAds.initialize(this, gameID, testMode)
+        AdManager.initialize(this, testMode = true) {
+            Log.d("MainActivity", "Unity Ads ready - Rewarded: ${AdManager.isRewardedReady()}, Interstitial: ${AdManager.isInterstitialReady()}")
+        }
+
         setContentView(R.layout.activity_main)
 
         Handler(Looper.getMainLooper()).postDelayed({
@@ -112,6 +114,11 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         MusicManager.resumeMusic()
     }
+//    private fun checkAdAvailability() {
+//        // Check if ads are ready
+//        Log.d("UnityAds", "Rewarded Ad Ready: ${UnityAds.isReady(AdManager.REWARDED_ID)}")
+//        Log.d("UnityAds", "Interstitial Ad Ready: ${UnityAds.isReady(AdManager.INTERSTITIAL_ID)}")
+//    }
     override fun onDestroy() {
         super.onDestroy()
         MusicManager.stopMusic()
