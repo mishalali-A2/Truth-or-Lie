@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0B0F1A">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:padding="40dp">
+
+        <TextView
+            android:text="PREMIUM SHOP"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="30dp"/>
+
+        <!-- Premium Status Card -->
+        <LinearLayout
+            android:layout_width="600dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/card_bg"
+            android:padding="20dp"
+            android:layout_marginBottom="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Your Status"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvPremiumStatus"
+                android:text="No active purchases"
+                android:textColor="#AAAAAA"
+                android:textSize="16sp"/>
+
+        </LinearLayout>
+
+        <!-- Remove Ads -->
+        <Button
+            android:id="@+id/btnRemoveAds"
+            android:layout_width="600dp"
+            android:layout_height="wrap_content"
+            android:text="Remove Ads - $2.99"
+            android:textSize="18sp"
+            android:padding="16dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/btn_primary"
+            android:textColor="#FFFFFF"
+            android:focusable="true"/>
+
+        <!-- Unlock All Categories -->
+        <Button
+            android:id="@+id/btnUnlockCategories"
+            android:layout_width="600dp"
+            android:layout_height="wrap_content"
+            android:text="Unlock All Categories - $4.99"
+            android:textSize="18sp"
+            android:padding="16dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/btn_primary"
+            android:textColor="#FFFFFF"
+            android:focusable="true"/>
+
+        <!-- Monthly Subscription -->
+        <Button
+            android:id="@+id/btnMonthlySubscription"
+            android:layout_width="600dp"
+            android:layout_height="wrap_content"
+            android:text="Monthly Premium - $2.99/month"
+            android:textSize="18sp"
+            android:padding="16dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/btn_primary"
+            android:textColor="#FFFFFF"
+            android:focusable="true"/>
+
+        <!-- Yearly Subscription -->
+        <Button
+            android:id="@+id/btnYearlySubscription"
+            android:layout_width="600dp"
+            android:layout_height="wrap_content"
+            android:text="Yearly Premium - $19.99/year"
+            android:textSize="18sp"
+            android:padding="16dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/btn_primary"
+            android:textColor="#FFFFFF"
+            android:focusable="true"/>
+
+        <!-- Restore Purchases -->
+        <Button
+            android:id="@+id/btnRestore"
+            android:layout_width="600dp"
+            android:layout_height="wrap_content"
+            android:text="Restore Purchases"
+            android:textSize="16sp"
+            android:padding="12dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/btn_secondary"
+            android:textColor="#FFFFFF"
+            android:focusable="true"/>
+
+        <!-- Back Button -->
+        <Button
+            android:id="@+id/btnBack"
+            android:layout_width="253dp"
+            android:layout_height="57dp"
+            android:text="Back"
+            android:textSize="18sp"
+            android:background="@drawable/btn_secondary"
+            android:textColor="#FFFFFF"
+            android:focusable="true"/>
+
+    </LinearLayout>
+</ScrollView>
