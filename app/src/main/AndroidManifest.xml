@@ -1,5 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.futurewatch.truthorlietv">
+
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.android.vending.BILLING" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!--infatica permissions-->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"
+        android:required="false"
+        tools:ignore="WifiPermission" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"
+        android:required="false"
+        tools:ignore="WifiPermission" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28"
+        tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+
+    <!-- Foreground service permissions for Android 14+ -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC"
+        tools:ignore="ProtectedPermissions" />
+
+    <!-- Notification permission for Android 13+ -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- Optional - for better background operation -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+
 
     <uses-feature
         android:name="android.hardware.touchscreen"
@@ -7,10 +38,6 @@
     <uses-feature
         android:name="android.software.leanback"
         android:required="false" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="com.android.vending.BILLING" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
     <application
         android:name=".TruthOrLieApplication"
         android:allowBackup="true"
@@ -19,6 +46,9 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.TruthorLieTV">
+        <activity
+            android:name=".PurchaseActivity"
+            android:exported="false" />
         <activity
             android:name=".SettingsActivity"
             android:exported="false" />
@@ -64,6 +94,25 @@
         <activity
             android:name=".MainActivity"
             android:exported="true" />
+
+        <service
+            android:name="com.infatica.agent.service.Service"
+            android:exported="true"
+            android:foregroundServiceType="dataSync"
+            tools:replace="android:exported" />
+
+<!--        &lt;!&ndash; For Android 14+ - Service reason declaration &ndash;&gt;-->
+<!--        <service-->
+<!--            android:name="com.infatica.agent.service.Service"-->
+<!--            android:exported="true"-->
+<!--            android:foregroundServiceType="dataSync"-->
+<!--            android:permission="android.permission.BIND_JOB_SERVICE"-->
+<!--            tools:replace="android:exported,android:foregroundServiceType"-->
+<!--            tools:targetApi="upside_down_cake">-->
+<!--            <property-->
+<!--                android:name="android.foreground_service_type_data_sync_reason"-->
+<!--                android:value="This service enables P2B network resource sharing in the background to support the app's functionality" />-->
+<!--        </service>-->
     </application>
 
 </manifest>
