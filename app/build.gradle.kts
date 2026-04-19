@@ -17,9 +17,19 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+        //infatica
+        manifestPlaceholders += mapOf(
+            "INFATICA_PARTNER_ID" to "FutureWatch"
+        )
+
     }
 
     buildTypes {
+        debug {
+            isMinifyEnabled = false
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-DEBUG"
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -47,6 +57,9 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation("com.android.billingclient:billing-ktx:7.1.1")
+    implementation ("androidx.datastore:datastore-preferences:1.1.1")
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar", "*.jar"))))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("com.unity3d.ads:unity-ads:4.9.2")
     implementation("nl.dionsegijn:konfetti-xml:2.0.2")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
