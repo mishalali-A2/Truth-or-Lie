@@ -34,16 +34,17 @@ class FinalResultsActivity : AppCompatActivity() {
         setContentView(R.layout.final_results)
 
         MusicManager.resumeMusic()
-
-        AdManager.showInterstitial(
-            activity = this,
-            onComplete = {
-                Log.d("FinalResults", "Interstitial completed")
-            },
-            onFailed = {
-                Log.d("FinalResults", "Interstitial not available, continuing")
-            }
-        )
+        if (AdManager.isInterstitialReady()) {
+            AdManager.showInterstitial(
+                activity = this,
+                onComplete = {
+                    Log.d("FinalResults", "Interstitial completed")
+                },
+                onFailed = {
+                    Log.d("FinalResults", "Interstitial not available, continuing")
+                }
+            )
+        }
 
         tvWinnerName = findViewById(R.id.tvWinnerName)
         tvWinnerPoints = findViewById(R.id.tvWinnerPoints)

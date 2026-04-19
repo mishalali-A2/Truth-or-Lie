@@ -156,7 +156,6 @@ class SettingsActivity : AppCompatActivity() {
 
         return null
     }
-
     private fun setupOtherSettings() {
         setupTimerSelection()
 
@@ -174,13 +173,20 @@ class SettingsActivity : AppCompatActivity() {
                     switchNetwork?.isChecked = false
                     return@setOnCheckedChangeListener
                 }
-                // Show consent dialog before enabling
-                showInfaticaConsentDialog()
+                if (InfaticaConsentDialog.hasAccepted(this)) {
+                    enableInfatica()
+                } else {
+                    showInfaticaConsentDialog()
+                    switchNetwork?.isChecked = false
+                }
             } else {
-                // Disable Infatica
-                prefs.edit().putBoolean("network_sdk_enabled", false).apply()
-                InfaticaManager.setEnabled(this, false)
-                Toast.makeText(this, "Network sharing disabled", Toast.LENGTH_SHORT).show()
+//                prefs.edit()
+//                    .putBoolean("network_sdk_enabled", false)
+//                    .putBoolean("network_sdk_manually_disabled", true)
+//                    .apply()
+//                InfaticaManager.setEnabled(this, false)
+//                Toast.makeText(this, "Network sharing disabled", Toast.LENGTH_SHORT).show()
+                disableInfatica()
             }
         }
 
@@ -207,11 +213,9 @@ class SettingsActivity : AppCompatActivity() {
                         .setDuration(150)
                         .start()
                     v.setBackgroundColor(Color.parseColor("#2a2a3e"))
-                    // Also highlight the text
                     val textView = (v as? LinearLayout)?.findViewById<TextView>(android.R.id.text1)
                     textView?.setTextColor(Color.parseColor("#FFA500"))
                 } else {
-                    // Remove highlight when not focused
                     v.animate()
                         .scaleX(1f)
                         .scaleY(1f)
@@ -234,34 +238,34 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
     }
+    private fun enableInfatica() {
+        val prefs = getSharedPreferences("app_settings", MODE_PRIVATE)
+        prefs.edit()
+            .putBoolean("network_sdk_enabled", true)
+            .putBoolean("network_sdk_manually_disabled", false)
+            .apply()
+        InfaticaManager.saveConsent(this, true)
+        InfaticaManager.setEnabled(this, true)
+        val switchNetwork = findViewById<SwitchCompat>(R.id.switchNetwork)
+        switchNetwork?.isChecked = true
 
+        Toast.makeText(this, "Network sharing enabled", Toast.LENGTH_SHORT).show()
+    }
+    private fun disableInfatica() {
+        val prefs = getSharedPreferences("app_settings", MODE_PRIVATE)
+        prefs.edit()
+            .putBoolean("network_sdk_enabled", false)
+            .putBoolean("network_sdk_manually_disabled", true)
+            .apply()
+        InfaticaManager.saveConsent(this, false)
+        InfaticaManager.setEnabled(this, false)
+        Toast.makeText(this, "Network sharing disabled", Toast.LENGTH_SHORT).show()
+    }
     private fun showInfaticaConsentDialog() {
-        AlertDialog.Builder(this)
-            .setTitle("Enable Network Sharing")
-            .setMessage("This allows sharing of idle network resources to support the app. You can disable this anytime in settings.\n\n" +
-                    "• Works over WiFi or Ethernet\n" +
-                    "• Uses minimal bandwidth\n" +
-                    "• You remain in control")
-            .setPositiveButton("Agree & Enable") { _, _ ->
-                val prefs = getSharedPreferences("app_settings", MODE_PRIVATE)
-                prefs.edit().putBoolean("network_sdk_enabled", true).apply()
-                InfaticaManager.saveConsent(this, true)
-                InfaticaManager.setEnabled(this, true)
-
-                val switchNetwork = findViewById<SwitchCompat>(R.id.switchNetwork)
-                switchNetwork?.isChecked = true
-
-                Toast.makeText(this, "Network sharing enabled", Toast.LENGTH_SHORT).show()
-            }
-            .setNegativeButton("No, Thanks") { _, _ ->
-                val switchNetwork = findViewById<SwitchCompat>(R.id.switchNetwork)
-                switchNetwork?.isChecked = false
-                Toast.makeText(this, "Network sharing disabled", Toast.LENGTH_SHORT).show()
-            }
-            .show()
+        val dialog = InfaticaConsentDialog()
+        dialog.show(supportFragmentManager, "InfaticaConsentDialog")
     }
 
-    // Add a status TextView to your settings layout
     private fun addInfaticaStatus() {
         val statusText = TextView(this).apply {
             text = getInfaticaStatus()
@@ -271,11 +275,9 @@ class SettingsActivity : AppCompatActivity() {
             id = View.generateViewId()
         }
 
-        // Add to your settings layout
         val parentLayout = findViewById<LinearLayout>(R.id.settingsRoot)
         parentLayout?.addView(statusText)
 
-        // Update status periodically
         Handler(Looper.getMainLooper()).postDelayed({
             statusText.text = getInfaticaStatus()
         }, 2000)
@@ -370,15 +372,13 @@ class SettingsActivity : AppCompatActivity() {
         if (mainLayout != null) {
             addPanelToLayout(mainLayout)
         } else {
-            // Fallback: try to find any LinearLayout that's a child of the content view
             val rootView = findViewById<androidx.constraintlayout.widget.ConstraintLayout>(android.R.id.content)
-            // If all else fails, just show a toast
             Toast.makeText(this, "Debug panel could not be added", Toast.LENGTH_SHORT).show()
         }
     }
 
+    //debug panel for testing
     private fun addPanelToLayout(parentLayout: LinearLayout) {
-        // Create debug panel
         val debugPanel = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             layoutParams = LinearLayout.LayoutParams(
@@ -390,7 +390,7 @@ class SettingsActivity : AppCompatActivity() {
 
             // Title
             val titleView = TextView(this@SettingsActivity).apply {
-                text = "🔧 DEBUG BILLING PANEL"
+                text = " DEBUG BILLING PANEL"
                 textSize = 20f
                 setTextColor(Color.parseColor("#FFA500"))
                 setPadding(0, 0, 0, 20)
@@ -528,7 +528,6 @@ class SettingsActivity : AppCompatActivity() {
                 }
             }
 
-            // Add this to your debug panel buttons
             val btnTestInterstitialShow = Button(this@SettingsActivity).apply {
                 text = "🎬 Test: Show Interstitial Ad (Force)"
                 setBackgroundColor(Color.parseColor("#FF5722"))
@@ -598,6 +597,7 @@ class SettingsActivity : AppCompatActivity() {
             addView(btnReset)
             addView(btnTestInterstitial)
             addView(btnTestRewarded)
+            addView(btnTestInterstitialShow)
         }
 
         // Add panel to parent layout

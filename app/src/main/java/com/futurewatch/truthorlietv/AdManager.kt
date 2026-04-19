@@ -6,30 +6,35 @@ import com.unity3d.ads.UnityAds
 import com.unity3d.ads.IUnityAdsShowListener
 import com.unity3d.ads.IUnityAdsInitializationListener
 import com.unity3d.ads.IUnityAdsLoadListener
+import android.os.Handler
+import android.os.Looper
 
 object AdManager {
     private const val REWARDED_ID = "Rewarded_Android"
     private const val INTERSTITIAL_ID = "Interstitial_Android"
-    private const val GAMEID= "6069840"
+    private const val GAME_ID = "6069840"
+
     private var lastInterstitialTime = 0L
-    private const val INTERSTITIAL_COOLDOWN = 90 * 1000L // 90 seconds
+    private const val INTERSTITIAL_COOLDOWN = 90 * 1000L
     private var isInterstitialPreloaded = false
     private var isLoadingInterstitial = false
     private var isLoadingRewarded = false
     private var isInitialized = false
+    private var isShowingInterstitial = false
+    private val mainHandler = Handler(Looper.getMainLooper())
 
-  //initialize unity
     fun initialize(activity: Activity, testMode: Boolean = true, onComplete: () -> Unit = {}) {
         if (isInitialized) {
             onComplete()
             return
         }
 
-        UnityAds.initialize(activity, GAMEID, testMode, object : IUnityAdsInitializationListener {
+        UnityAds.initialize(activity, GAME_ID, testMode, object : IUnityAdsInitializationListener {
             override fun onInitializationComplete() {
-                Log.d("AdManager", "Unity Ads initialized successfully")
+                Log.d("AdManager", "✅ Unity Ads initialized successfully")
                 isInitialized = true
                 preloadInterstitial()
+                preloadRewarded()
                 onComplete()
             }
 
@@ -37,13 +42,35 @@ object AdManager {
                 error: UnityAds.UnityAdsInitializationError,
                 message: String
             ) {
-                Log.e("AdManager", " Unity Ads init failed: $error - $message")
+                Log.e("AdManager", "❌ Unity Ads init failed: $error - $message")
                 isInitialized = false
             }
         })
     }
 
-    // Preload interstitial -> faster loading
+    fun preloadRewarded() {
+        if (!isInitialized || isLoadingRewarded) return
+
+        isLoadingRewarded = true
+        Log.d("AdManager", "Preloading rewarded ad...")
+
+        UnityAds.load(REWARDED_ID, object : IUnityAdsLoadListener {
+            override fun onUnityAdsAdLoaded(placementId: String) {
+                Log.d("AdManager", "✅ Rewarded ad preloaded successfully")
+                isLoadingRewarded = false
+            }
+
+            override fun onUnityAdsFailedToLoad(
+                placementId: String,
+                error: UnityAds.UnityAdsLoadError,
+                message: String
+            ) {
+                Log.e("AdManager", "❌ Failed to preload rewarded: $error - $message")
+                isLoadingRewarded = false
+            }
+        })
+    }
+
     fun preloadInterstitial() {
         if (!isInitialized) return
         if (isLoadingInterstitial || isInterstitialPreloaded) return
@@ -53,7 +80,7 @@ object AdManager {
 
         UnityAds.load(INTERSTITIAL_ID, object : IUnityAdsLoadListener {
             override fun onUnityAdsAdLoaded(placementId: String) {
-                Log.d("AdManager", " Interstitial preloaded successfully")
+                Log.d("AdManager", "✅ Interstitial preloaded successfully")
                 isInterstitialPreloaded = true
                 isLoadingInterstitial = false
             }
@@ -63,26 +90,30 @@ object AdManager {
                 error: UnityAds.UnityAdsLoadError,
                 message: String
             ) {
-                Log.e("AdManager", " Failed to preload interstitial: $error - $message")
+                Log.e("AdManager", "❌ Failed to preload interstitial: $error - $message")
                 isLoadingInterstitial = false
                 isInterstitialPreloaded = false
             }
         })
     }
 
-    //cooldown
     private fun canShowInterstitial(): Boolean {
         if (lastInterstitialTime == 0L) return true
         val diff = System.currentTimeMillis() - lastInterstitialTime
         return diff >= INTERSTITIAL_COOLDOWN
     }
 
-    // Show Interstitial Ad
     fun showInterstitial(
         activity: Activity,
         onComplete: () -> Unit = {},
         onFailed: () -> Unit = {}
     ) {
+        Log.d("AdManager", "=== SHOW INTERSTITIAL CALLED ===")
+        Log.d("AdManager", "isInitialized: $isInitialized")
+        Log.d("AdManager", "isInterstitialPreloaded: $isInterstitialPreloaded")
+        Log.d("AdManager", "canShowInterstitial: ${canShowInterstitial()}")
+        Log.d("AdManager", "isShowingInterstitial: $isShowingInterstitial")
+
         if (!isInitialized) {
             Log.e("AdManager", "Unity Ads not initialized")
             onFailed()
@@ -90,34 +121,129 @@ object AdManager {
         }
 
         if (!canShowInterstitial()) {
-            val remainingSeconds = (INTERSTITIAL_COOLDOWN - (System.currentTimeMillis() - lastInterstitialTime)) / 1000
-            Log.d("AdManager", "Interstitial on cooldown: ${remainingSeconds}s remaining")
+            Log.d("AdManager", "Interstitial on cooldown")
             onFailed()
-            return
-        }
-        //pause music on ads
-        MusicManager.pauseMusic()
-        if (isLoadingInterstitial) {
-            Log.d("AdManager", "Interstitial still loading, waiting...")
-            onFailed()
-            return
-        }
-//on preload
-        if (isInterstitialPreloaded) {
-            isInterstitialPreloaded = false
-            showLoadedInterstitial(activity, onComplete, onFailed)
             return
         }
 
-        //else load first
+        if (isShowingInterstitial) {
+            Log.d("AdManager", "Already showing an interstitial")
+            onFailed()
+            return
+        }
+
+        // Pause music
+        MusicManager.pauseMusic()
+
+        // If preloaded, show it
+        if (isInterstitialPreloaded) {
+            Log.d("AdManager", "Preloaded interstitial available, showing now")
+            isInterstitialPreloaded = false
+            isShowingInterstitial = true
+
+            UnityAds.show(activity, INTERSTITIAL_ID, object : IUnityAdsShowListener {
+                override fun onUnityAdsShowComplete(
+                    placementId: String,
+                    state: UnityAds.UnityAdsShowCompletionState
+                ) {
+                    Log.d("AdManager", "Interstitial complete: $state")
+                    lastInterstitialTime = System.currentTimeMillis()
+                    isShowingInterstitial = false
+                    MusicManager.resumeMusic()
+
+                    // Preload next one
+                    mainHandler.postDelayed({
+                        preloadInterstitial()
+                    }, 5000)
+
+                    onComplete()
+                }
+
+                override fun onUnityAdsShowFailure(
+                    placementId: String,
+                    error: UnityAds.UnityAdsShowError,
+                    message: String
+                ) {
+                    Log.e("AdManager", "Interstitial show failed: $error - $message")
+                    isShowingInterstitial = false
+                    MusicManager.resumeMusic()
+
+                    // Try to preload again
+                    mainHandler.postDelayed({
+                        preloadInterstitial()
+                    }, 3000)
+
+                    onFailed()
+                }
+
+                override fun onUnityAdsShowStart(placementId: String) {
+                    Log.d("AdManager", "Interstitial started playing")
+                }
+
+                override fun onUnityAdsShowClick(placementId: String) {
+                    Log.d("AdManager", "Interstitial clicked")
+                }
+            })
+            return
+        }
+
+        // Not preloaded, load then show
+        Log.d("AdManager", "No preloaded interstitial, loading on demand...")
+
+        if (isLoadingInterstitial) {
+            Log.d("AdManager", "Interstitial already loading, waiting...")
+            // Wait for it to finish loading
+            mainHandler.postDelayed({
+                if (isInterstitialPreloaded) {
+                    showInterstitial(activity, onComplete, onFailed)
+                } else {
+                    MusicManager.resumeMusic()
+                    onFailed()
+                }
+            }, 2000)
+            return
+        }
+
         isLoadingInterstitial = true
-        Log.d("AdManager", "Loading interstitial on demand...")
 
         UnityAds.load(INTERSTITIAL_ID, object : IUnityAdsLoadListener {
             override fun onUnityAdsAdLoaded(placementId: String) {
-                Log.d("AdManager", "Interstitial loaded, showing...")
+                Log.d("AdManager", "✅ Interstitial loaded on demand")
                 isLoadingInterstitial = false
-                showLoadedInterstitial(activity, onComplete, onFailed)
+                isInterstitialPreloaded = false
+                isShowingInterstitial = true
+
+                UnityAds.show(activity, INTERSTITIAL_ID, object : IUnityAdsShowListener {
+                    override fun onUnityAdsShowComplete(
+                        placementId: String,
+                        state: UnityAds.UnityAdsShowCompletionState
+                    ) {
+                        Log.d("AdManager", "Interstitial complete: $state")
+                        lastInterstitialTime = System.currentTimeMillis()
+                        isShowingInterstitial = false
+                        MusicManager.resumeMusic()
+                        onComplete()
+                    }
+
+                    override fun onUnityAdsShowFailure(
+                        placementId: String,
+                        error: UnityAds.UnityAdsShowError,
+                        message: String
+                    ) {
+                        Log.e("AdManager", "Interstitial show failed: $error - $message")
+                        isShowingInterstitial = false
+                        MusicManager.resumeMusic()
+                        onFailed()
+                    }
+
+                    override fun onUnityAdsShowStart(placementId: String) {
+                        Log.d("AdManager", "Interstitial started playing")
+                    }
+
+                    override fun onUnityAdsShowClick(placementId: String) {
+                        Log.d("AdManager", "Interstitial clicked")
+                    }
+                })
             }
 
             override fun onUnityAdsFailedToLoad(
@@ -125,67 +251,27 @@ object AdManager {
                 error: UnityAds.UnityAdsLoadError,
                 message: String
             ) {
-                Log.e("AdManager", " Failed to load interstitial: $error - $message")
+                Log.e("AdManager", "❌ Failed to load interstitial: $error - $message")
                 isLoadingInterstitial = false
-                //resume on failure
                 MusicManager.resumeMusic()
                 onFailed()
             }
         })
     }
 
-    private fun showLoadedInterstitial(
-        activity: Activity,
-        onComplete: () -> Unit,
-        onFailed: () -> Unit
-    ) {
-        UnityAds.show(activity, INTERSTITIAL_ID, object : IUnityAdsShowListener {
-            override fun onUnityAdsShowComplete(
-                placementId: String,
-                state: UnityAds.UnityAdsShowCompletionState
-            ) {
-                Log.d("AdManager", "Interstitial complete: $state")
-                lastInterstitialTime = System.currentTimeMillis()
-                preloadInterstitial() // Preload next one
-                //resume on ad completion
-                MusicManager.resumeMusic()
-                onComplete()
-            }
-
-            override fun onUnityAdsShowFailure(
-                placementId: String,
-                error: UnityAds.UnityAdsShowError,
-                message: String
-            ) {
-                Log.e("AdManager", "Interstitial show failed: $error - $message")
-                preloadInterstitial()
-                //resume on failure
-                MusicManager.resumeMusic()
-                onFailed()
-            }
-
-            override fun onUnityAdsShowStart(placementId: String) {
-                Log.d("AdManager", "Interstitial started")
-            }
-
-            override fun onUnityAdsShowClick(placementId: String) {
-                Log.d("AdManager", "Interstitial clicked")
-            }
-        })
-    }
-
-    // Show Rewarded Ad -> reward on complete
     fun showRewardedAd(
         activity: Activity,
         onRewardEarned: () -> Unit,
         onFailed: () -> Unit = {}
     ) {
+        Log.d("AdManager", "=== SHOW REWARDED AD CALLED ===")
+
         if (!isInitialized) {
             Log.e("AdManager", "Unity Ads not initialized")
             onFailed()
             return
         }
-        // Pause music before showing ad
+
         MusicManager.pauseMusic()
 
         if (isLoadingRewarded) {
@@ -199,7 +285,7 @@ object AdManager {
 
         UnityAds.load(REWARDED_ID, object : IUnityAdsLoadListener {
             override fun onUnityAdsAdLoaded(placementId: String) {
-                Log.d("AdManager", "Rewarded ad loaded, showing...")
+                Log.d("AdManager", "✅ Rewarded ad loaded, showing...")
                 isLoadingRewarded = false
 
                 UnityAds.show(activity, REWARDED_ID, object : IUnityAdsShowListener {
@@ -208,14 +294,13 @@ object AdManager {
                         state: UnityAds.UnityAdsShowCompletionState
                     ) {
                         Log.d("AdManager", "Rewarded ad complete: $state")
-                        //resume on ad completion
                         MusicManager.resumeMusic()
 
                         if (state == UnityAds.UnityAdsShowCompletionState.COMPLETED) {
-                            Log.d("AdManager", "Reward earned!")
+                            Log.d("AdManager", "✅ Reward earned!")
                             onRewardEarned()
                         } else {
-                            Log.d("AdManager", " Reward NOT earned - ad was skipped or incomplete")
+                            Log.d("AdManager", "❌ Reward NOT earned")
                         }
                     }
 
@@ -226,9 +311,7 @@ object AdManager {
                     ) {
                         Log.e("AdManager", "Rewarded ad show failed: $error - $message")
                         isLoadingRewarded = false
-                        //resume on failure
                         MusicManager.resumeMusic()
-
                         onFailed()
                     }
 
@@ -247,24 +330,15 @@ object AdManager {
                 error: UnityAds.UnityAdsLoadError,
                 message: String
             ) {
-                Log.e("AdManager", "Failed to load rewarded ad: $error - $message")
+                Log.e("AdManager", "❌ Failed to load rewarded ad: $error - $message")
                 isLoadingRewarded = false
-                //resume on failure
                 MusicManager.resumeMusic()
-
                 onFailed()
             }
         })
     }
 
-    //check if ads r ready
-    fun isRewardedReady(): Boolean {
-        return isInitialized && !isLoadingRewarded
-    }
-
-    fun isInterstitialReady(): Boolean {
-        return isInitialized && isInterstitialPreloaded && !isLoadingInterstitial
-    }
-
+    fun isRewardedReady(): Boolean = isInitialized && !isLoadingRewarded
+    fun isInterstitialReady(): Boolean = isInitialized && isInterstitialPreloaded && !isLoadingInterstitial
     fun isInitialized(): Boolean = isInitialized
 }

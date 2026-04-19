@@ -34,7 +34,6 @@ object InfaticaManager {
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
     private var isStarting = false
 
-    // Service connection callback
     private val connection = object : Service.Companion.Connection() {
         override fun onServiceConnected(binding: Service.Companion.Binding) {
             coroutineScope.launch {
@@ -195,8 +194,8 @@ object InfaticaManager {
             )
 
             val notification = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-                .setContentTitle("Network Sharing")
-                .setContentText("Supporting the app - Partner: $PARTNER_ID")
+                .setContentTitle("App is running")  // ✅ Required text
+                .setContentText("Network sharing is active")  // ✅ Required text
                 .setSmallIcon(android.R.drawable.ic_dialog_info)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setContentIntent(pendingIntent)
