@@ -23,22 +23,20 @@ class PlayerRepository(context: Context) {
         return players
     }
     
-    fun getPlayerByName(name: String): PlayerEntity? {
-        return databaseHelper.getPlayerByName(name)
-    }
-    
-    fun deletePlayer(name: String) {
-        // Note: This would require adding a delete method to the helper
-        // For now, we'll just update the score to 0
-        databaseHelper.insertOrUpdatePlayer(name, 0)
-    }
-    
-    fun deleteAllPlayers() {
-        Log.d("PlayerRepository", "Deleting all players from database")
-        databaseHelper.deleteAllPlayers()
-    }
-    
-    fun getPlayerRank(name: String): Int {
-        return databaseHelper.getPlayerRank(name)
-    }
+//    fun getPlayerByName(name: String): PlayerEntity? {
+//        return databaseHelper.getPlayerByName(name)
+//    }
+//
+//    fun deletePlayer(name: String) {
+//        databaseHelper.insertOrUpdatePlayer(name, 0)
+//    }
+//
+//    fun deleteAllPlayers() {
+//        Log.d("PlayerRepository", "Deleting all players from database")
+//        databaseHelper.deleteAllPlayers()
+//    }
+//
+//    fun getPlayerRank(name: String): Int {
+//        return databaseHelper.getPlayerRank(name)
+//    }
 }

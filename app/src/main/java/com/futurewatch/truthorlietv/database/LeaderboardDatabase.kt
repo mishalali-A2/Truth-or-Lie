@@ -38,29 +38,37 @@ class LeaderboardDatabaseHelper(context: Context) :
 
     fun insertOrUpdatePlayer(name: String, points: Int): Long {
         val db = writableDatabase
-        val values = ContentValues().apply {
-            put(COLUMN_NAME, name)
-            put(COLUMN_POINTS, points)
-            put(COLUMN_TIMESTAMP, System.currentTimeMillis())
-        }
-
+        
         val cursor = db.query(
             TABLE_PLAYERS,
-            arrayOf(COLUMN_ID),
+            arrayOf(COLUMN_ID, COLUMN_POINTS),
             "$COLUMN_NAME = ?",
             arrayOf(name),
             null, null, null
         )
 
         val result = if (cursor.moveToFirst()) {
-            // Update existing player
+            // Update existing player: ADD points to existing ones
             val id = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_ID))
-            Log.d("LeaderboardDatabase", "Updating existing player $name (ID: $id) with new score $points")
+            val currentPoints = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_POINTS))
+            val totalPoints = currentPoints + points
+            
+            Log.d("LeaderboardDatabase", "Updating existing player $name (ID: $id). Current: $currentPoints, Adding: $points, Total: $totalPoints")
+            
+            val values = ContentValues().apply {
+                put(COLUMN_POINTS, totalPoints)
+                put(COLUMN_TIMESTAMP, System.currentTimeMillis())
+            }
             db.update(TABLE_PLAYERS, values, "$COLUMN_ID = ?", arrayOf(id.toString()))
             id
         } else {
-            //  new player
+            // New player: Insert fresh
             Log.d("LeaderboardDatabase", "Inserting new player $name with score $points")
+            val values = ContentValues().apply {
+                put(COLUMN_NAME, name)
+                put(COLUMN_POINTS, points)
+                put(COLUMN_TIMESTAMP, System.currentTimeMillis())
+            }
             db.insert(TABLE_PLAYERS, null, values)
         }
 
@@ -122,6 +130,12 @@ class LeaderboardDatabaseHelper(context: Context) :
 
         cursor.close()
         return player
+    }
+
+    // Delete a single player
+    fun deletePlayer(name: String) {
+        val db = writableDatabase
+        db.delete(TABLE_PLAYERS, "$COLUMN_NAME = ?", arrayOf(name))
     }
 
     // Delete all players

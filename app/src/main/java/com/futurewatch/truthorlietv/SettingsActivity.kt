@@ -15,7 +15,7 @@ import android.os.Looper
 import android.os.Handler
 
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsActivity : AppCompatActivity(), InfaticaConsentDialog.ConsentListener {
 
     private lateinit var switchMusic: SwitchCompat
     private lateinit var backBtn: Button
@@ -173,19 +173,13 @@ class SettingsActivity : AppCompatActivity() {
                     switchNetwork?.isChecked = false
                     return@setOnCheckedChangeListener
                 }
-                if (InfaticaConsentDialog.hasAccepted(this)) {
-                    enableInfatica()
-                } else {
-                    showInfaticaConsentDialog()
-                    switchNetwork?.isChecked = false
-                }
+                
+                // Show consent dialog when enabling, regardless of previous state to ensure clarity
+                showInfaticaConsentDialog()
+                
+                // Revert toggle visually until consent is confirmed via dialog
+                switchNetwork.post { switchNetwork.isChecked = isInfaticaEnabled }
             } else {
-//                prefs.edit()
-//                    .putBoolean("network_sdk_enabled", false)
-//                    .putBoolean("network_sdk_manually_disabled", true)
-//                    .apply()
-//                InfaticaManager.setEnabled(this, false)
-//                Toast.makeText(this, "Network sharing disabled", Toast.LENGTH_SHORT).show()
                 disableInfatica()
             }
         }
@@ -195,6 +189,14 @@ class SettingsActivity : AppCompatActivity() {
         setupSettingsItemFocus(R.id.restorePurchases, "Restore Purchases")
         setupSettingsItemFocus(R.id.rateApp, "Rate App")
         setupSettingsItemFocus(R.id.termsPrivacy, "Terms & Privacy")
+    }
+
+    override fun onConsentAccepted() {
+        enableInfatica()
+    }
+
+    override fun onConsentDeclined() {
+        disableInfatica()
     }
 
     private fun setupSettingsItemFocus(itemId: Int, itemName: String) {
@@ -259,6 +261,9 @@ class SettingsActivity : AppCompatActivity() {
             .apply()
         InfaticaManager.saveConsent(this, false)
         InfaticaManager.setEnabled(this, false)
+        val switchNetwork = findViewById<SwitchCompat>(R.id.switchNetwork)
+        switchNetwork?.isChecked = false
+        
         Toast.makeText(this, "Network sharing disabled", Toast.LENGTH_SHORT).show()
     }
     private fun showInfaticaConsentDialog() {

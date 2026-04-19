@@ -126,67 +126,22 @@ class FinalResultsActivity : AppCompatActivity() {
 
     private fun startContinuousConfetti() {
         konfettiView.post {
-            // Create multiple parties for a continuous, spread-out effect
-
-            // Main party - full screen width continuous flow
-            val mainParty = Party(
+            val party = Party(
                 speed = 2f,
                 maxSpeed = 8f,
                 damping = 0.9f,
                 spread = 360,
                 colors = listOf(
-                    Color.YELLOW,
-                    Color.GREEN,
-                    Color.MAGENTA,
-                    Color.BLUE,
-                    Color.CYAN,
-                    Color.RED,
-                    Color.parseColor("#FFA500"),
-                    Color.parseColor("#FF69B4"),
-                    Color.parseColor("#00CED1"),
-                    Color.parseColor("#9370DB")
+                    Color.YELLOW, Color.GREEN, Color.MAGENTA, Color.BLUE, Color.CYAN, Color.RED,
+                    Color.parseColor("#FFA500"), Color.parseColor("#FF69B4"),
+                    Color.parseColor("#00CED1"), Color.parseColor("#9370DB")
                 ),
                 size = listOf(Size(12), Size(15), Size(18), Size(20)),
-                emitter = Emitter(duration = 15000).perSecond(120),
-                position = Position.Relative(0.5, 0.0)
+                emitter = Emitter(duration = 15000).perSecond(200),
+                position = Position.Relative(0.0, 0.0).between(Position.Relative(1.0, 0.0))
             )
-            konfettiView.start(mainParty)
-
-            // Left side wave
-            val leftParty = Party(
-                speed = 1.5f,
-                maxSpeed = 7f,
-                damping = 0.85f,
-                spread = 300,
-                colors = listOf(
-                    Color.YELLOW,
-                    Color.GREEN,
-                    Color.BLUE,
-                    Color.parseColor("#FFA500")
-                ),
-                size = listOf(Size(10), Size(14), Size(16)),
-                emitter = Emitter(duration = 12000).perSecond(90),
-                position = Position.Relative(0.2, 0.0)
-            )
-            konfettiView.start(leftParty)
-
-            // Right side wave
-            val rightParty = Party(
-                speed = 1.8f,
-                maxSpeed = 7.5f,
-                damping = 0.88f,
-                spread = 300,
-                colors = listOf(
-                    Color.MAGENTA,
-                    Color.CYAN,
-                    Color.RED,
-                    Color.parseColor("#FF69B4")
-                ),
-                size = listOf(Size(10), Size(14), Size(16)),
-                emitter = Emitter(duration = 12000).perSecond(90),
-                position = Position.Relative(0.8, 0.0)
-            )
-            konfettiView.start(rightParty)
+            
+            konfettiView.start(party)
         }
     }
 }
