@@ -18,6 +18,7 @@ class TruthOrLieApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        //make sure no other processes are running only main
         if (!isMainProcess()) {
             Log.w("TruthOrLieApp", "Skipping init in non-main process")
             return
@@ -56,26 +57,26 @@ class TruthOrLieApplication : Application() {
                     return processInfo.processName == packageName
                 }
             }
-            true // Default to true can't determine
+            true
         } catch (e: Exception) {
             Log.e("TruthOrLieApp", "Error checking process: ${e.message}")
-            true // Default to true on error
+            true
         }
     }
     private fun initializeInfaticaSafely() {
         try {
-            // Check if we have storage permissions/storage available
+            // Check storage permissions + availability
             val storageAvailable = isStorageAvailable()
             if (!storageAvailable) {
                 Log.w("TruthOrLieApp", "Storage not available, Infatica SDK may not work properly")
                 return
             }
 
-            // Check if Infatica was previously enabled
+            // Check if Infatica previously enabled
             val infaticaEnabled = prefs.getBoolean("network_sdk_enabled", false)
             if (infaticaEnabled) {
                 Log.d("TruthOrLieApp", "Infatica was previously enabled, but will start from Settings")
-                // Don't auto-start here - let user control via settings
+                // Don't auto-start -> user controlled
             }
         } catch (e: Exception) {
             Log.e("TruthOrLieApp", "Failed to initialize Infatica: ${e.message}", e)

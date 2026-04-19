@@ -7,27 +7,31 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="com.android.vending.BILLING" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <!--infatica permissions-->
+<!--        Wi-fi-->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"
         android:required="false"
         tools:ignore="WifiPermission" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"
         android:required="false"
         tools:ignore="WifiPermission" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"
+        android:required="false"
+        tools:ignore="LocationPermission" />
+<!--    Storage-->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28"
         tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 
-    <!-- Foreground service permissions for Android 14+ -->
+    <!-- Foreground  -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC"
         tools:ignore="ProtectedPermissions" />
-
-    <!-- Notification permission for Android 13+ -->
+    <!-- Notification  -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-
-    <!-- Optional - for better background operation -->
+    <!--  optimized background operation -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
@@ -38,6 +42,7 @@
     <uses-feature
         android:name="android.software.leanback"
         android:required="false" />
+
     <application
         android:name=".TruthOrLieApplication"
         android:allowBackup="true"
@@ -75,7 +80,7 @@
             android:exported="false" />
         <activity
             android:name=".RoundsActivity"
-            android:exported="false" /> <!-- launch screen followed by home screen -->
+            android:exported="false" />
         <activity
             android:name=".SplashActivity"
             android:exported="true">
@@ -95,13 +100,13 @@
             android:name=".MainActivity"
             android:exported="true" />
 
+<!--        infatica sdk service overridden-->
         <service
             android:name="com.infatica.agent.service.Service"
             android:exported="true"
             android:foregroundServiceType="dataSync"
             tools:replace="android:exported" />
 
-<!--        &lt;!&ndash; For Android 14+ - Service reason declaration &ndash;&gt;-->
 <!--        <service-->
 <!--            android:name="com.infatica.agent.service.Service"-->
 <!--            android:exported="true"-->

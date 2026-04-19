@@ -34,7 +34,6 @@ object InfaticaManager {
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
     private var isStarting = false
 
-    // Service connection callback
     private val connection = object : Service.Companion.Connection() {
         override fun onServiceConnected(binding: Service.Companion.Binding) {
             coroutineScope.launch {

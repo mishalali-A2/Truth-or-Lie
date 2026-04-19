@@ -13,10 +13,6 @@ import android.util.Log
 
 
 class MainActivity : AppCompatActivity() {
-    //id for unity ads as per doc
-    private val gameID="6069840"
-    private val testMode= true
-
     private lateinit var floatAnim: ObjectAnimator
 
     override fun onCreate(savedInstanceState: Bundle?) {

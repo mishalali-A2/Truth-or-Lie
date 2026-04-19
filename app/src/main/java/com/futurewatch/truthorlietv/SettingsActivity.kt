@@ -207,11 +207,9 @@ class SettingsActivity : AppCompatActivity() {
                         .setDuration(150)
                         .start()
                     v.setBackgroundColor(Color.parseColor("#2a2a3e"))
-                    // Also highlight the text
                     val textView = (v as? LinearLayout)?.findViewById<TextView>(android.R.id.text1)
                     textView?.setTextColor(Color.parseColor("#FFA500"))
                 } else {
-                    // Remove highlight when not focused
                     v.animate()
                         .scaleX(1f)
                         .scaleY(1f)
@@ -261,7 +259,6 @@ class SettingsActivity : AppCompatActivity() {
             .show()
     }
 
-    // Add a status TextView to your settings layout
     private fun addInfaticaStatus() {
         val statusText = TextView(this).apply {
             text = getInfaticaStatus()
@@ -271,11 +268,9 @@ class SettingsActivity : AppCompatActivity() {
             id = View.generateViewId()
         }
 
-        // Add to your settings layout
         val parentLayout = findViewById<LinearLayout>(R.id.settingsRoot)
         parentLayout?.addView(statusText)
 
-        // Update status periodically
         Handler(Looper.getMainLooper()).postDelayed({
             statusText.text = getInfaticaStatus()
         }, 2000)
@@ -370,15 +365,13 @@ class SettingsActivity : AppCompatActivity() {
         if (mainLayout != null) {
             addPanelToLayout(mainLayout)
         } else {
-            // Fallback: try to find any LinearLayout that's a child of the content view
             val rootView = findViewById<androidx.constraintlayout.widget.ConstraintLayout>(android.R.id.content)
-            // If all else fails, just show a toast
             Toast.makeText(this, "Debug panel could not be added", Toast.LENGTH_SHORT).show()
         }
     }
 
+    //debug panel for testing
     private fun addPanelToLayout(parentLayout: LinearLayout) {
-        // Create debug panel
         val debugPanel = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             layoutParams = LinearLayout.LayoutParams(
@@ -390,7 +383,7 @@ class SettingsActivity : AppCompatActivity() {
 
             // Title
             val titleView = TextView(this@SettingsActivity).apply {
-                text = "🔧 DEBUG BILLING PANEL"
+                text = " DEBUG BILLING PANEL"
                 textSize = 20f
                 setTextColor(Color.parseColor("#FFA500"))
                 setPadding(0, 0, 0, 20)
@@ -528,7 +521,6 @@ class SettingsActivity : AppCompatActivity() {
                 }
             }
 
-            // Add this to your debug panel buttons
             val btnTestInterstitialShow = Button(this@SettingsActivity).apply {
                 text = "🎬 Test: Show Interstitial Ad (Force)"
                 setBackgroundColor(Color.parseColor("#FF5722"))
@@ -598,6 +590,7 @@ class SettingsActivity : AppCompatActivity() {
             addView(btnReset)
             addView(btnTestInterstitial)
             addView(btnTestRewarded)
+            addView(btnTestInterstitialShow)
         }
 
         // Add panel to parent layout

@@ -92,21 +92,30 @@ class CategoriesActivity : AppCompatActivity() {
             return
         }
 
+        // Check if all categories are already unlocked via purchase
+        val prefs = TruthOrLieApplication.prefs
+        val allCategoriesUnlocked = prefs.getBoolean("all_categories_unlocked", false)
+
+        if (allCategoriesUnlocked) {
+            // If all categories are unlocked, just unlock this one
+            CategoryManager.unlockTemporarily(category)
+            GameSession.category = category
+            startActivity(Intent(this, RoundsActivity::class.java))
+            return
+        }
+
         val dialog = android.app.AlertDialog.Builder(this)
             .setTitle("Unlock Category")
-            .setMessage("Watch an ad to unlock for this session or buy full access.")
+            .setMessage("Watch an ad to unlock for this session or buy full access to unlock ALL categories permanently.")
             .setPositiveButton("Watch Ad") { _, _ ->
-                // Show loading indicator
                 Toast.makeText(this, "Loading ad...", Toast.LENGTH_SHORT).show()
 
                 AdManager.showRewardedAd(
                     activity = this,
                     onRewardEarned = {
-                        //reward on completion
                         runOnUiThread {
                             CategoryManager.unlockTemporarily(category)
-                            Toast.makeText(this, "Category Unlocked! ✓", Toast.LENGTH_SHORT).show()
-                            // Start game immediately
+                            Toast.makeText(this, "Category Unlocked for this session! ✓", Toast.LENGTH_SHORT).show()
                             GameSession.category = category
                             startActivity(Intent(this, RoundsActivity::class.java))
                         }
@@ -118,9 +127,11 @@ class CategoriesActivity : AppCompatActivity() {
                     }
                 )
             }
-            .setNegativeButton("Buy ($2.99)") { _, _ ->
-                // Google Play Billing
-                Toast.makeText(this, "Purchase coming soon!", Toast.LENGTH_SHORT).show()
+            .setNegativeButton("Buy All Categories ($4.99)") { _, _ ->
+                // Launch Purchase Activity for unlocking all categories
+                val intent = Intent(this, PurchaseActivity::class.java)
+                intent.putExtra("purpose", "unlock_categories")
+                startActivity(intent)
             }
             .setNeutralButton("Cancel", null)
             .create()
@@ -139,5 +150,19 @@ class CategoriesActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         MusicManager.resumeMusic()
+        // Check if purchases were made while away
+        val prefs = TruthOrLieApplication.prefs
+        val allCategoriesUnlocked = prefs.getBoolean("all_categories_unlocked", false)
+
+        if (allCategoriesUnlocked) {
+            // Unlock all categories for this session
+            val allCategories = listOf(
+                "history", "space", "technology", "human_body", "crazy_facts", "mixed_facts"
+            )
+            allCategories.forEach { category ->
+                CategoryManager.unlockTemporarily(category)
+            }
+            Toast.makeText(this, "All categories unlocked! 🎉", Toast.LENGTH_SHORT).show()
+        }
     }
 }
