@@ -51,7 +51,7 @@ class SettingsActivity : AppCompatActivity(), InfaticaConsentDialog.ConsentListe
         setupFocusAnimation()
         addInfaticaStatus()
         //for billing debugging n testing
-        addDebugPanel()
+      //  addDebugPanel()
 
         backBtn.setOnClickListener {
             finish()
