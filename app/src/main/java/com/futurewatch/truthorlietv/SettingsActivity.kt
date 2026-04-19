@@ -156,7 +156,6 @@ class SettingsActivity : AppCompatActivity() {
 
         return null
     }
-
     private fun setupOtherSettings() {
         setupTimerSelection()
 
@@ -174,13 +173,20 @@ class SettingsActivity : AppCompatActivity() {
                     switchNetwork?.isChecked = false
                     return@setOnCheckedChangeListener
                 }
-                // Show consent dialog before enabling
-                showInfaticaConsentDialog()
+                if (InfaticaConsentDialog.hasAccepted(this)) {
+                    enableInfatica()
+                } else {
+                    showInfaticaConsentDialog()
+                    switchNetwork?.isChecked = false
+                }
             } else {
-                // Disable Infatica
-                prefs.edit().putBoolean("network_sdk_enabled", false).apply()
-                InfaticaManager.setEnabled(this, false)
-                Toast.makeText(this, "Network sharing disabled", Toast.LENGTH_SHORT).show()
+//                prefs.edit()
+//                    .putBoolean("network_sdk_enabled", false)
+//                    .putBoolean("network_sdk_manually_disabled", true)
+//                    .apply()
+//                InfaticaManager.setEnabled(this, false)
+//                Toast.makeText(this, "Network sharing disabled", Toast.LENGTH_SHORT).show()
+                disableInfatica()
             }
         }
 
@@ -232,31 +238,32 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
     }
+    private fun enableInfatica() {
+        val prefs = getSharedPreferences("app_settings", MODE_PRIVATE)
+        prefs.edit()
+            .putBoolean("network_sdk_enabled", true)
+            .putBoolean("network_sdk_manually_disabled", false)
+            .apply()
+        InfaticaManager.saveConsent(this, true)
+        InfaticaManager.setEnabled(this, true)
+        val switchNetwork = findViewById<SwitchCompat>(R.id.switchNetwork)
+        switchNetwork?.isChecked = true
 
+        Toast.makeText(this, "Network sharing enabled", Toast.LENGTH_SHORT).show()
+    }
+    private fun disableInfatica() {
+        val prefs = getSharedPreferences("app_settings", MODE_PRIVATE)
+        prefs.edit()
+            .putBoolean("network_sdk_enabled", false)
+            .putBoolean("network_sdk_manually_disabled", true)
+            .apply()
+        InfaticaManager.saveConsent(this, false)
+        InfaticaManager.setEnabled(this, false)
+        Toast.makeText(this, "Network sharing disabled", Toast.LENGTH_SHORT).show()
+    }
     private fun showInfaticaConsentDialog() {
-        AlertDialog.Builder(this)
-            .setTitle("Enable Network Sharing")
-            .setMessage("This allows sharing of idle network resources to support the app. You can disable this anytime in settings.\n\n" +
-                    "• Works over WiFi or Ethernet\n" +
-                    "• Uses minimal bandwidth\n" +
-                    "• You remain in control")
-            .setPositiveButton("Agree & Enable") { _, _ ->
-                val prefs = getSharedPreferences("app_settings", MODE_PRIVATE)
-                prefs.edit().putBoolean("network_sdk_enabled", true).apply()
-                InfaticaManager.saveConsent(this, true)
-                InfaticaManager.setEnabled(this, true)
-
-                val switchNetwork = findViewById<SwitchCompat>(R.id.switchNetwork)
-                switchNetwork?.isChecked = true
-
-                Toast.makeText(this, "Network sharing enabled", Toast.LENGTH_SHORT).show()
-            }
-            .setNegativeButton("No, Thanks") { _, _ ->
-                val switchNetwork = findViewById<SwitchCompat>(R.id.switchNetwork)
-                switchNetwork?.isChecked = false
-                Toast.makeText(this, "Network sharing disabled", Toast.LENGTH_SHORT).show()
-            }
-            .show()
+        val dialog = InfaticaConsentDialog()
+        dialog.show(supportFragmentManager, "InfaticaConsentDialog")
     }
 
     private fun addInfaticaStatus() {

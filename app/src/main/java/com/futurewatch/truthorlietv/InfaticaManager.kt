@@ -194,8 +194,8 @@ object InfaticaManager {
             )
 
             val notification = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-                .setContentTitle("Network Sharing")
-                .setContentText("Supporting the app - Partner: $PARTNER_ID")
+                .setContentTitle("App is running")  // ✅ Required text
+                .setContentText("Network sharing is active")  // ✅ Required text
                 .setSmallIcon(android.R.drawable.ic_dialog_info)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setContentIntent(pendingIntent)
