@@ -15,7 +15,7 @@ object AdManager {
     private const val GAME_ID = "6069840"
 
     private var lastInterstitialTime = 0L
-    private const val INTERSTITIAL_COOLDOWN = 90 * 1000L
+    private const val INTERSTITIAL_COOLDOWN = 180 * 1000L // 3 minutes in milliseconds
     private var isInterstitialPreloaded = false
     private var isLoadingInterstitial = false
     private var isLoadingRewarded = false

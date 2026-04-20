@@ -6,6 +6,7 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import android.util.Log
 
 class PurchaseActivity : AppCompatActivity() {
 
@@ -80,6 +81,7 @@ class PurchaseActivity : AppCompatActivity() {
     private fun purchaseProduct(productId: String) {
         val prefs = getSharedPreferences("app_settings", MODE_PRIVATE)
 
+        // Check if already owned in local prefs
         when (productId) {
             "remove_ads" -> {
                 if (prefs.getBoolean("ads_removed", false)) {
@@ -95,58 +97,26 @@ class PurchaseActivity : AppCompatActivity() {
             }
         }
 
-        // For now, simulate purchase (since full billing not implemented yet)
-        simulatePurchase(productId)
-    }
-
-    private fun simulatePurchase(productId: String) {
-        // This simulates a successful purchase (for testing)
-        android.app.AlertDialog.Builder(this)
-            .setTitle("Test Purchase")
-            .setMessage("This is a TEST purchase simulation.\n\nProduct: $productId\n\nNo real money will be charged.")
-            .setPositiveButton("Simulate Success") { _, _ ->
-                val prefs = TruthOrLieApplication.prefs
-                when (productId) {
-                    "remove_ads" -> {
-                        prefs.edit().putBoolean("ads_removed", true).apply()
-                        Toast.makeText(this, "✅ Ads Removed Permanently!", Toast.LENGTH_LONG).show()
-                    }
-                    "unlock_all_categories" -> {
-                        prefs.edit().putBoolean("all_categories_unlocked", true).apply()
-                        Toast.makeText(this, "✅ All Categories Unlocked Permanently!", Toast.LENGTH_LONG).show()
-                    }
-                    "premium_monthly", "premium_yearly" -> {
-                        prefs.edit().putBoolean("premium_access", true).apply()
-                        Toast.makeText(this, "✅ Premium Subscription Active!", Toast.LENGTH_LONG).show()
-                    }
-                }
-                updatePremiumStatus()
-
-                // Close activity after successful purchase
-                finish()
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
+        // Use the real BillingRepository instead of simulation
+        Log.d("PurchaseActivity", "Initiating real purchase for: $productId")
+        try {
+            TruthOrLieApplication.billingRepository.purchaseProduct(this, productId)
+        } catch (e: Exception) {
+            Log.e("PurchaseActivity", "Error launching purchase flow", e)
+            Toast.makeText(this, "Billing error: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun restorePurchases() {
-        val prefs = TruthOrLieApplication.prefs
-        val adsRemoved = prefs.getBoolean("ads_removed", false)
-        val categoriesUnlocked = prefs.getBoolean("all_categories_unlocked", false)
-        val premiumAccess = prefs.getBoolean("premium_access", false)
-
-        val restoredItems = mutableListOf<String>()
-        if (adsRemoved) restoredItems.add("Ads Removed")
-        if (categoriesUnlocked) restoredItems.add("All Categories Unlocked")
-        if (premiumAccess) restoredItems.add("Premium Access")
-
-        if (restoredItems.isEmpty()) {
-            Toast.makeText(this, "No purchases found to restore", Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(this, "Restored: ${restoredItems.joinToString(", ")}", Toast.LENGTH_LONG).show()
-        }
-
-        updatePremiumStatus()
+        Log.d("PurchaseActivity", "Restoring purchases...")
+        Toast.makeText(this, "Checking for previous purchases...", Toast.LENGTH_SHORT).show()
+        TruthOrLieApplication.billingRepository.restorePurchases()
+        
+        // The update will happen via the global listener in Application class
+        // which updates prefs. We'll refresh our UI shortly.
+        android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+            updatePremiumStatus()
+        }, 2000)
     }
 
     private fun updatePremiumStatus() {
