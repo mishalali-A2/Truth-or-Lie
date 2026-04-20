@@ -3,32 +3,35 @@ package com.futurewatch.truthorlietv
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 
 class CategoriesActivity : AppCompatActivity() {
 
+    private lateinit var unlockOverlay: View
+    private lateinit var unlockTitle: TextView
+    private lateinit var unlockDescription: TextView
+    private lateinit var btnBuyCategory: Button
+    private lateinit var btnWatchAd: Button
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_categories)
-        //for testing purposes
-//        resetPurchases()
+
         MusicManager.resumeMusic()
-//        caused flickering -> parent in XML steals the focus
-//        val focusListener = View.OnFocusChangeListener { v, hasFocus ->
-//            if (hasFocus) {
-//                v.startAnimation(AnimationUtils.loadAnimation(this, R.anim.scaleup))
-//                v.elevation = 20f
-//            } else {
-//                v.startAnimation(AnimationUtils.loadAnimation(this, R.anim.scaledown))
-//                v.elevation = 0f
-//            }
-//        }
+
+        // Initialize Overlay Views
+        unlockOverlay = findViewById(R.id.unlockOverlay)
+        unlockTitle = findViewById(R.id.unlockTitle)
+        unlockDescription = findViewById(R.id.unlockDescription)
+        btnBuyCategory = findViewById(R.id.btnBuyCategory)
+        btnWatchAd = findViewById(R.id.btnWatchAd)
 
         val focusListener = View.OnFocusChangeListener { v, hasFocus ->
-
             v.clearAnimation()
-
             if (hasFocus) {
                 v.animate()
                     .scaleX(1.06f)
@@ -46,12 +49,15 @@ class CategoriesActivity : AppCompatActivity() {
             }
         }
 
+        // Setup Overlay Button Animations
+        btnBuyCategory.onFocusChangeListener = focusListener
+        btnWatchAd.onFocusChangeListener = focusListener
+
         // Card -> Category
         val categoryMap = mapOf(
             R.id.card_general to "general_knowledge",
             R.id.card_science to "science",
             R.id.card_animals to "animals",
-            //locked
             R.id.card_history to "history",
             R.id.card_space to "space",
             R.id.card_technology to "technology",
@@ -66,24 +72,35 @@ class CategoriesActivity : AppCompatActivity() {
             view?.apply {
                 isFocusable = true
                 isClickable = true
-
                 onFocusChangeListener = focusListener
 
-                // to rounds screen
                 setOnClickListener {
                     if (CategoryManager.isUnlocked(categoryName)) {
                         GameSession.category = categoryName
                         val intent = Intent(this@CategoriesActivity, RoundsActivity::class.java)
                         startActivity(intent)
                     } else {
-                        showUnlockDialog(categoryName)
+                        showUnlockOverlay(categoryName)
                     }
                 }
             }
         }
 
         updateCategoryUI()
-        // Default
+        
+        // Handle back press to close overlay
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (unlockOverlay.visibility == View.VISIBLE) {
+                    hideUnlockOverlay()
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        })
+
+        // Default focus
         findViewById<View>(R.id.card_general)?.requestFocus()
     }
 
@@ -91,7 +108,6 @@ class CategoriesActivity : AppCompatActivity() {
         val prefs = TruthOrLieApplication.prefs
         val allCategoriesUnlocked = prefs.getBoolean("all_categories_unlocked", false)
 
-        // List of locked category view IDs
         val lockedCategoryIds = listOf(
             R.id.card_history, R.id.card_space, R.id.card_technology,
             R.id.card_human_body, R.id.card_crazy_facts, R.id.card_mixed_facts
@@ -113,7 +129,6 @@ class CategoriesActivity : AppCompatActivity() {
             val isUnlocked = allCategoriesUnlocked || CategoryManager.isUnlocked(categoryName)
 
             if (isUnlocked) {
-                // Remove the overlay and lock icon
                 if (frameLayout is android.view.ViewGroup && frameLayout.childCount >= 3) {
                     frameLayout.getChildAt(1).visibility = View.GONE
                     frameLayout.getChildAt(2).visibility = View.GONE
@@ -132,84 +147,67 @@ class CategoriesActivity : AppCompatActivity() {
             }
         }
     }
-    private fun showUnlockDialog(category: String) {
-        // Check if ad is ready first
-        if (!AdManager.isInitialized()) {
-            Toast.makeText(this, "Ads loading, please wait...", Toast.LENGTH_SHORT).show()
-            return
+
+    private fun showUnlockOverlay(category: String) {
+        val friendlyName = category.replace("_", " ").split(" ").joinToString(" ") { it.replaceFirstChar { char -> char.uppercase() } }
+        
+        unlockTitle.text = "Unlock $friendlyName"
+        unlockDescription.text = "Get access to all $friendlyName statements and challenge your friends!"
+        
+        unlockOverlay.visibility = View.VISIBLE
+        unlockOverlay.alpha = 0f
+        unlockOverlay.animate().alpha(1f).setDuration(200).start()
+        
+        btnBuyCategory.setOnClickListener {
+            val intent = Intent(this, PurchaseActivity::class.java)
+            intent.putExtra("purpose", "unlock_categories")
+            startActivity(intent)
         }
+        
+        btnWatchAd.setOnClickListener {
+            if (!AdManager.isInitialized()) {
+                Toast.makeText(this, "Ads loading, please wait...", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
-        // Check if all categories are already unlocked via purchase
-        val prefs = TruthOrLieApplication.prefs
-        val allCategoriesUnlocked = prefs.getBoolean("all_categories_unlocked", false)
-
-        if (allCategoriesUnlocked) {
-            // If all categories are unlocked, just unlock this one
-            CategoryManager.unlockTemporarily(category)
-            GameSession.category = category
-            startActivity(Intent(this, RoundsActivity::class.java))
-            return
-        }
-
-        val dialog = android.app.AlertDialog.Builder(this)
-            .setTitle("Unlock Category")
-            .setMessage("Watch an ad to unlock for this session or buy full access to unlock ALL categories permanently.")
-            .setPositiveButton("Watch Ad") { _, _ ->
-                Toast.makeText(this, "Loading ad...", Toast.LENGTH_SHORT).show()
-
-                AdManager.showRewardedAd(
-                    activity = this,
-                    onRewardEarned = {
-                        runOnUiThread {
-                            CategoryManager.unlockTemporarily(category)
-                            Toast.makeText(this, "Category Unlocked for this session! ✓", Toast.LENGTH_SHORT).show()
-                            GameSession.category = category
-                            //stay on this screen
-//                            startActivity(Intent(this, RoundsActivity::class.java))
-                        }
-                    },
-                    onFailed = {
-                        runOnUiThread {
-                            Toast.makeText(this, "Ad not available. Please try again.", Toast.LENGTH_SHORT).show()
-                        }
+            Toast.makeText(this, "Loading ad...", Toast.LENGTH_SHORT).show()
+            AdManager.showRewardedAd(
+                activity = this,
+                onRewardEarned = {
+                    runOnUiThread {
+                        CategoryManager.unlockTemporarily(category)
+                        Toast.makeText(this, "Category Unlocked! ✓", Toast.LENGTH_SHORT).show()
+                        updateCategoryUI()
+                        hideUnlockOverlay()
                     }
-                )
-            }
-            .setNegativeButton("Buy Category Pack ($2.99)") { _, _ ->
-                // Launch Purchase Activity for unlocking all categories
-                val intent = Intent(this, PurchaseActivity::class.java)
-                intent.putExtra("purpose", "unlock_categories")
-                startActivity(intent)
-            }
-            .setNeutralButton("Cancel", null)
-            .create()
-
-        dialog.setOnDismissListener {
-            findViewById<View>(R.id.card_general)?.requestFocus()
+                },
+                onFailed = {
+                    runOnUiThread {
+                        Toast.makeText(this, "Ad not available. Please try again.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            )
         }
-        dialog.show()
-    }
-    // Add this method to reset purchases (for testing only)
-    private fun resetPurchases() {
-        val prefs = TruthOrLieApplication.prefs
-        prefs.edit().putBoolean("all_categories_unlocked", false).apply()
-        CategoryManager.resetSession()
+        
+        btnBuyCategory.requestFocus()
     }
 
-    override fun onPause() {
-        super.onPause()
-        //MusicManager.pauseMusic()
+    private fun hideUnlockOverlay() {
+        unlockOverlay.animate().alpha(0f).setDuration(200).withEndAction {
+            unlockOverlay.visibility = View.GONE
+            // Return focus to the grid
+            findViewById<View>(R.id.card_general)?.requestFocus()
+        }.start()
     }
 
     override fun onResume() {
         super.onResume()
         MusicManager.resumeMusic()
-        // Check if purchases were made while away
+        
         val prefs = TruthOrLieApplication.prefs
         val allCategoriesUnlocked = prefs.getBoolean("all_categories_unlocked", false)
 
         if (allCategoriesUnlocked) {
-            // Unlock all categories for this session
             val allCategories = listOf(
                 "history", "space", "technology", "human_body", "crazy_facts", "mixed_facts"
             )
@@ -217,8 +215,7 @@ class CategoriesActivity : AppCompatActivity() {
                 CategoryManager.unlockTemporarily(category)
             }
             updateCategoryUI()
-            Toast.makeText(this, "All categories unlocked! 🎉", Toast.LENGTH_SHORT).show()
-        }else{
+        } else {
             updateCategoryUI()
         }
     }
