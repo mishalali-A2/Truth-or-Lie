@@ -12,7 +12,7 @@ import android.os.Handler
 import android.util.Log
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), InfaticaConsentDialog.ConsentListener {
     private lateinit var floatAnim: ObjectAnimator
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -120,7 +120,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun onConsentAccepted() {
+    override fun onConsentAccepted() {
         Log.d("MainActivity", "Infatica consent accepted - toggle turned ON")
         val prefs = getSharedPreferences("app_settings", MODE_PRIVATE)
         prefs.edit()
@@ -131,7 +131,7 @@ class MainActivity : AppCompatActivity() {
         InfaticaManager.setEnabled(this, true)
     }
 
-    private fun onConsentDeclined() {
+    override fun onConsentDeclined() {
         Log.d("MainActivity", "Infatica consent declined - toggle turned OFF")
         val prefs = getSharedPreferences("app_settings", MODE_PRIVATE)
         prefs.edit()
@@ -151,11 +151,7 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         MusicManager.resumeMusic()
     }
-//    private fun checkAdAvailability() {
-//        // Check if ads are ready
-//        Log.d("UnityAds", "Rewarded Ad Ready: ${UnityAds.isReady(AdManager.REWARDED_ID)}")
-//        Log.d("UnityAds", "Interstitial Ad Ready: ${UnityAds.isReady(AdManager.INTERSTITIAL_ID)}")
-//    }
+
     override fun onDestroy() {
         super.onDestroy()
         MusicManager.stopMusic()

@@ -1,25 +1,29 @@
 package com.futurewatch.truthorlietv
 
+import android.content.Intent
+import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.widget.Button
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SwitchCompat
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.graphics.Color
-import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import android.os.Looper
-import android.os.Handler
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SwitchCompat
+import com.futurewatch.truthorlietv.CategoryManager.resetSession
 
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsActivity : AppCompatActivity(), InfaticaConsentDialog.ConsentListener {
 
     private lateinit var switchMusic: SwitchCompat
     private lateinit var backBtn: Button
     private lateinit var musicChips: List<View>
+    private var selectedAppPackage: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,9 +53,12 @@ class SettingsActivity : AppCompatActivity() {
         setupMusicGenreSelection()
         setupOtherSettings()
         setupFocusAnimation()
-        addInfaticaStatus()
+        setupOtherAppsSection()
+
         //for billing debugging n testing
-        addDebugPanel()
+        //addDebugPanel()
+        // addInfaticaStatus()
+        resetSession()
 
         backBtn.setOnClickListener {
             finish()
@@ -173,19 +180,13 @@ class SettingsActivity : AppCompatActivity() {
                     switchNetwork?.isChecked = false
                     return@setOnCheckedChangeListener
                 }
-                if (InfaticaConsentDialog.hasAccepted(this)) {
-                    enableInfatica()
-                } else {
-                    showInfaticaConsentDialog()
-                    switchNetwork?.isChecked = false
-                }
+
+                // Show consent dialog when enabling, regardless of previous state to ensure clarity
+                showInfaticaConsentDialog()
+
+                // Revert toggle visually until consent is confirmed via dialog
+                switchNetwork.post { switchNetwork.isChecked = isInfaticaEnabled }
             } else {
-//                prefs.edit()
-//                    .putBoolean("network_sdk_enabled", false)
-//                    .putBoolean("network_sdk_manually_disabled", true)
-//                    .apply()
-//                InfaticaManager.setEnabled(this, false)
-//                Toast.makeText(this, "Network sharing disabled", Toast.LENGTH_SHORT).show()
                 disableInfatica()
             }
         }
@@ -195,6 +196,14 @@ class SettingsActivity : AppCompatActivity() {
         setupSettingsItemFocus(R.id.restorePurchases, "Restore Purchases")
         setupSettingsItemFocus(R.id.rateApp, "Rate App")
         setupSettingsItemFocus(R.id.termsPrivacy, "Terms & Privacy")
+    }
+
+    override fun onConsentAccepted() {
+        enableInfatica()
+    }
+
+    override fun onConsentDeclined() {
+        disableInfatica()
     }
 
     private fun setupSettingsItemFocus(itemId: Int, itemName: String) {
@@ -230,14 +239,175 @@ class SettingsActivity : AppCompatActivity() {
 
             setOnClickListener {
                 when (itemId) {
-                    R.id.removeAds -> Toast.makeText(this@SettingsActivity, "Remove Ads - Coming soon!", Toast.LENGTH_SHORT).show()
-                    R.id.restorePurchases -> Toast.makeText(this@SettingsActivity, "Restore Purchases - Coming soon!", Toast.LENGTH_SHORT).show()
-                    R.id.rateApp -> Toast.makeText(this@SettingsActivity, "Thank you for rating!", Toast.LENGTH_SHORT).show()
-                    R.id.termsPrivacy -> Toast.makeText(this@SettingsActivity, "Terms & Privacy - Coming soon!", Toast.LENGTH_SHORT).show()
+                    R.id.removeAds -> {
+                        val intent = Intent(this@SettingsActivity, PurchaseActivity::class.java)
+                        startActivity(intent)
+                    }
+                    R.id.restorePurchases -> {
+                        Toast.makeText(this@SettingsActivity, "Restoring all purchases...", Toast.LENGTH_SHORT).show()
+                        TruthOrLieApplication.billingRepository.restorePurchases()
+                    }
+                    R.id.rateApp -> {
+                        Toast.makeText(this@SettingsActivity, "Rating will be available once live!", Toast.LENGTH_SHORT).show()
+                    }
+                    R.id.termsPrivacy -> {
+                        showTermsPrivacyDialog()
+                    }
                 }
             }
         }
     }
+
+    private fun showTermsPrivacyDialog() {
+        val options = arrayOf("Privacy Policy", "Terms of Service")
+        AlertDialog.Builder(this, R.style.Theme_TruthorLieTV_Dialog)
+            .setTitle("Terms & Privacy")
+            .setItems(options) { _, which ->
+                val url = if (which == 0) {
+                    "https://infatica-sdk.io/uploads/privacy-policy.pdf"
+                } else {
+                    "https://futurewatch.co/terms"
+                }
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                startActivity(intent)
+            }
+            .setNegativeButton("Close", null)
+            .show()
+    }
+
+
+    private fun setupOtherAppsSection() {
+        val otherAppsContainer = findViewById<LinearLayout>(R.id.otherAppsContainer) ?: return
+
+        // Clear any existing views (in case this is called again)
+        otherAppsContainer.removeAllViews()
+
+        val apps = listOf(
+            "Heads Up To Go" to "com.futurewatch.headsuptogo",
+            "World Clock TV" to "com.futurewatch.world_clock_tv",
+            "Tranquil" to "com.tranquil.androidtv",
+            "Minesweeper" to "com.futurewatch.minesweeper",
+            "Turborg 2D Racing" to "co.futurewatch.turborg2d.racing",
+            "Moodscreen TV" to "com.moodscreen.tv"
+        )
+
+        // Create rows with 2 chips per row (EXACT same as music layout)
+        val chipsPerRow = 2
+        val rows = apps.chunked(chipsPerRow)
+
+        rows.forEachIndexed { rowIndex, rowApps ->
+            val rowLayout = LinearLayout(this).apply {
+                orientation = LinearLayout.HORIZONTAL
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    bottomMargin = 15
+                }
+            }
+
+            rowApps.forEachIndexed { index, (appName, packageName) ->
+                val chipButton = Button(this).apply {
+                    text = appName
+                    tag=packageName
+                    textSize = 14f
+                    setTextColor(Color.WHITE)
+                    setBackgroundResource(R.drawable.chip_bg)
+                    setPadding(30, 20, 30, 20)
+
+                    val params = LinearLayout.LayoutParams(
+                        0,
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        1f
+                    ).apply {
+                        if (index > 0) marginStart = 15
+                    }
+                    layoutParams = params
+
+                    isFocusable = true
+                    isClickable = true
+
+                    // Focus animation matching music buttons
+                    onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
+                        if (hasFocus) {
+                            v.animate().scaleX(1.06f).scaleY(1.06f).setDuration(150).start()
+                            v.translationZ = 20f
+                            setBackgroundResource(R.drawable.chip_selected)
+                        } else {
+                            v.animate().scaleX(1f).scaleY(1f).setDuration(150).start()
+                            v.translationZ = 0f
+                            setBackgroundResource(R.drawable.chip_bg)
+                        }
+                    }
+
+                    setOnClickListener {
+                        selectedAppPackage = packageName
+                        updateOtherAppsSelection(otherAppsContainer, packageName)
+                        openAppOrPlayStore(packageName)
+                    }
+                }
+                rowLayout.addView(chipButton)
+            }
+
+            // Fill empty space if odd number of items
+            if (rowApps.size < chipsPerRow) {
+                val spacer = View(this).apply {
+                    layoutParams = LinearLayout.LayoutParams(
+                        0,
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        1f
+                    )
+                }
+                rowLayout.addView(spacer)
+            }
+
+            otherAppsContainer.addView(rowLayout)
+        }
+    }
+
+    private fun openAppOrPlayStore(packageName: String) {
+        try {
+            //opening play stor
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                data = Uri.parse("market://details?id=$packageName")
+                setPackage("com.android.vending")
+            }
+            startActivity(intent)
+        } catch (e: Exception) {
+            try {
+                // Fallback to browser
+                val intent = Intent(Intent.ACTION_VIEW).apply {
+                    data = Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
+                }
+                startActivity(intent)
+            } catch (ex: Exception) {
+                Toast.makeText(this, "Unable to open link", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun updateOtherAppsSelection(container: LinearLayout, selectedPackage: String) {
+        for (i in 0 until container.childCount) {
+            val row = container.getChildAt(i) as? LinearLayout ?: continue
+
+            for (j in 0 until row.childCount) {
+                val view = row.getChildAt(j)
+
+                if (view is Button) {
+                    val tagPackage = view.tag as? String
+
+                    if (tagPackage == selectedPackage) {
+                        view.setBackgroundResource(R.drawable.chip_selected)
+                    } else {
+                        view.setBackgroundResource(R.drawable.chip_bg)
+                    }
+                }
+            }
+        }
+    }
+    private val Int.sp: Float
+        get() = this.toFloat() * resources.displayMetrics.scaledDensity
+
     private fun enableInfatica() {
         val prefs = getSharedPreferences("app_settings", MODE_PRIVATE)
         prefs.edit()
@@ -259,6 +429,9 @@ class SettingsActivity : AppCompatActivity() {
             .apply()
         InfaticaManager.saveConsent(this, false)
         InfaticaManager.setEnabled(this, false)
+        val switchNetwork = findViewById<SwitchCompat>(R.id.switchNetwork)
+        switchNetwork?.isChecked = false
+
         Toast.makeText(this, "Network sharing disabled", Toast.LENGTH_SHORT).show()
     }
     private fun showInfaticaConsentDialog() {
@@ -366,7 +539,6 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun addDebugPanel() {
-        // Find the settingsRoot LinearLayout directly
         val mainLayout = findViewById<LinearLayout>(R.id.settingsRoot)
 
         if (mainLayout != null) {
@@ -621,6 +793,7 @@ class SettingsActivity : AppCompatActivity() {
             append("💡 Tap buttons above to simulate purchases")
         }
     }
+
 
 
     override fun onPause() {
