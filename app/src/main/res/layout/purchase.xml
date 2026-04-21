@@ -1,128 +1,180 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0B0F1A">
+    android:background="#D9000000"
+    android:clickable="true"
+    android:focusable="true">
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="450dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/popup_bg"
         android:orientation="vertical"
         android:gravity="center_horizontal"
-        android:padding="40dp">
+        android:padding="32dp">
 
+        <!-- Gold Crown Icon -->
+        <FrameLayout
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="@drawable/circle_gold_bg">
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/star"
+                android:layout_gravity="center"
+                app:tint="#F59E0B"/>
+        </FrameLayout>
+
+        <!-- Title -->
         <TextView
-            android:text="PREMIUM SHOP"
+            android:id="@+id/titlePremium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="PREMIUM ACCESS"
             android:textColor="#FFFFFF"
-            android:textSize="32sp"
+            android:textSize="28sp"
             android:textStyle="bold"
-            android:layout_marginBottom="30dp"/>
+            android:letterSpacing="0.05"/>
 
-        <!-- Premium Status Card -->
-        <LinearLayout
-            android:layout_width="600dp"
+        <!-- Description -->
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Unlock ALL categories permanently!"
+            android:textColor="#9CA3AF"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:paddingHorizontal="16dp"/>
+
+        <!-- Features List -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
             android:orientation="vertical"
-            android:background="@drawable/card_bg"
-            android:padding="20dp"
-            android:layout_marginBottom="20dp">
+            android:background="@drawable/chip_bg"
+            android:padding="16dp">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Your Status"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="10dp"/>
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+                <TextView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:text="✓"
+                    android:textColor="#10B981"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="12dp"
+                    android:text="All 9 categories unlocked"
+                    android:textColor="#D1D5DB"
+                    android:textSize="14sp"/>
+            </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/tvPremiumStatus"
-                android:text="No active purchases"
-                android:textColor="#AAAAAA"
-                android:textSize="16sp"/>
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+                <TextView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:text="✓"
+                    android:textColor="#10B981"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="12dp"
+                    android:text="No ads ever"
+                    android:textColor="#D1D5DB"
+                    android:textSize="14sp"/>
+            </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:text="✓"
+                    android:textColor="#10B981"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="12dp"
+                    android:text="Lifetime access"
+                    android:textColor="#D1D5DB"
+                    android:textSize="14sp"/>
+            </LinearLayout>
         </LinearLayout>
 
-        <!-- Remove Ads -->
+        <!-- Price and Purchase Button -->
         <Button
-            android:id="@+id/btnRemoveAds"
-            android:layout_width="600dp"
-            android:layout_height="wrap_content"
-            android:text="Remove Ads - $2.99"
-            android:textSize="18sp"
-            android:padding="16dp"
-            android:layout_marginBottom="10dp"
+            android:id="@+id/btnPurchase"
+            android:layout_width="wrap_content"
+            android:layout_height="64dp"
+            android:layout_marginTop="32dp"
             android:background="@drawable/btn_primary"
+            android:paddingStart="32dp"
+            android:paddingEnd="32dp"
+            android:text="Unlock All Categories ($2.99)"
+            android:textAllCaps="false"
             android:textColor="#FFFFFF"
-            android:focusable="true"/>
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:focusable="true"
+            android:nextFocusDown="@id/btnCancel"/>
 
-        <!-- Unlock All Categories -->
+        <!-- Cancel Button -->
         <Button
-            android:id="@+id/btnUnlockCategories"
-            android:layout_width="600dp"
-            android:layout_height="wrap_content"
-            android:text="Unlock All Categories - $4.99"
-            android:textSize="18sp"
-            android:padding="16dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/btn_primary"
-            android:textColor="#FFFFFF"
-            android:focusable="true"/>
-
-        <!-- Monthly Subscription -->
-        <Button
-            android:id="@+id/btnMonthlySubscription"
-            android:layout_width="600dp"
-            android:layout_height="wrap_content"
-            android:text="Monthly Premium - $2.99/month"
-            android:textSize="18sp"
-            android:padding="16dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/btn_primary"
-            android:textColor="#FFFFFF"
-            android:focusable="true"/>
-
-        <!-- Yearly Subscription -->
-        <Button
-            android:id="@+id/btnYearlySubscription"
-            android:layout_width="600dp"
-            android:layout_height="wrap_content"
-            android:text="Yearly Premium - $19.99/year"
-            android:textSize="18sp"
-            android:padding="16dp"
-            android:layout_marginBottom="20dp"
-            android:background="@drawable/btn_primary"
-            android:textColor="#FFFFFF"
-            android:focusable="true"/>
-
-        <!-- Restore Purchases -->
-        <Button
-            android:id="@+id/btnRestore"
-            android:layout_width="600dp"
-            android:layout_height="wrap_content"
-            android:text="Restore Purchases"
+            android:id="@+id/btnCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="56dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/btn_secondary_outline"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
+            android:text="Cancel"
+            android:textAllCaps="false"
+            android:textColor="#9CA3AF"
             android:textSize="16sp"
-            android:padding="12dp"
-            android:layout_marginBottom="20dp"
-            android:background="@drawable/btn_secondary"
-            android:textColor="#FFFFFF"
-            android:focusable="true"/>
+            android:focusable="true"
+            android:nextFocusUp="@id/btnPurchase"/>
 
-        <!-- Back Button -->
-        <Button
-            android:id="@+id/btnBack"
-            android:layout_width="253dp"
-            android:layout_height="57dp"
-            android:text="Back"
-            android:textSize="18sp"
-            android:background="@drawable/btn_secondary"
-            android:textColor="#FFFFFF"
-            android:focusable="true"/>
+        <!-- Restore Link -->
+        <TextView
+            android:id="@+id/txtRestore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Restore Purchases"
+            android:textColor="#6B7280"
+            android:textSize="14sp"
+            android:padding="8dp"
+            android:focusable="true"
+            android:clickable="true"/>
 
     </LinearLayout>
-</ScrollView>
+
+</FrameLayout>

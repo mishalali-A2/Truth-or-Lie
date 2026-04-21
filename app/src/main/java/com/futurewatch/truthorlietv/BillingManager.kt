@@ -2,18 +2,26 @@ package com.futurewatch.truthorlietv
 
 import android.app.Activity
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import com.android.billingclient.api.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+
 
 class BillingManager(
     private val context: Context,
     private val listener: BillingListener
-) : PurchasesUpdatedListener, BillingClientStateListener {
 
+) : PurchasesUpdatedListener, BillingClientStateListener {
+    private val isFakeBilling = isDebugBuild()
+
+    private fun isDebugBuild(): Boolean {
+        return try {
+            context.applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE != 0
+        } catch (e: Exception) {
+            true
+        }
+    }
     interface BillingListener {
         fun onBillingSetupFinished()
         fun onBillingDisconnected()
@@ -29,13 +37,19 @@ class BillingManager(
         private const val PREFS_NAME = "billing_prefs"
         private const val KEY_PREMIUM = "premium_access"
 
-        // Define your product IDs (create these in Google Play Console)
-        val PRODUCT_IDS = listOf(
-            "remove_ads",           // One-time purchase to remove ads
-            "premium_monthly",      // Monthly subscription
-            "premium_yearly",       // Yearly subscription
-            "unlock_all_categories" // One-time unlock all categories
+        // product ids: to match the console rn only dummy for testing
+        val INAPP_PRODUCT_IDS = listOf(
+            "remove_ads",
+            "unlock_all_categories"
         )
+
+        val SUBS_PRODUCT_IDS = listOf(
+            "premium_monthly",      // Monthly subscription
+            "premium_yearly"        // Yearly subscription
+        )
+
+        // All product IDs combined
+        val ALL_PRODUCT_IDS = INAPP_PRODUCT_IDS + SUBS_PRODUCT_IDS
 
         // Premium product IDs (anything that gives premium access)
         val PREMIUM_PRODUCT_IDS = setOf(
@@ -59,88 +73,181 @@ class BillingManager(
     private var isServiceConnected = false
     private val productDetailsMap = mutableMapOf<String, ProductDetails>()
     private val purchaseAttemptIds = mutableMapOf<String, String>()
-
     fun initialize() {
         Log.d(TAG, "Initializing BillingClient")
         if (billingClient.isReady) {
+            Log.d(TAG, "BillingClient already ready, skipping startConnection")
             isServiceConnected = true
             listener.onBillingSetupFinished()
             queryProductDetails()
             queryPurchases()
             return
         }
+
+        Log.d(TAG, "Starting BillingClient connection...")
         billingClient.startConnection(this)
     }
 
     override fun onBillingSetupFinished(billingResult: BillingResult) {
-        Log.d(TAG, "Billing setup finished: ${billingResult.responseCode}")
+        Log.d(TAG, "onBillingSetupFinished called with responseCode=${billingResult.responseCode}")
+
         if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
             isServiceConnected = true
+            Log.d(TAG, "✓ Billing setup SUCCESSFUL - service connected")
             listener.onBillingSetupFinished()
+
+            // Query products and purchases after successful connection
             queryProductDetails()
             queryPurchases()
         } else {
-            Log.e(TAG, "Billing setup failed: ${billingResult.debugMessage}")
-            // Don't crash, just log and continue
+            Log.e(
+                TAG,
+                "✗ Billing setup FAILED with responseCode=${billingResult.responseCode}, " +
+                        "debugMessage=${billingResult.debugMessage}"
+            )
             isServiceConnected = false
-            // Don't call listener.onBillingDisconnected() as it might cause issues
+            listener.onPurchaseError(
+                billingResult.responseCode,
+                "Billing setup failed: ${billingResult.debugMessage}"
+            )
         }
     }
 
     override fun onBillingServiceDisconnected() {
-        Log.w(TAG, "Billing service disconnected")
+        Log.w(TAG, "onBillingServiceDisconnected - service disconnected, attempting reconnect")
         isServiceConnected = false
         listener.onBillingDisconnected()
-        // Attempt to reconnect
-        billingClient.startConnection(this)
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            Log.d(TAG, "Attempting to reconnect to billing service...")
+            if (!billingClient.isReady) {
+                billingClient.startConnection(this)
+            }
+        }, 2000)
     }
 
-    fun queryProductDetails() {
-        if (!isServiceConnected) return
+    // PRODUCT QUERIES
 
-        Log.d(TAG, "Querying product details for: $PRODUCT_IDS")
+    fun queryProductDetails() {
+        if (isFakeBilling) {
+            Log.d(TAG, "⚡ Fake product loading")
+
+            listener.onProductsUpdated(emptyList())
+            return
+        }
+        if (!isServiceConnected) {
+            Log.w(TAG, "queryProductDetails called but service not connected, skipping")
+            return
+        }
+
+        Log.d(TAG, "Querying product details for INAPP and SUBS...")
+
+        // QUERY 1: INAPP PRODUCTS (remove_ads, unlock_all_categories)
+        if (INAPP_PRODUCT_IDS.isNotEmpty()) {
+            queryInAppProducts()
+        }
+
+        // QUERY 2: SUBS PRODUCTS (premium_monthly, premium_yearly)
+        if (SUBS_PRODUCT_IDS.isNotEmpty()) {
+            querySubsProducts()
+        }
+    }
+
+    private fun queryInAppProducts() {
+        Log.d(TAG, "Querying INAPP products: $INAPP_PRODUCT_IDS")
 
         val params = QueryProductDetailsParams.newBuilder()
             .setProductList(
-                PRODUCT_IDS.map { productId ->
+                INAPP_PRODUCT_IDS.map { productId ->
                     QueryProductDetailsParams.Product.newBuilder()
                         .setProductId(productId)
                         .setProductType(BillingClient.ProductType.INAPP)
                         .build()
-                } + listOf(
-                    // Add subscriptions separately
-                    QueryProductDetailsParams.Product.newBuilder()
-                        .setProductId("premium_monthly")
-                        .setProductType(BillingClient.ProductType.SUBS)
-                        .build(),
-                    QueryProductDetailsParams.Product.newBuilder()
-                        .setProductId("premium_yearly")
-                        .setProductType(BillingClient.ProductType.SUBS)
-                        .build()
-                )
+                }
             )
             .build()
 
         billingClient.queryProductDetailsAsync(params) { billingResult, productDetailsList ->
             if (billingResult.responseCode != BillingClient.BillingResponseCode.OK) {
-                Log.e(TAG, "Failed to query products: ${billingResult.debugMessage}")
+                Log.e(
+                    TAG,
+                    "✗ Failed to query INAPP products (code=${billingResult.responseCode}): ${billingResult.debugMessage}"
+                )
                 return@queryProductDetailsAsync
             }
 
-            productDetailsMap.clear()
             productDetailsList.forEach { details ->
                 productDetailsMap[details.productId] = details
-                Log.d(TAG, "Product loaded: ${details.productId} - ${details.name} - ${details.oneTimePurchaseOfferDetails?.formattedPrice ?: details.subscriptionOfferDetails?.firstOrNull()?.pricingPhases?.pricingPhaseList?.firstOrNull()?.formattedPrice}")
+                val price = details.oneTimePurchaseOfferDetails?.formattedPrice ?: "N/A"
+                Log.d(TAG, "✓ INAPP Product loaded: ${details.productId} - ${details.title} - $price")
+            }
+        }
+    }
+
+    private fun querySubsProducts() {
+        Log.d(TAG, "Querying SUBS products: $SUBS_PRODUCT_IDS")
+
+        val params = QueryProductDetailsParams.newBuilder()
+            .setProductList(
+                SUBS_PRODUCT_IDS.map { productId ->
+                    QueryProductDetailsParams.Product.newBuilder()
+                        .setProductId(productId)
+                        .setProductType(BillingClient.ProductType.SUBS)
+                        .build()
+                }
+            )
+            .build()
+
+        billingClient.queryProductDetailsAsync(params) { billingResult, productDetailsList ->
+            if (billingResult.responseCode != BillingClient.BillingResponseCode.OK) {
+                Log.e(
+                    TAG,
+                    "✗ Failed to query SUBS products (code=${billingResult.responseCode}): ${billingResult.debugMessage}"
+                )
+                return@queryProductDetailsAsync
+            }
+
+            productDetailsList.forEach { details ->
+                productDetailsMap[details.productId] = details
+                val price = details.subscriptionOfferDetails
+                    ?.firstOrNull()
+                    ?.pricingPhases
+                    ?.pricingPhaseList
+                    ?.firstOrNull()
+                    ?.formattedPrice ?: "N/A"
+                Log.d(TAG, "✓ SUBS Product loaded: ${details.productId} - ${details.title} - $price")
             }
 
             listener.onProductsUpdated(productDetailsList)
         }
     }
 
-    fun queryPurchases() {
-        if (!isServiceConnected) return
+    // PURCHASE QUERIES (RESTORE)
 
-        Log.d(TAG, "Querying existing purchases")
+    fun queryPurchases() {
+        if (isFakeBilling) {
+            Log.d(TAG, "⚡ Fake restore")
+
+            val hasPremium = getHasPremiumAccess()
+            listener.onRestoreCompleted(hasPremium)
+            return
+        }
+        if (!isServiceConnected) {
+            Log.w(TAG, "queryPurchases called but service not connected, skipping")
+            return
+        }
+
+        Log.d(TAG, "Querying existing purchases...")
+
+        // QUERY 1: INAPP PURCHASES
+        queryInAppPurchases()
+
+        // QUERY 2: SUBS PURCHASES
+        querySubsPurchases()
+    }
+
+    private fun queryInAppPurchases() {
+        Log.d(TAG, "Querying INAPP purchases...")
 
         val params = QueryPurchasesParams.newBuilder()
             .setProductType(BillingClient.ProductType.INAPP)
@@ -148,30 +255,59 @@ class BillingManager(
 
         billingClient.queryPurchasesAsync(params) { billingResult, purchases ->
             if (billingResult.responseCode != BillingClient.BillingResponseCode.OK) {
-                Log.w(TAG, "Query purchases failed: ${billingResult.debugMessage}")
+                Log.w(
+                    TAG,
+                    "Query INAPP purchases failed (code=${billingResult.responseCode}): ${billingResult.debugMessage}"
+                )
                 return@queryPurchasesAsync
             }
 
+            Log.d(TAG, "INAPP purchases query returned ${purchases.size} purchases")
             handlePurchases(purchases)
         }
     }
 
+    private fun querySubsPurchases() {
+        Log.d(TAG, "Querying SUBS purchases...")
+
+        val params = QueryPurchasesParams.newBuilder()
+            .setProductType(BillingClient.ProductType.SUBS)
+            .build()
+
+        billingClient.queryPurchasesAsync(params) { billingResult, purchases ->
+            if (billingResult.responseCode != BillingClient.BillingResponseCode.OK) {
+                Log.w(
+                    TAG,
+                    "Query SUBS purchases failed (code=${billingResult.responseCode}): ${billingResult.debugMessage}"
+                )
+                return@queryPurchasesAsync
+            }
+
+            Log.d(TAG, "SUBS purchases query returned ${purchases.size} purchases")
+            handlePurchases(purchases)
+        }
+    }
     private fun handlePurchases(purchases: List<Purchase>) {
         var hasPremiumAccess = false
 
         for (purchase in purchases) {
             if (purchase.purchaseState != Purchase.PurchaseState.PURCHASED) {
+                Log.d(TAG, "Skipping purchase with state=${purchase.purchaseState}")
                 continue
             }
 
             val isPremiumPurchase = purchase.products.any { it in PREMIUM_PRODUCT_IDS }
             if (!isPremiumPurchase) {
+                Log.d(TAG, "Purchase ${purchase.purchaseToken} is not a premium product")
                 continue
             }
 
             hasPremiumAccess = true
+            Log.d(TAG, "✓ Premium purchase found: ${purchase.products}")
 
+            // Acknowledge if not already done
             if (!purchase.isAcknowledged) {
+                Log.d(TAG, "Acknowledging purchase...")
                 acknowledgePurchase(purchase)
             }
         }
@@ -187,16 +323,32 @@ class BillingManager(
 
         billingClient.acknowledgePurchase(params) { billingResult ->
             if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                Log.d(TAG, "Purchase acknowledged: ${purchase.purchaseToken}")
+                Log.d(TAG, "✓ Purchase acknowledged: ${purchase.purchaseToken.take(8)}...")
             } else {
-                Log.e(TAG, "Failed to acknowledge purchase: ${billingResult.debugMessage}")
+                Log.e(
+                    TAG,
+                    "✗ Failed to acknowledge purchase: ${billingResult.debugMessage}"
+                )
             }
         }
     }
-
     fun launchPurchaseFlow(activity: Activity, productId: String) {
+        Log.d(TAG, "launchPurchaseFlow called for productId=$productId")
+
+      //FAKE BILLING -> for testing
+        if (isFakeBilling) {
+            Log.d(TAG, "⚡ Using FAKE billing for $productId")
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                handleFakePurchase(productId)
+            }, 1000)
+
+            return
+        }
+
+        //  REAL BILLING
         if (!isServiceConnected) {
-            Log.w(TAG, "Launch blocked: billing service disconnected")
+            Log.e(TAG, "✗ Launch blocked: billing service disconnected")
             listener.onPurchaseError(
                 BillingClient.BillingResponseCode.SERVICE_DISCONNECTED,
                 "Billing service not connected"
@@ -206,7 +358,8 @@ class BillingManager(
 
         val productDetails = productDetailsMap[productId]
         if (productDetails == null) {
-            Log.w(TAG, "Launch blocked: product unavailable: $productId")
+            Log.e(TAG, "✗ Launch blocked: product unavailable for id=$productId")
+            Log.d(TAG, "Available products: ${productDetailsMap.keys}")
             listener.onPurchaseError(
                 BillingClient.BillingResponseCode.ITEM_UNAVAILABLE,
                 "Product not found: $productId"
@@ -214,48 +367,78 @@ class BillingManager(
             return
         }
 
-        // Generate purchase attempt ID for correlation
-        val purchaseAttemptId = "${System.currentTimeMillis()}_${productId}"
-        purchaseAttemptIds[productId] = purchaseAttemptId
+        val detailsBuilder = BillingFlowParams.ProductDetailsParams.newBuilder()
+            .setProductDetails(productDetails)
 
-        val productDetailsParamsList = listOf(
-            BillingFlowParams.ProductDetailsParams.newBuilder()
-                .setProductDetails(productDetails)
-                .apply {
-                    // For subscriptions, set the offer token
-                    productDetails.subscriptionOfferDetails?.firstOrNull()?.let { offer ->
-                        setOfferToken(offer.offerToken)
-                    }
-                }
-                .build()
-        )
+        productDetails.subscriptionOfferDetails
+            ?.firstOrNull()
+            ?.let { offer ->
+                detailsBuilder.setOfferToken(offer.offerToken)
+            }
 
         val billingFlowParams = BillingFlowParams.newBuilder()
-            .setProductDetailsParamsList(productDetailsParamsList)
+            .setProductDetailsParamsList(listOf(detailsBuilder.build()))
             .build()
 
-        Log.d(TAG, "Launching billing flow for: $productId")
-
         billingClient.launchBillingFlow(activity, billingFlowParams)
-            .let { result ->
-                if (result.responseCode != BillingClient.BillingResponseCode.OK) {
-                    listener.onPurchaseError(result.responseCode, result.debugMessage)
-                }
-            }
     }
 
+    fun clearPurchaseCache() {
+        val prefs = context.getSharedPreferences("app_settings", Context.MODE_PRIVATE)
+        prefs.edit()
+            .remove("ads_removed")
+            .remove("all_categories_unlocked")
+            .remove("premium_access")
+            .apply()
+        Log.d(TAG, "Purchase cache cleared")
+    }
+
+    fun resetBillingState() {
+        productDetailsMap.clear()
+        isServiceConnected = false
+        Log.d(TAG, "Billing state reset")
+    }
+    private fun handleFakePurchase(productId: String) {
+        Log.d(TAG, "✅ FAKE purchase success: $productId")
+
+        val isPremium = productId in PREMIUM_PRODUCT_IDS
+        if (isPremium) {
+            setHasPremiumAccess(true)
+        }
+
+        val prefs = context.getSharedPreferences("app_settings", Context.MODE_PRIVATE)
+
+        when (productId) {
+            "remove_ads" -> prefs.edit().putBoolean("ads_removed", true).apply()
+            "unlock_all_categories" -> prefs.edit().putBoolean("all_categories_unlocked", true).apply()
+            "premium_monthly", "premium_yearly" -> {
+                prefs.edit()
+                    .putBoolean("ads_removed", true)
+                    .putBoolean("all_categories_unlocked", true)
+                    .putBoolean("premium_access", true)
+                    .apply()
+            }
+        }
+
+        // Notify UI
+        listener.onPurchaseSuccess(productId)
+        listener.onRestoreCompleted(true)
+    }
     override fun onPurchasesUpdated(
         billingResult: BillingResult,
         purchases: MutableList<Purchase>?
     ) {
+        Log.d(TAG, "onPurchasesUpdated called with responseCode=${billingResult.responseCode}")
+
         when (billingResult.responseCode) {
             BillingClient.BillingResponseCode.OK -> {
                 val localPurchases = purchases ?: emptyList()
-                Log.d(TAG, "Purchase update success; count=${localPurchases.size}")
+                Log.d(TAG, "✓ Purchase update success; count=${localPurchases.size}")
                 handlePurchases(localPurchases)
 
                 localPurchases.forEach { purchase ->
                     purchase.products.forEach { productId ->
+                        Log.d(TAG, "✓ Purchase success for productId=$productId")
                         listener.onPurchaseSuccess(productId)
                     }
                 }
@@ -269,13 +452,17 @@ class BillingManager(
                 listener.onPurchaseCanceled()
             }
             else -> {
-                Log.e(TAG, "Purchase failed: ${billingResult.responseCode}, ${billingResult.debugMessage}")
+                Log.e(
+                    TAG,
+                    "✗ Purchase failed: code=${billingResult.responseCode}, " +
+                            "message=${billingResult.debugMessage}"
+                )
                 listener.onPurchaseError(billingResult.responseCode, billingResult.debugMessage)
             }
         }
     }
-
     fun restorePurchases() {
+        Log.d(TAG, "restorePurchases called")
         queryPurchases()
     }
 
@@ -289,6 +476,7 @@ class BillingManager(
     }
 
     fun destroy() {
+        Log.d(TAG, "Destroying BillingManager")
         if (billingClient.isReady) {
             billingClient.endConnection()
         }

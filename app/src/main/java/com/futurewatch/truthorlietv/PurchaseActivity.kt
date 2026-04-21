@@ -10,95 +10,72 @@ import android.util.Log
 
 class PurchaseActivity : AppCompatActivity() {
 
-    private lateinit var btnRemoveAds: Button
-    private lateinit var btnUnlockCategories: Button
-    private lateinit var btnMonthlySubscription: Button
-    private lateinit var btnYearlySubscription: Button
-    private lateinit var btnRestore: Button
-    private lateinit var btnBack: Button
-    private lateinit var tvPremiumStatus: TextView
-
-    private var purchasePurpose: String? = null
+    private lateinit var btnPurchase: Button
+    private lateinit var btnCancel: Button
+    private lateinit var txtRestore: TextView
+    private lateinit var titlePremium: TextView
+    private lateinit var description: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.purchase)
 
-        // Get purpose from intent
-        purchasePurpose = intent.getStringExtra("purpose")
+        btnPurchase = findViewById(R.id.btnPurchase)
+        btnCancel = findViewById(R.id.btnCancel)
+        txtRestore = findViewById(R.id.txtRestore)
+        titlePremium = findViewById(R.id.titlePremium)
+        description = findViewById(R.id.description)
 
-        btnRemoveAds = findViewById(R.id.btnRemoveAds)
-        btnUnlockCategories = findViewById(R.id.btnUnlockCategories)
-        btnMonthlySubscription = findViewById(R.id.btnMonthlySubscription)
-        btnYearlySubscription = findViewById(R.id.btnYearlySubscription)
-        btnRestore = findViewById(R.id.btnRestore)
-        btnBack = findViewById(R.id.btnBack)
-        tvPremiumStatus = findViewById(R.id.tvPremiumStatus)
+        // Check if already purchased
+        val prefs = TruthOrLieApplication.prefs
+        val allCategoriesUnlocked = prefs.getBoolean("all_categories_unlocked", false)
 
-        // Show current premium status
-        updatePremiumStatus()
-
-        // Highlight the relevant purchase option if coming from a specific flow
-        if (purchasePurpose == "unlock_categories") {
-            highlightUnlockCategories()
+        if (allCategoriesUnlocked) {
+            // Show already purchased state
+            titlePremium.text = "ALREADY UNLOCKED!"
+            description.text = "You already have full access to all categories!"
+            btnPurchase.text = "Unlocked ✓"
+            btnPurchase.isEnabled = false
+            btnPurchase.alpha = 0.5f
         }
 
-        // Setup click listeners
-        btnRemoveAds.setOnClickListener {
-            purchaseProduct("remove_ads")
-        }
-
-        btnUnlockCategories.setOnClickListener {
+        // Purchase button click
+        btnPurchase.setOnClickListener {
+            if (allCategoriesUnlocked) {
+                Toast.makeText(this, "Already unlocked!", Toast.LENGTH_SHORT).show()
+                finish()
+                return@setOnClickListener
+            }
             purchaseProduct("unlock_all_categories")
         }
 
-        btnMonthlySubscription.setOnClickListener {
-            purchaseProduct("premium_monthly")
+        // Cancel button
+        btnCancel.setOnClickListener {
+            finish()
         }
 
-        btnYearlySubscription.setOnClickListener {
-            purchaseProduct("premium_yearly")
-        }
-
-        btnRestore.setOnClickListener {
+        // Restore purchases
+        txtRestore.setOnClickListener {
             restorePurchases()
         }
 
-        btnBack.setOnClickListener {
-            finish()
-        }
+        // Handle back press - close overlay
+        btnCancel.requestFocus()
 
         setupFocusAnimation()
     }
 
-    private fun highlightUnlockCategories() {
-        // Highlight the unlock categories button
-        btnUnlockCategories.setBackgroundColor(android.graphics.Color.parseColor("#FFA500"))
-        btnUnlockCategories.requestFocus()
-        Toast.makeText(this, "Unlock all categories to access locked content!", Toast.LENGTH_LONG).show()
-    }
-
     private fun purchaseProduct(productId: String) {
-        val prefs = getSharedPreferences("app_settings", MODE_PRIVATE)
+        val prefs = TruthOrLieApplication.prefs
 
-        // Check if already owned in local prefs
-        when (productId) {
-            "remove_ads" -> {
-                if (prefs.getBoolean("ads_removed", false)) {
-                    Toast.makeText(this, "Ads already removed!", Toast.LENGTH_SHORT).show()
-                    return
-                }
-            }
-            "unlock_all_categories" -> {
-                if (prefs.getBoolean("all_categories_unlocked", false)) {
-                    Toast.makeText(this, "All categories already unlocked!", Toast.LENGTH_SHORT).show()
-                    return
-                }
-            }
+        // Check if already owned
+        if (prefs.getBoolean("all_categories_unlocked", false)) {
+            Toast.makeText(this, "Already unlocked!", Toast.LENGTH_SHORT).show()
+            finish()
+            return
         }
 
-        // Use the real BillingRepository instead of simulation
-        Log.d("PurchaseActivity", "Initiating real purchase for: $productId")
+        Log.d("PurchaseActivity", "Initiating purchase for: $productId")
         try {
             TruthOrLieApplication.billingRepository.purchaseProduct(this, productId)
         } catch (e: Exception) {
@@ -111,34 +88,17 @@ class PurchaseActivity : AppCompatActivity() {
         Log.d("PurchaseActivity", "Restoring purchases...")
         Toast.makeText(this, "Checking for previous purchases...", Toast.LENGTH_SHORT).show()
         TruthOrLieApplication.billingRepository.restorePurchases()
-        
-        // The update will happen via the global listener in Application class
-        // which updates prefs. We'll refresh our UI shortly.
+
+        // Check after restore
         android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
-            updatePremiumStatus()
-        }, 2000)
-    }
-
-    private fun updatePremiumStatus() {
-        val prefs = TruthOrLieApplication.prefs
-        val adsRemoved = prefs.getBoolean("ads_removed", false)
-        val categoriesUnlocked = prefs.getBoolean("all_categories_unlocked", false)
-        val premiumAccess = prefs.getBoolean("premium_access", false)
-
-        val status = buildString {
-            append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
-            append("     YOUR PURCHASE STATUS\n")
-            append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
-            if (adsRemoved) append("✅ Ads Removed\n")
-            if (categoriesUnlocked) append("✅ All Categories Unlocked\n")
-            if (premiumAccess) append("✅ Premium Active\n")
-            if (!adsRemoved && !categoriesUnlocked && !premiumAccess) {
-                append("❌ No active purchases\n")
+            val prefs = TruthOrLieApplication.prefs
+            if (prefs.getBoolean("all_categories_unlocked", false)) {
+                Toast.makeText(this, "Purchase restored! All categories unlocked.", Toast.LENGTH_LONG).show()
+                finish()
+            } else {
+                Toast.makeText(this, "No previous purchases found.", Toast.LENGTH_SHORT).show()
             }
-            append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-        }
-
-        tvPremiumStatus.text = status
+        }, 2000)
     }
 
     private fun setupFocusAnimation() {
@@ -152,16 +112,17 @@ class PurchaseActivity : AppCompatActivity() {
             }
         }
 
-        btnRemoveAds.onFocusChangeListener = focusListener
-        btnUnlockCategories.onFocusChangeListener = focusListener
-        btnMonthlySubscription.onFocusChangeListener = focusListener
-        btnYearlySubscription.onFocusChangeListener = focusListener
-        btnRestore.onFocusChangeListener = focusListener
-        btnBack.onFocusChangeListener = focusListener
+        btnPurchase.onFocusChangeListener = focusListener
+        btnCancel.onFocusChangeListener = focusListener
+        txtRestore.onFocusChangeListener = focusListener
     }
 
     override fun onResume() {
         super.onResume()
-        updatePremiumStatus()
+        // Update UI in case purchase completed while away
+        val prefs = TruthOrLieApplication.prefs
+        if (prefs.getBoolean("all_categories_unlocked", false)) {
+            finish() // Close if now unlocked
+        }
     }
 }

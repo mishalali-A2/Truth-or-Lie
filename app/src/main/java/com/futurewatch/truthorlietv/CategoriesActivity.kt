@@ -8,7 +8,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
-
+import android.util.Log
 class CategoriesActivity : AppCompatActivity() {
 
     private lateinit var unlockOverlay: View
@@ -21,7 +21,20 @@ class CategoriesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_categories)
 
+      //for testing
+      //  resetAllPurchasesForTesting()
         MusicManager.resumeMusic()
+        //        caused flickering -> parent in XML steals the focus
+//        val focusListener = View.OnFocusChangeListener { v, hasFocus ->
+//            if (hasFocus) {
+//                v.startAnimation(AnimationUtils.loadAnimation(this, R.anim.scaleup))
+//                v.elevation = 20f
+//            } else {
+//                v.startAnimation(AnimationUtils.loadAnimation(this, R.anim.scaledown))
+//                v.elevation = 0f
+//            }
+//        }
+
 
         // Initialize Overlay Views
         unlockOverlay = findViewById(R.id.unlockOverlay)
@@ -192,10 +205,42 @@ class CategoriesActivity : AppCompatActivity() {
         btnBuyCategory.requestFocus()
     }
 
+    private fun resetAllPurchasesForTesting() {
+        val prefs = TruthOrLieApplication.prefs
+        val hasBeenReset = prefs.getBoolean("debug_has_been_reset", false)
+
+        if (!hasBeenReset) {
+            // Clear all preferences
+            prefs.edit().clear().apply()
+            getSharedPreferences("app_settings", MODE_PRIVATE).edit().clear().apply()
+            CategoryManager.resetSession()
+
+            // Reset billing
+            try {
+                TruthOrLieApplication.billingRepository.clearPurchaseCache()
+                TruthOrLieApplication.billingRepository.resetBillingState()
+            } catch (e: Exception) {
+                Log.e("ResetDebug", "Error resetting billing", e)
+            }
+
+            // Set default values
+            prefs.edit()
+                .putBoolean("music_enabled", true)
+                .putInt("timer_seconds", 20)
+                .putBoolean("network_sdk_enabled", false)
+                .putBoolean("debug_has_been_reset", true)
+                .apply()
+
+            Log.d("ResetDebug", "========== RESET COMPLETE (WILL NOT RUN AGAIN) ==========")
+
+            Toast.makeText(this, "✅ Purchases reset for testing", Toast.LENGTH_SHORT).show()
+        } else {
+            Log.d("ResetDebug", "Skipping reset - already performed once")
+        }
+    }
     private fun hideUnlockOverlay() {
         unlockOverlay.animate().alpha(0f).setDuration(200).withEndAction {
             unlockOverlay.visibility = View.GONE
-            // Return focus to the grid
             findViewById<View>(R.id.card_general)?.requestFocus()
         }.start()
     }

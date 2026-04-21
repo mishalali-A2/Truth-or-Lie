@@ -22,7 +22,6 @@ class BillingRepository private constructor(private val billingManager: BillingM
     }
 
     fun getProducts(): List<ProductDetails> {
-        // This is populated via callback
         return emptyList()
     }
 
@@ -30,13 +29,20 @@ class BillingRepository private constructor(private val billingManager: BillingM
         billingManager.launchPurchaseFlow(activity, productId)
     }
 
+    fun clearPurchaseCache() {
+        billingManager.clearPurchaseCache()
+    }
+
+    fun resetBillingState() {
+        billingManager.resetBillingState()
+    }
     fun restorePurchases() {
         billingManager.restorePurchases()
     }
 
-    fun isPremium(): Boolean {
-        return billingManager.getHasPremiumAccess()
-    }
+//    fun isPremium(): Boolean {
+//        return billingManager.getHasPremiumAccess()
+//    }
 
     fun destroy() {
         billingManager.destroy()
