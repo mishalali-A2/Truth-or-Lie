@@ -67,8 +67,8 @@
         <item name="android:padding">12dp</item>
     </style>
 
-    <!-- Chips (Music / Timer buttons) -->
-    <style name="chip">
+    <!-- Chips (Music ) -->
+    <style name="chip_music">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">45dp</item>
         <item name="android:layout_margin">6dp</item>
@@ -80,14 +80,40 @@
         <item name="android:textAllCaps">false</item>
     </style>
 
-    <style name="chip_selected">
+    <style name="chip_selected_music">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">45dp</item>
         <item name="android:layout_margin">6dp</item>
         <item name="android:layout_weight">1</item>
+        <item name="android:textStyle">bold</item>
         <item name="android:textColor">#FFFFFF</item>
         <item name="android:textSize">14sp</item>
         <item name="android:background">@drawable/btn_primary</item>
+        <item name="android:focusable">true</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+    <!-- Timer Chips-->
+    <style name="chip_timer">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:layout_margin">1dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textColor">#D1D5DB</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:background">@drawable/sq_chip</item>
+        <item name="android:focusable">true</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="chip_timer_selected">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:layout_margin">6dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:background">@drawable/sq_primary</item>
         <item name="android:focusable">true</item>
         <item name="android:textAllCaps">false</item>
     </style>

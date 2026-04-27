@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#0B0F1A"
     android:clipChildren="false"
     android:clipToPadding="false">
@@ -33,7 +33,7 @@
 
         <!-- MUSIC CARD -->
         <LinearLayout
-            android:id="@+id/musicContainer"
+            android:id="@+id/musicOuterContainer"
             android:layout_width="600dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -68,60 +68,73 @@
                     android:layout_width="67dp"
                     android:layout_height="wrap_content"
                     android:focusable="true"
-                    android:focusableInTouchMode="true" />
-            </LinearLayout>
-
-            <!-- Music Genre Chips -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:orientation="horizontal"
-                android:weightSum="3"
-                android:clipChildren="false">
-
-                <Button
-                    android:id="@+id/chipPartyVibes"
-                    style="@style/chip"
-                    android:text="Party Vibes"
-                    android:layout_weight="1"
-                    android:layout_margin="4dp"/>
-
-                <Button
-                    android:id="@+id/chipChillLounge"
-                    style="@style/chip_selected"
-                    android:text="Chill Lounge"
-                    android:layout_weight="1"
-                    android:layout_margin="4dp"/>
-
-                <Button
-                    android:id="@+id/chipRetroArcade"
-                    style="@style/chip"
-                    android:text="Retro Arcade"
-                    android:layout_weight="1"
-                    android:layout_margin="4dp"/>
-
+                    android:focusableInTouchMode="true"
+                    app:thumbTint="@color/switch_thumb_color"
+                    app:trackTint="@color/switch_track_color" />
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/musicContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:clipChildren="false">
+                android:orientation="vertical"
+                android:layout_marginTop="15dp">
 
-                <Button
-                    android:id="@+id/chipEpicAdventure"
-                    style="@style/chip"
-                    android:text="Epic Adventure"
-                    android:layout_weight="1"
-                    android:layout_margin="4dp"/>
+                <!-- First Row: 3 genres -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="3"
+                    android:clipChildren="false">
 
-                <Button
-                    android:id="@+id/chipFunkyGroove"
-                    style="@style/chip"
-                    android:text="Funky Groove"
-                    android:layout_weight="1"
-                    android:layout_margin="4dp"/>
+                    <Button
+                        android:id="@+id/chipPartyVibes"
+                        style="@style/chip_music"
+                        android:text="Party Vibes"
+                        android:layout_weight="1"
+                        android:layout_margin="4dp"/>
+
+                    <Button
+                        android:id="@+id/chipChillLounge"
+                        style="@style/chip_selected_music"
+                        android:text="Chill Lounge"
+                        android:layout_weight="1"
+                        android:layout_margin="4dp"/>
+
+                    <Button
+                        android:id="@+id/chipRetroArcade"
+                        style="@style/chip_music"
+                        android:text="Retro Arcade"
+                        android:layout_weight="1"
+                        android:layout_margin="4dp"/>
+
+                </LinearLayout>
+
+                <!-- Second Row: 2 genres -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    android:clipChildren="false">
+
+                    <Button
+                        android:id="@+id/chipEpicAdventure"
+                        style="@style/chip_music"
+                        android:text="Epic Adventure"
+                        android:layout_weight="1"
+                        android:layout_margin="4dp"/>
+
+                    <Button
+                        android:id="@+id/chipFunkyGroove"
+                        style="@style/chip_music"
+                        android:text="Funky Groove"
+                        android:layout_weight="1"
+                        android:layout_margin="4dp"/>
+
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -168,31 +181,31 @@
 
                 <Button
                     android:id="@+id/timer10"
-                    style="@style/chip"
+                    style="@style/chip_timer"
                     android:text="10"
                     android:layout_margin="4dp"/>
 
                 <Button
                     android:id="@+id/timer20"
-                    style="@style/chip_selected"
+                    style="@style/chip_timer_selected"
                     android:text="20"
                     android:layout_margin="4dp"/>
 
                 <Button
                     android:id="@+id/timer30"
-                    style="@style/chip"
+                    style="@style/chip_timer"
                     android:text="30"
                     android:layout_margin="4dp"/>
 
                 <Button
                     android:id="@+id/timer40"
-                    style="@style/chip"
+                    style="@style/chip_timer"
                     android:text="40"
                     android:layout_margin="4dp"/>
 
                 <Button
                     android:id="@+id/timer50"
-                    style="@style/chip"
+                    style="@style/chip_timer"
                     android:text="50"
                     android:layout_margin="4dp"/>
 

@@ -53,6 +53,8 @@
         android:layout_below="@id/tvStatement"
         android:layout_marginTop="50dp"
         android:text="Start Voting"
+        android:textAllCaps="false"
+        android:textStyle="bold"
         android:textSize="20sp"
         android:textColor="@android:color/white"
         android:background="@drawable/btn_primary"

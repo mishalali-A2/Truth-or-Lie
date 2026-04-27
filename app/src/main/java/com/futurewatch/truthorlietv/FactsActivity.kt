@@ -31,7 +31,8 @@ class FactsActivity : AppCompatActivity() {
         val btnStartVoting = findViewById<Button>(R.id.btnStartVoting)
 
         // Load + shuffle facts -> no repeat
-        factsList = loadFacts(GameSession.category).shuffled().toMutableList()
+        factsList = loadFacts(GameSession.category)
+        factsList = ensureBalancedFacts(factsList, GameSession.totalRounds).shuffled().toMutableList()
         currentIndex = 0
 
         tvCategory.text = GameSession.category.replace("_", " ").uppercase()
@@ -39,6 +40,9 @@ class FactsActivity : AppCompatActivity() {
 
         val currentFact = getNextFact()
         tvStatement.text = currentFact.statement
+
+        // Log the answer for debugging
+        android.util.Log.d("FactsActivity", "Fact ${GameSession.currRound}: Answer = ${if(currentFact.answer) "TRUTH" else "LIE"}")
 
         btnStartVoting.setOnFocusChangeListener { v, hasFocus ->
             v.animate()
@@ -62,6 +66,60 @@ class FactsActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
+
+    private fun ensureBalancedFacts(facts: MutableList<Facts>, totalRounds: Int): MutableList<Facts> {
+        if (facts.isEmpty()) return facts
+
+        val truths = facts.filter { it.answer }.toMutableList()
+        val lies = facts.filter { !it.answer }.toMutableList()
+
+        android.util.Log.d("FactsActivity", "Original - Truths: ${truths.size}, Lies: ${lies.size}")
+
+        // If we have no lies at all, we need to generate some
+        if (lies.isEmpty()) {
+            android.util.Log.w("FactsActivity", "No lies found in database! Converting some truths to lies for balance.")
+            return generateMixedFacts(facts, totalRounds)
+        }
+
+        // If we have very few lies, duplicate them
+        val requiredLies = (totalRounds / 2) + (totalRounds % 2)
+        val requiredTruths = totalRounds / 2
+
+        val balancedList = mutableListOf<Facts>()
+
+        // Add truths (with repetition if needed)
+        for (i in 0 until requiredTruths) {
+            balancedList.add(truths[i % truths.size])
+        }
+
+        // Add lies (with repetition if needed)
+        for (i in 0 until requiredLies) {
+            balancedList.add(lies[i % lies.size])
+        }
+
+        android.util.Log.d("FactsActivity", "Balanced - Truths: $requiredTruths, Lies: $requiredLies")
+        return balancedList
+    }
+    private fun generateMixedFacts(facts: MutableList<Facts>, totalRounds: Int): MutableList<Facts> {
+        val mixedFacts = mutableListOf<Facts>()
+        val halfRounds = totalRounds / 2
+
+        for (i in 0 until totalRounds) {
+            val originalFact = facts[i % facts.size]
+            // Make half of them lies (every other round starting from round 1)
+            val isLie = if (i < halfRounds) i % 2 == 1 else (i + halfRounds) % 2 == 1
+
+            val mixedFact = Facts(
+                id = "${originalFact.id}_${if(isLie) "lie" else "truth"}",
+                statement = originalFact.statement,
+                answer = !isLie // If it's a lie, answer = false
+            )
+            mixedFacts.add(mixedFact)
+        }
+
+        return mixedFacts
+    }
+
 
     //  facts from JSON
     private fun loadFacts(category: String): MutableList<Facts> {

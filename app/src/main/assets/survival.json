@@ -1,0 +1,1112 @@
+{
+  "category": "survival",
+  "version": 1,
+  "total": 221,
+  "questions": [
+    {
+      "id": "mf_001",
+      "statement": "Humans need water to survive",
+      "answer": true
+    },
+    {
+      "id": "mf_002",
+      "statement": "You can survive weeks without water",
+      "answer": false
+    },
+    {
+      "id": "mf_003",
+      "statement": "Humans can survive longer without food than water",
+      "answer": true
+    },
+    {
+      "id": "mf_004",
+      "statement": "Fire can provide warmth and protection",
+      "answer": true
+    },
+    {
+      "id": "mf_005",
+      "statement": "You should drink seawater if thirsty",
+      "answer": false
+    },
+    {
+      "id": "mf_006",
+      "statement": "Shelter protects from harsh weather",
+      "answer": true
+    },
+    {
+      "id": "mf_007",
+      "statement": "You can survive without air for hours",
+      "answer": false
+    },
+    {
+      "id": "mf_008",
+      "statement": "Boiling water can make it safer to drink",
+      "answer": true
+    },
+    {
+      "id": "mf_009",
+      "statement": "You should eat unknown plants without checking",
+      "answer": false
+    },
+    {
+      "id": "mf_010",
+      "statement": "Finding clean water is a survival priority",
+      "answer": true
+    },
+    {
+      "id": "mf_011",
+      "statement": "The sun can help you navigate direction",
+      "answer": true
+    },
+    {
+      "id": "mf_012",
+      "statement": "You should run aimlessly if lost",
+      "answer": false
+    },
+    {
+      "id": "mf_013",
+      "statement": "Staying calm improves survival chances",
+      "answer": true
+    },
+    {
+      "id": "mf_014",
+      "statement": "Panic helps in survival situations",
+      "answer": false
+    },
+    {
+      "id": "mf_015",
+      "statement": "Clothing helps regulate body temperature",
+      "answer": true
+    },
+    {
+      "id": "mf_016",
+      "statement": "You can ignore weather conditions safely",
+      "answer": false
+    },
+    {
+      "id": "mf_017",
+      "statement": "Fire can be used to cook food",
+      "answer": true
+    },
+    {
+      "id": "mf_018",
+      "statement": "Raw meat is always safe to eat",
+      "answer": false
+    },
+    {
+      "id": "mf_019",
+      "statement": "Signaling for help can improve rescue chances",
+      "answer": true
+    },
+    {
+      "id": "mf_020",
+      "statement": "You should hide from rescuers",
+      "answer": false
+    },
+    {
+      "id": "mf_021",
+      "statement": "First aid knowledge is useful in emergencies",
+      "answer": true
+    },
+    {
+      "id": "mf_022",
+      "statement": "Injuries can be ignored safely",
+      "answer": false
+    },
+    {
+      "id": "mf_023",
+      "statement": "You can use landmarks for navigation",
+      "answer": true
+    },
+    {
+      "id": "mf_024",
+      "statement": "Getting lost has no risks",
+      "answer": false
+    },
+    {
+      "id": "mf_025",
+      "statement": "Building a shelter can protect from rain",
+      "answer": true
+    },
+    {
+      "id": "mf_026",
+      "statement": "Exposure to extreme cold can be dangerous",
+      "answer": true
+    },
+    {
+      "id": "mf_027",
+      "statement": "Extreme heat cannot harm you",
+      "answer": false
+    },
+    {
+      "id": "mf_028",
+      "statement": "You should ration food in survival situations",
+      "answer": true
+    },
+    {
+      "id": "mf_029",
+      "statement": "Eating everything at once is best",
+      "answer": false
+    },
+    {
+      "id": "mf_030",
+      "statement": "You can collect rainwater for drinking",
+      "answer": true
+    },
+    {
+      "id": "mf_031",
+      "statement": "All water sources are safe to drink",
+      "answer": false
+    },
+    {
+      "id": "mf_032",
+      "statement": "You should stay visible for rescue teams",
+      "answer": true
+    },
+    {
+      "id": "mf_033",
+      "statement": "Hiding improves rescue chances",
+      "answer": false
+    },
+    {
+      "id": "mf_034",
+      "statement": "Energy conservation is important for survival",
+      "answer": true
+    },
+    {
+      "id": "mf_035",
+      "statement": "Running constantly saves energy",
+      "answer": false
+    },
+    {
+      "id": "mf_036",
+      "statement": "You can use fire to signal for help",
+      "answer": true
+    },
+    {
+      "id": "mf_037",
+      "statement": "Smoke signals are useless",
+      "answer": false
+    },
+    {
+      "id": "mf_038",
+      "statement": "Knowing your environment helps survival",
+      "answer": true
+    },
+    {
+      "id": "mf_039",
+      "statement": "Environment does not matter",
+      "answer": false
+    },
+    {
+      "id": "mf_040",
+      "statement": "You should avoid dangerous animals",
+      "answer": true
+    },
+    {
+      "id": "mf_041",
+      "statement": "Approaching wild animals is safe",
+      "answer": false
+    },
+    {
+      "id": "mf_042",
+      "statement": "You can use tools for survival",
+      "answer": true
+    },
+    {
+      "id": "mf_043",
+      "statement": "Tools are not useful",
+      "answer": false
+    },
+    {
+      "id": "mf_044",
+      "statement": "You should protect yourself from rain",
+      "answer": true
+    },
+    {
+      "id": "mf_045",
+      "statement": "Getting wet has no risks",
+      "answer": false
+    },
+    {
+      "id": "mf_046",
+      "statement": "Fire provides light in darkness",
+      "answer": true
+    },
+    {
+      "id": "mf_047",
+      "statement": "Darkness has no impact",
+      "answer": false
+    },
+    {
+      "id": "mf_048",
+      "statement": "You should think before acting in emergencies",
+      "answer": true
+    },
+    {
+      "id": "mf_049",
+      "statement": "Acting without thinking is best",
+      "answer": false
+    },
+    {
+      "id": "mf_050",
+      "statement": "You can use stars for navigation",
+      "answer": true
+    },
+    {
+      "id": "mf_051",
+      "statement": "Stars cannot help navigation",
+      "answer": false
+    },
+    {
+      "id": "mf_052",
+      "statement": "You should stay hydrated",
+      "answer": true
+    },
+    {
+      "id": "mf_053",
+      "statement": "Hydration is not important",
+      "answer": false
+    },
+    {
+      "id": "mf_054",
+      "statement": "You can use clothing as insulation",
+      "answer": true
+    },
+    {
+      "id": "mf_055",
+      "statement": "Clothing has no survival value",
+      "answer": false
+    },
+    {
+      "id": "mf_056",
+      "statement": "You should stay in one place if lost sometimes",
+      "answer": true
+    },
+    {
+      "id": "mf_057",
+      "statement": "Always keep moving when lost",
+      "answer": false
+    },
+    {
+      "id": "mf_058",
+      "statement": "You can mark your path to avoid getting lost",
+      "answer": true
+    },
+    {
+      "id": "mf_059",
+      "statement": "Marking paths is unnecessary",
+      "answer": false
+    },
+    {
+      "id": "mf_060",
+      "statement": "You should avoid contaminated water",
+      "answer": true
+    },
+    {
+      "id": "mf_061",
+      "statement": "All water is safe",
+      "answer": false
+    },
+    {
+      "id": "mf_062",
+      "statement": "You can use fire to scare animals",
+      "answer": true
+    },
+    {
+      "id": "mf_063",
+      "statement": "Animals are not afraid of fire",
+      "answer": false
+    },
+    {
+      "id": "mf_064",
+      "statement": "You should conserve energy",
+      "answer": true
+    },
+    {
+      "id": "mf_065",
+      "statement": "Using all energy quickly is best",
+      "answer": false
+    },
+    {
+      "id": "mf_066",
+      "statement": "You can build tools from natural materials",
+      "answer": true
+    },
+    {
+      "id": "mf_067",
+      "statement": "Natural materials are useless",
+      "answer": false
+    },
+    {
+      "id": "mf_068",
+      "statement": "You should prioritize safety",
+      "answer": true
+    },
+    {
+      "id": "mf_069",
+      "statement": "Safety is not important",
+      "answer": false
+    },
+    {
+      "id": "mf_070",
+      "statement": "You can use signals to communicate for help",
+      "answer": true
+    },
+    {
+      "id": "mf_071",
+      "statement": "Communication is unnecessary",
+      "answer": false
+    },
+    {
+      "id": "mf_072",
+      "statement": "You should be aware of surroundings",
+      "answer": true
+    },
+    {
+      "id": "mf_073",
+      "statement": "Awareness is not needed",
+      "answer": false
+    },
+    {
+      "id": "mf_074",
+      "statement": "You can survive longer with planning",
+      "answer": true
+    },
+    {
+      "id": "mf_075",
+      "statement": "Planning does not help survival",
+      "answer": false
+    },
+    {
+      "id": "mf_076",
+      "statement": "You should avoid risky decisions",
+      "answer": true
+    },
+    {
+      "id": "mf_077",
+      "statement": "Risky decisions improve survival",
+      "answer": false
+    },
+    {
+      "id": "mf_078",
+      "statement": "You can adapt to different environments",
+      "answer": true
+    },
+    {
+      "id": "mf_079",
+      "statement": "Adaptation is impossible",
+      "answer": false
+    },
+    {
+      "id": "mf_080",
+      "statement": "You should look for shade in extreme heat",
+      "answer": true
+    },
+    {
+      "id": "mf_081",
+      "statement": "Staying in direct sun is safest in heat",
+      "answer": false
+    },
+    {
+      "id": "mf_082",
+      "statement": "Layered clothing helps in cold weather",
+      "answer": true
+    },
+    {
+      "id": "mf_083",
+      "statement": "Cold weather has no impact on the body",
+      "answer": false
+    },
+    {
+      "id": "mf_084",
+      "statement": "You should keep wounds clean to avoid infection",
+      "answer": true
+    },
+    {
+      "id": "mf_085",
+      "statement": "Dirty wounds heal faster",
+      "answer": false
+    },
+    {
+      "id": "mf_086",
+      "statement": "You can use leaves or cloth as temporary bandages",
+      "answer": true
+    },
+    {
+      "id": "mf_087",
+      "statement": "Bleeding should be ignored",
+      "answer": false
+    },
+    {
+      "id": "mf_088",
+      "statement": "You should signal rescuers with bright colors",
+      "answer": true
+    },
+    {
+      "id": "mf_089",
+      "statement": "Staying hidden helps rescuers find you",
+      "answer": false
+    },
+    {
+      "id": "mf_090",
+      "statement": "You can use mirrors or reflective items for signaling",
+      "answer": true
+    },
+    {
+      "id": "mf_091",
+      "statement": "Reflection cannot be used to signal",
+      "answer": false
+    },
+    {
+      "id": "mf_092",
+      "statement": "You should stay near water sources when possible",
+      "answer": true
+    },
+    {
+      "id": "mf_093",
+      "statement": "Water sources are always dangerous to approach",
+      "answer": false
+    },
+    {
+      "id": "mf_094",
+      "statement": "You should avoid eating unknown berries",
+      "answer": true
+    },
+    {
+      "id": "mf_095",
+      "statement": "All berries are safe to eat",
+      "answer": false
+    },
+    {
+      "id": "mf_096",
+      "statement": "You can build shelter using branches and leaves",
+      "answer": true
+    },
+    {
+      "id": "mf_097",
+      "statement": "Shelters are not necessary outdoors",
+      "answer": false
+    },
+    {
+      "id": "mf_098",
+      "statement": "You should stay dry in cold environments",
+      "answer": true
+    },
+    {
+      "id": "mf_099",
+      "statement": "Being wet helps you stay warm",
+      "answer": false
+    },
+    {
+      "id": "mf_100",
+      "statement": "You can use fire for cooking and warmth",
+      "answer": true
+    },
+    {
+      "id": "mf_101",
+      "statement": "Fire has no survival benefits",
+      "answer": false
+    },
+    {
+      "id": "mf_102",
+      "statement": "You should ration your supplies carefully",
+      "answer": true
+    },
+    {
+      "id": "mf_103",
+      "statement": "Using all supplies quickly is better",
+      "answer": false
+    },
+    {
+      "id": "mf_104",
+      "statement": "You can use sound to attract attention",
+      "answer": true
+    },
+    {
+      "id": "mf_105",
+      "statement": "Noise reduces chances of rescue",
+      "answer": false
+    },
+    {
+      "id": "mf_106",
+      "statement": "You should stay calm and think clearly",
+      "answer": true
+    },
+    {
+      "id": "mf_107",
+      "statement": "Panic improves decision-making",
+      "answer": false
+    },
+    {
+      "id": "mf_108",
+      "statement": "You can use shadows to estimate direction",
+      "answer": true
+    },
+    {
+      "id": "mf_109",
+      "statement": "Direction cannot be determined without tools",
+      "answer": false
+    },
+    {
+      "id": "mf_110",
+      "statement": "You should protect yourself from wind exposure",
+      "answer": true
+    },
+    {
+      "id": "mf_111",
+      "statement": "Wind has no effect on survival",
+      "answer": false
+    },
+    {
+      "id": "mf_112",
+      "statement": "You can conserve energy by resting",
+      "answer": true
+    },
+    {
+      "id": "mf_113",
+      "statement": "Constant movement saves energy",
+      "answer": false
+    },
+    {
+      "id": "mf_114",
+      "statement": "You should avoid dangerous terrain",
+      "answer": true
+    },
+    {
+      "id": "mf_115",
+      "statement": "All terrain is equally safe",
+      "answer": false
+    },
+    {
+      "id": "mf_116",
+      "statement": "You can use a whistle to signal for help",
+      "answer": true
+    },
+    {
+      "id": "mf_117",
+      "statement": "Whistles are useless in emergencies",
+      "answer": false
+    },
+    {
+      "id": "mf_118",
+      "statement": "You should plan movements carefully",
+      "answer": true
+    },
+    {
+      "id": "mf_119",
+      "statement": "Moving randomly is best",
+      "answer": false
+    },
+    {
+      "id": "mf_120",
+      "statement": "You can use natural cover for shelter",
+      "answer": true
+    },
+    {
+      "id": "mf_121",
+      "statement": "Shelter must always be man-made",
+      "answer": false
+    },
+    {
+      "id": "mf_122",
+      "statement": "You should stay hydrated even in cold weather",
+      "answer": true
+    },
+    {
+      "id": "mf_123",
+      "statement": "Hydration is only important in heat",
+      "answer": false
+    },
+    {
+      "id": "mf_124",
+      "statement": "You can collect dew as a water source",
+      "answer": true
+    },
+    {
+      "id": "mf_125",
+      "statement": "Dew cannot be used for water",
+      "answer": false
+    },
+    {
+      "id": "mf_126",
+      "statement": "You should stay visible for rescue teams",
+      "answer": true
+    },
+    {
+      "id": "mf_127",
+      "statement": "Visibility reduces rescue chances",
+      "answer": false
+    },
+    {
+      "id": "mf_128",
+      "statement": "You can create signals on the ground for aircraft",
+      "answer": true
+    },
+    {
+      "id": "mf_129",
+      "statement": "Ground signals are useless",
+      "answer": false
+    },
+    {
+      "id": "mf_130",
+      "statement": "You should avoid overexertion",
+      "answer": true
+    },
+    {
+      "id": "mf_131",
+      "statement": "Using maximum effort constantly is best",
+      "answer": false
+    },
+    {
+      "id": "mf_132",
+      "statement": "You can use rocks to mark your path",
+      "answer": true
+    },
+    {
+      "id": "mf_133",
+      "statement": "Marking paths is pointless",
+      "answer": false
+    },
+    {
+      "id": "mf_134",
+      "statement": "You should keep tools organized",
+      "answer": true
+    },
+    {
+      "id": "mf_135",
+      "statement": "Organization has no value in survival",
+      "answer": false
+    },
+    {
+      "id": "mf_136",
+      "statement": "You can adapt to changing weather conditions",
+      "answer": true
+    },
+    {
+      "id": "mf_137",
+      "statement": "Weather does not change",
+      "answer": false
+    },
+    {
+      "id": "mf_138",
+      "statement": "You should stay alert at all times",
+      "answer": true
+    },
+    {
+      "id": "mf_139",
+      "statement": "Awareness is unnecessary",
+      "answer": false
+    },
+    {
+      "id": "mf_140",
+      "statement": "You can improve chances by staying positive",
+      "answer": true
+    },
+    {
+      "id": "mf_141",
+      "statement": "Attitude has no effect on survival",
+      "answer": false
+    },
+    {
+      "id": "mf_142",
+      "statement": "You should avoid contaminated food",
+      "answer": true
+    },
+    {
+      "id": "mf_143",
+      "statement": "All food is safe to eat",
+      "answer": false
+    },
+    {
+      "id": "mf_144",
+      "statement": "You can use fire for signaling at night",
+      "answer": true
+    },
+    {
+      "id": "mf_145",
+      "statement": "Fire cannot be seen at night",
+      "answer": false
+    },
+    {
+      "id": "mf_146",
+      "statement": "You should understand your surroundings",
+      "answer": true
+    },
+    {
+      "id": "mf_147",
+      "statement": "Surroundings do not matter",
+      "answer": false
+    },
+    {
+      "id": "mf_148",
+      "statement": "You can survive longer with preparation",
+      "answer": true
+    },
+    {
+      "id": "mf_149",
+      "statement": "Preparation has no benefit",
+      "answer": false
+    },
+    {
+      "id": "mf_150",
+      "statement": "You should make careful decisions",
+      "answer": true
+    },
+    {
+      "id": "mf_151",
+      "statement": "Quick random decisions are better",
+      "answer": false
+    },
+    {
+      "id": "mf_152",
+      "statement": "You can learn survival skills over time",
+      "answer": true
+    },
+    {
+      "id": "mf_153",
+      "statement": "Survival skills cannot be learned",
+      "answer": false
+    },
+    {
+      "id": "mf_154",
+      "statement": "You should prioritize basic needs first",
+      "answer": true
+    },
+    {
+      "id": "mf_155",
+      "statement": "Basic needs are not important",
+      "answer": false
+    },
+    {
+      "id": "mf_156",
+      "statement": "You can increase chances by thinking logically",
+      "answer": true
+    },
+    {
+      "id": "mf_157",
+      "statement": "Logic does not help in survival",
+      "answer": false
+    },
+    {
+      "id": "mf_158",
+      "statement": "You should focus on water shelter and food in survival",
+      "answer": true
+    },
+    {
+      "id": "mf_159",
+      "statement": "Food is always the first priority over water",
+      "answer": false
+    },
+    {
+      "id": "mf_160",
+      "statement": "You can use clothing to protect from sunburn",
+      "answer": true
+    },
+    {
+      "id": "mf_161",
+      "statement": "Sunburn has no effect on health",
+      "answer": false
+    },
+    {
+      "id": "mf_162",
+      "statement": "You should move during cooler parts of the day in heat",
+      "answer": true
+    },
+    {
+      "id": "mf_163",
+      "statement": "Midday heat is the best time to travel",
+      "answer": false
+    },
+    {
+      "id": "mf_164",
+      "statement": "You can use natural shade to stay cool",
+      "answer": true
+    },
+    {
+      "id": "mf_165",
+      "statement": "Shade has no effect on body temperature",
+      "answer": false
+    },
+    {
+      "id": "mf_166",
+      "statement": "You should insulate yourself from cold ground",
+      "answer": true
+    },
+    {
+      "id": "mf_167",
+      "statement": "Cold ground has no impact on body heat",
+      "answer": false
+    },
+    {
+      "id": "mf_168",
+      "statement": "You can build fires with dry materials",
+      "answer": true
+    },
+    {
+      "id": "mf_169",
+      "statement": "Wet materials burn easily",
+      "answer": false
+    },
+    {
+      "id": "mf_170",
+      "statement": "You should protect food from animals",
+      "answer": true
+    },
+    {
+      "id": "mf_171",
+      "statement": "Animals will ignore your food",
+      "answer": false
+    },
+    {
+      "id": "mf_172",
+      "statement": "You can use elevated areas for visibility",
+      "answer": true
+    },
+    {
+      "id": "mf_173",
+      "statement": "Low areas are always best for visibility",
+      "answer": false
+    },
+    {
+      "id": "mf_174",
+      "statement": "You should listen for sounds of water or people",
+      "answer": true
+    },
+    {
+      "id": "mf_175",
+      "statement": "Sounds are not useful for navigation",
+      "answer": false
+    },
+    {
+      "id": "mf_176",
+      "statement": "You can stay safe by avoiding risky shortcuts",
+      "answer": true
+    },
+    {
+      "id": "mf_177",
+      "statement": "Shortcuts are always safe",
+      "answer": false
+    },
+    {
+      "id": "mf_178",
+      "statement": "You should stay dry to avoid hypothermia",
+      "answer": true
+    },
+    {
+      "id": "mf_179",
+      "statement": "Being wet has no effect in cold weather",
+      "answer": false
+    },
+    {
+      "id": "mf_180",
+      "statement": "You can use natural resources wisely",
+      "answer": true
+    },
+    {
+      "id": "mf_181",
+      "statement": "Natural resources should be wasted",
+      "answer": false
+    },
+    {
+      "id": "mf_182",
+      "statement": "You should monitor your energy levels",
+      "answer": true
+    },
+    {
+      "id": "mf_183",
+      "statement": "Energy levels do not matter",
+      "answer": false
+    },
+    {
+      "id": "mf_184",
+      "statement": "You can improve survival by staying organized",
+      "answer": true
+    },
+    {
+      "id": "mf_185",
+      "statement": "Organization wastes time",
+      "answer": false
+    },
+    {
+      "id": "mf_186",
+      "statement": "You should stay patient in emergencies",
+      "answer": true
+    },
+    {
+      "id": "mf_187",
+      "statement": "Impatience improves survival",
+      "answer": false
+    },
+    {
+      "id": "mf_188",
+      "statement": "You can use sunlight direction to orient yourself",
+      "answer": true
+    },
+    {
+      "id": "mf_189",
+      "statement": "Sunlight gives no directional clues",
+      "answer": false
+    },
+    {
+      "id": "mf_190",
+      "statement": "You should check surroundings before moving",
+      "answer": true
+    },
+    {
+      "id": "mf_191",
+      "statement": "Moving without checking is safer",
+      "answer": false
+    },
+    {
+      "id": "mf_192",
+      "statement": "You can use signals like SOS for rescue",
+      "answer": true
+    },
+    {
+      "id": "mf_193",
+      "statement": "SOS signals are not recognized",
+      "answer": false
+    },
+    {
+      "id": "mf_194",
+      "statement": "You should stay where rescuers can find you",
+      "answer": true
+    },
+    {
+      "id": "mf_195",
+      "statement": "Moving constantly helps rescuers locate you",
+      "answer": false
+    },
+    {
+      "id": "mf_196",
+      "statement": "You can use tools to improve survival chances",
+      "answer": true
+    },
+    {
+      "id": "mf_197",
+      "statement": "Tools have no value in emergencies",
+      "answer": false
+    },
+    {
+      "id": "mf_198",
+      "statement": "You should avoid dehydration at all costs",
+      "answer": true
+    },
+    {
+      "id": "mf_199",
+      "statement": "Dehydration is not serious",
+      "answer": false
+    },
+    {
+      "id": "mf_200",
+      "statement": "You can collect and store water",
+      "answer": true
+    },
+    {
+      "id": "mf_201",
+      "statement": "Water storage is unnecessary",
+      "answer": false
+    },
+    {
+      "id": "mf_202",
+      "statement": "You should maintain body temperature",
+      "answer": true
+    },
+    {
+      "id": "mf_203",
+      "statement": "Body temperature does not matter",
+      "answer": false
+    },
+    {
+      "id": "mf_204",
+      "statement": "You can use natural landmarks to stay oriented",
+      "answer": true
+    },
+    {
+      "id": "mf_205",
+      "statement": "Landmarks are not useful",
+      "answer": false
+    },
+    {
+      "id": "mf_206",
+      "statement": "You should stay focused on survival priorities",
+      "answer": true
+    },
+    {
+      "id": "mf_207",
+      "statement": "Priorities are not needed",
+      "answer": false
+    },
+    {
+      "id": "mf_208",
+      "statement": "You can improve chances with knowledge and preparation",
+      "answer": true
+    },
+    {
+      "id": "mf_209",
+      "statement": "Knowledge does not help survival",
+      "answer": false
+    },
+    {
+      "id": "mf_210",
+      "statement": "You should remain calm under pressure",
+      "answer": true
+    },
+    {
+      "id": "mf_211",
+      "statement": "Pressure improves panic decisions",
+      "answer": false
+    },
+    {
+      "id": "mf_212",
+      "statement": "You can survive longer by conserving energy and resources",
+      "answer": true
+    },
+    {
+      "id": "mf_213",
+      "statement": "Using all resources quickly improves survival",
+      "answer": false
+    },
+    {
+      "id": "mf_214",
+      "statement": "You should use common sense in survival situations",
+      "answer": true
+    },
+    {
+      "id": "mf_215",
+      "statement": "Common sense is not helpful",
+      "answer": false
+    },
+    {
+      "id": "mf_216",
+      "statement": "You can improve outcomes by thinking ahead",
+      "answer": true
+    },
+    {
+      "id": "mf_217",
+      "statement": "Thinking ahead is unnecessary",
+      "answer": false
+    },
+    {
+      "id": "mf_218",
+      "statement": "You should stay aware of weather changes",
+      "answer": true
+    },
+    {
+      "id": "mf_219",
+      "statement": "Weather never changes suddenly",
+      "answer": false
+    },
+    {
+      "id": "mf_220",
+      "statement": "You can increase survival chances with proper decisions",
+      "answer": true
+    },
+    {
+      "id": "mf_221",
+      "statement": "Decisions do not matter in survival",
+      "answer": false
+    }
+  ]
+}

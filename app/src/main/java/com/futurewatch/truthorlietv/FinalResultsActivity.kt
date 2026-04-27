@@ -84,23 +84,34 @@ class FinalResultsActivity : AppCompatActivity() {
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             )
-            row.setPadding(0, 20, 0, 20)
+            row.setPadding(0, 16, 0, 16)
 
             val left = TextView(this)
             left.text = "#${index + 1}  ${player.name}"
-            left.textSize = 20f
+            left.textSize = 18f
             left.setTextColor(
                 if (index == 0) Color.parseColor("#FFA500")
                 else Color.parseColor("#AAAAAA")
             )
-            left.layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+            left.layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            val spacer = android.view.View(this)
+            spacer.layoutParams = LinearLayout.LayoutParams(
+                0,
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                1f
+            )
+
 
             val right = TextView(this)
             right.text = "${player.score}"
-            right.textSize = 20f
+            right.textSize = 18f
             right.setTextColor(Color.parseColor("#7F3FFF"))
 
             row.addView(left)
+            row.addView(spacer)
             row.addView(right)
 
             leaderboardContainer.addView(row)
@@ -127,9 +138,9 @@ class FinalResultsActivity : AppCompatActivity() {
     private fun startContinuousConfetti() {
         konfettiView.post {
             val party = Party(
-                speed = 2f,
-                maxSpeed = 8f,
-                damping = 0.9f,
+                speed = 1.5f,
+                maxSpeed = 5f,
+                damping = 0.95f,
                 spread = 360,
                 colors = listOf(
                     Color.YELLOW, Color.GREEN, Color.MAGENTA, Color.BLUE, Color.CYAN, Color.RED,
@@ -137,7 +148,7 @@ class FinalResultsActivity : AppCompatActivity() {
                     Color.parseColor("#00CED1"), Color.parseColor("#9370DB")
                 ),
                 size = listOf(Size(12), Size(15), Size(18), Size(20)),
-                emitter = Emitter(duration = 15000).perSecond(200),
+                emitter = Emitter(duration = 15000).perSecond(20),
                 position = Position.Relative(0.0, 0.0).between(Position.Relative(1.0, 0.0))
             )
             

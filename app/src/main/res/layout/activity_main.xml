@@ -114,8 +114,8 @@
         <!-- Start Game Button -->
         <Button
             android:id="@+id/btnStart"
-            android:layout_width="260dp"
-            android:layout_height="72dp"
+            android:layout_width="240dp"
+            android:layout_height="65dp"
             android:background="@drawable/btn_main"
             app:backgroundTint="@null"
             app:cornerRadius="18dp"
@@ -134,8 +134,8 @@
         <!-- How to Play -->
         <Button
             android:id="@+id/btnHowToPlay"
-            android:layout_width="260dp"
-            android:layout_height="72dp"
+            android:layout_width="240dp"
+            android:layout_height="65dp"
             android:layout_marginTop="16dp"
             android:textStyle="bold"
             android:fontFamily="@font/plus_jakarta_sans"
@@ -154,8 +154,8 @@
         <!-- Leaderboard -->
         <Button
             android:id="@+id/btnLeaderboard"
-            android:layout_width="260dp"
-            android:layout_height="72dp"
+            android:layout_width="240dp"
+            android:layout_height="65dp"
             android:text="Leaderboard"
             android:textStyle="bold"
             android:fontFamily="@font/plus_jakarta_sans"
@@ -174,15 +174,15 @@
         <!-- Settings -->
         <Button
             android:id="@+id/btnSettings"
-            android:layout_width="260dp"
-            android:layout_height="72dp"
+            android:layout_width="230dp"
+            android:layout_height="63dp"
             android:text="Settings"
             android:textStyle="bold"
             android:fontFamily="@font/plus_jakarta_sans"
             android:textSize="20sp"
             android:textColor="#9CA3AF"
             android:layout_marginTop="16dp"
-            android:background="@drawable/btn_ghost"
+            android:background="@drawable/btn_secondary"
             app:backgroundTint="@null"
             app:cornerRadius="18dp"
             android:nextFocusUp="@id/btnLeaderboard"

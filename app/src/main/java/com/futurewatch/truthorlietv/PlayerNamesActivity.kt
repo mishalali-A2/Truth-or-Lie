@@ -3,13 +3,13 @@ package com.futurewatch.truthorlietv
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.text.InputFilter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import android.text.InputFilter
 
 class PlayerNamesActivity : AppCompatActivity() {
 
@@ -53,7 +53,7 @@ class PlayerNamesActivity : AppCompatActivity() {
             }
 
             val input = EditText(this).apply {
-                hint = "Player $i"
+                hint = "Player $i (Optional)"
                 setTextColor(Color.WHITE)
                 setHintTextColor(Color.parseColor("#888888"))
                 textSize = 18f
@@ -71,7 +71,7 @@ class PlayerNamesActivity : AppCompatActivity() {
                 isFocusable = true
                 isFocusableInTouchMode = true
 
-                //12 char max for name
+                //  char limit filter (10-12 characters) - only if user enters a name
                 filters = arrayOf(InputFilter.LengthFilter(12))
 
                 setOnFocusChangeListener { v, hasFocus ->
@@ -83,12 +83,19 @@ class PlayerNamesActivity : AppCompatActivity() {
                         v.setBackgroundResource(R.drawable.text_input)
                     }
                 }
-    //text watcher to enforce filters
+
+                // Add text watcher to enforce character limit when user starts typing
                 addTextChangedListener(object : android.text.TextWatcher {
                     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
                     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
                     override fun afterTextChanged(s: android.text.Editable?) {
-                        if (s != null && s.length in 10..12) {
+                        if (s != null && s.isNotEmpty()) {
+                            if (s.length in 10..12) {
+                                error = null
+                            } else if (s.length < 10 && s.length > 0) {
+                                error = "Name must be 10-12 characters if provided (current: ${s.length})"
+                            }
+                        } else {
                             error = null
                         }
                     }
@@ -101,42 +108,33 @@ class PlayerNamesActivity : AppCompatActivity() {
             container.addView(input, buttonIndex + (i - 1) * 2 + 1)
         }
 
-
         startBtn.setOnClickListener {
 
             GameSession.players.clear()
-            var hasError= false
 
             playerInputs.forEachIndexed { index, editText ->
 
                 val name = editText.text.toString().trim()
 
-                // fallback if no name
+                //default "Player X"
                 if (name.isEmpty()) {
-                    editText.error = "Enter name"
-                    editText.requestFocus()
-                    hasError = true
-                    return@setOnClickListener
-                }
-                //min 10
-                if (name.length < 10) {
-                    editText.error = "Name must be at least 10 characters (current: ${name.length})"
-                    editText.requestFocus()
-                    hasError = true
-                    return@forEachIndexed
-                }
-                //max 12
-                if (name.length > 12) {
-                    editText.error = "Name cannot exceed 12 characters"
-                    editText.requestFocus()
-                    hasError = true
+                    GameSession.players.add(Player("Player ${index + 1}"))
                     return@forEachIndexed
                 }
 
+                if (name.length < 10) {
+                    editText.error = "Name must be 10-12 characters if provided (current: ${name.length})"
+                    editText.requestFocus()
+                    return@setOnClickListener
+                }
+
+                if (name.length > 12) {
+                    editText.error = "Name cannot exceed 12 characters"
+                    editText.requestFocus()
+                    return@setOnClickListener
+                }
+
                 GameSession.players.add(Player(name))
-            }
-            if (hasError) {
-                return@setOnClickListener
             }
 
             GameSession.reset()

@@ -23,6 +23,12 @@ object GameSession {
         return players[currPlayerTurn % players.size]
     }
 
+    fun nextRound(): Boolean {
+        currRound++
+        currPlayerTurn = 0
+        return currRound <= totalRounds
+    }
+
     fun getActualRound(): Int {
         if (players.isEmpty()) return 1
         return (currPlayerTurn / players.size) + 1

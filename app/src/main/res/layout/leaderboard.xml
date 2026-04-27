@@ -6,102 +6,104 @@
     android:layout_height="match_parent"
     android:background="#0B0F1A">
 
-    <!-- Title Row -->
+    <!-- TITLE -->
     <LinearLayout
+
         android:id="@+id/titleRow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/messageContainer"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="40dp">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <ImageView
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:src="@drawable/trophy"
-            android:layout_marginEnd="12dp"/>
+            app:tint="#F59E0B"
+            android:layout_marginEnd="10dp"/>
 
         <TextView
             android:text="LEADERBOARD"
-            android:layout_height="match_parent"
             android:layout_width="wrap_content"
-            android:textColor="#D1D5DB"
-            android:textSize="40sp"
+            android:layout_height="wrap_content"
+            android:textColor="#E5E7EB"
+            android:textSize="34sp"
             android:textStyle="bold"/>
     </LinearLayout>
 
-    <!-- Leaderboard ScrollView -->
-    <ScrollView
-        android:id="@+id/leaderboardScroll"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="130dp"
-        android:layout_marginEnd="40dp"
-        android:layout_marginBottom="130dp"
-        android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@id/btnBack"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/titleRow">
-
-        <LinearLayout
-            android:id="@+id/leaderboardContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="8dp" />
-
-    </ScrollView>
-
+    <!-- EMPTY MESSAGE -->
     <LinearLayout
         android:id="@+id/messageContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/titleRow"
+        app:layout_constraintBottom_toTopOf="@id/btnBack"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:visibility="gone">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
             android:id="@+id/tvEmptyTitle"
-            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:text="No games played yet!"
             android:textColor="#9CA3AF"
             android:textSize="22sp"
-            android:layout_marginBottom="10dp"/>
+            android:layout_marginBottom="8dp"/>
 
         <TextView
             android:id="@+id/tvEmptySubtitle"
-            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
             android:text="Start a game to see scores here."
             android:textColor="#6B7280"
             android:textSize="16sp"/>
 
     </LinearLayout>
 
-    <!-- Back Button -->
+    <!-- BUTTON -->
     <Button
         android:id="@+id/btnBack"
         android:layout_width="260dp"
-        android:layout_height="65dp"
+        android:layout_height="60dp"
         android:text="Back to Menu"
-        android:textColor="#FFFFFF"
+        android:textAllCaps="false"
+        android:textColor="#D1D5DB"
         android:textSize="18sp"
-        android:background="@drawable/btn_secondary"
+        android:background="@drawable/text_input"
+        app:layout_constraintTop_toBottomOf="@id/messageContainer"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="40dp"
         android:focusable="true"
         android:focusableInTouchMode="true"/>
+
+    <!-- LEADERBOARD -->
+    <ScrollView
+        android:id="@+id/leaderboardScroll"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/titleRow"
+        app:layout_constraintBottom_toTopOf="@id/btnBack"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="40dp"
+        android:layout_marginVertical="20dp">
+
+        <LinearLayout
+            android:id="@+id/leaderboardContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"/>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -86,60 +86,67 @@
         android:layout_marginTop="80dp" />
 
     <!-- Truth / Lie bottom panels -->
+    <!-- Truth / Lie bottom panels -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="160dp"
         android:orientation="horizontal"
         android:layout_gravity="bottom">
 
+        <!-- TRUTH -->
         <FrameLayout
             android:id="@+id/frameTruth"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.5"
-            android:focusable="false">
+            android:layout_weight="1"
+            android:background="#123425">
 
+            <!-- Top glow line -->
             <View
-                android:id="@+id/barTruth"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#1B5E20" />
+                android:layout_height="3dp"
+                android:background="#00FFAA"
+                android:layout_gravity="top"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="TRUTH"
-                android:textColor="#00FF88"
-                android:textSize="22sp"
-                android:gravity="center"
+                android:textColor="#00FFAA"
+                android:textSize="24sp"
                 android:textStyle="bold"
-                android:focusable="false" />
-
+                android:gravity="center"/>
         </FrameLayout>
 
+        <!-- CENTER DIVIDER -->
+        <View
+            android:layout_width="6dp"
+            android:layout_height="match_parent"
+            android:background="#1A1A1A" />
+
+        <!-- LIE -->
         <FrameLayout
             android:id="@+id/frameLie"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.5"
-            android:focusable="false">
+            android:layout_weight="1"
+            android:background="#3B1A1F">
 
+            <!-- Top glow line -->
             <View
-                android:id="@+id/barLie"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#7F1D1D" />
+                android:layout_height="3dp"
+                android:background="#FF4444"
+                android:layout_gravity="top"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="LIE"
                 android:textColor="#FF4444"
-                android:textSize="22sp"
-                android:gravity="center"
+                android:textSize="24sp"
                 android:textStyle="bold"
-                android:focusable="false" />
-
+                android:gravity="center"/>
         </FrameLayout>
 
     </LinearLayout>
