@@ -24,6 +24,7 @@ class SettingsActivity : AppCompatActivity(), InfaticaConsentDialog.ConsentListe
     private lateinit var backBtn: Button
     private lateinit var musicChips: List<View>
     private var selectedAppPackage: String? = null
+    private lateinit var musicContainer: LinearLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +34,9 @@ class SettingsActivity : AppCompatActivity(), InfaticaConsentDialog.ConsentListe
 
         switchMusic = findViewById(R.id.switchMusic)
         backBtn = findViewById(R.id.btnBack)
+        musicContainer = findViewById(R.id.musicContainer)
+        musicContainer.visibility =
+            if (switchMusic.isChecked) View.VISIBLE else View.GONE
 
 
         musicChips = listOf(
@@ -46,6 +50,22 @@ class SettingsActivity : AppCompatActivity(), InfaticaConsentDialog.ConsentListe
         switchMusic.isChecked = MusicManager.isEnabled()
         switchMusic.setOnCheckedChangeListener { _, isChecked ->
             MusicManager.setEnabled(isChecked)
+
+            // Show / Hide with animation (optional but recommended)
+            if (isChecked) {
+                musicContainer.visibility = View.VISIBLE
+                musicContainer.alpha = 0f
+                musicContainer.animate().alpha(1f).setDuration(200).start()
+            } else {
+                musicContainer.animate()
+                    .alpha(0f)
+                    .setDuration(200)
+                    .withEndAction {
+                        musicContainer.visibility = View.GONE
+                    }
+                    .start()
+            }
+
             val message = if (isChecked) "Music enabled" else "Music disabled"
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
         }
@@ -180,11 +200,8 @@ class SettingsActivity : AppCompatActivity(), InfaticaConsentDialog.ConsentListe
                     switchNetwork?.isChecked = false
                     return@setOnCheckedChangeListener
                 }
-
-                // Show consent dialog when enabling, regardless of previous state to ensure clarity
                 showInfaticaConsentDialog()
 
-                // Revert toggle visually until consent is confirmed via dialog
                 switchNetwork.post { switchNetwork.isChecked = isInfaticaEnabled }
             } else {
                 disableInfatica()

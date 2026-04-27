@@ -30,8 +30,7 @@
                 android:text="PICK A CATEGORY"
                 android:textColor="#E5E7EB"
                 android:textSize="36sp"
-                android:textStyle="bold"
-                android:letterSpacing="0.05"/>
+                android:textStyle="bold"/>
 
             <!-- Grid -->
             <GridLayout

@@ -18,10 +18,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="PLAYER NAMES"
+            android:text="PLAYERS"
             android:textSize="42sp"
             android:textStyle="bold"
-            android:letterSpacing="0.08"
             android:textColor="@android:color/white"
             android:layout_marginBottom="40dp"/>
 

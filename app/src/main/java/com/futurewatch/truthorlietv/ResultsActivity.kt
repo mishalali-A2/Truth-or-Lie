@@ -40,19 +40,40 @@ class ResultsActivity : AppCompatActivity() {
             tvRound.text = "ROUND $round/${GameSession.totalRounds}"
             btnNext.text = "Next Round"
         } else {
-            tvRound.text = "FINAL RESULTS"
-            btnNext.text = "Finish Game"
+            tvRound.text = ""
+            btnNext.text = "See Final Scores"
         }
 
         if (correctAnswer) {
             tvResult.text = "TRUTH"
-            tvResult.setTextColor(Color.parseColor("#00FF88"))
+            tvResult.setTextColor(Color.parseColor("#22C55E"))
+
+            tvResult.setShadowLayer(
+                60f,
+                0f,
+                0f,
+                Color.parseColor("#22C55E")
+            )
         } else {
             tvResult.text = "LIE"
-            tvResult.setTextColor(Color.parseColor("#FF4444"))
+            tvResult.setTextColor(Color.parseColor("#EF4444"))
+
+            tvResult.setShadowLayer(
+                60f,
+                0f,
+                0f,
+                Color.parseColor("#EF4444")
+            )
         }
 
         container.removeAllViews()
+
+        // Set container to wrap_content and center the players
+        container.layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+        container.gravity = Gravity.CENTER
 
         GameSession.players.forEach { player ->
 
@@ -61,14 +82,13 @@ class ResultsActivity : AppCompatActivity() {
             val playerLayout = LinearLayout(this).apply {
                 orientation = LinearLayout.VERTICAL
                 gravity = Gravity.CENTER
+                // Remove weight, use WRAP_CONTENT instead
                 layoutParams = LinearLayout.LayoutParams(
-                    0,
                     LinearLayout.LayoutParams.WRAP_CONTENT,
-                    1f
+                    LinearLayout.LayoutParams.WRAP_CONTENT
                 )
-                setPadding(8, 0, 8, 0)
+                setPadding(16, 0, 16, 0)  // Reduced padding between players
             }
-
 
             val icon = ImageView(this).apply {
 
@@ -78,17 +98,17 @@ class ResultsActivity : AppCompatActivity() {
                     setImageResource(R.drawable.wrong)
                 }
                 layoutParams = LinearLayout.LayoutParams(
-                    dpToPx(52),
-                    dpToPx(52)
+                    dpToPx(56),  // Slightly smaller icon
+                    dpToPx(56)
                 )
-
+                setBackgroundResource(R.drawable.circle_bg)
                 scaleType = ImageView.ScaleType.FIT_CENTER
-                setPadding(dpToPx(8), dpToPx(8), dpToPx(8), dpToPx(8))
+                setPadding(dpToPx(12), dpToPx(12), dpToPx(12), dpToPx(12))
             }
 
             val name = TextView(this).apply {
                 text = player.name
-                textSize = 16f
+                textSize = 14f  // Slightly smaller font
                 setTextColor(Color.WHITE)
                 gravity = Gravity.CENTER
                 layoutParams = LinearLayout.LayoutParams(
@@ -96,12 +116,13 @@ class ResultsActivity : AppCompatActivity() {
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 )
                 setPadding(0, dpToPx(8), 0, dpToPx(4))
+                maxWidth = dpToPx(80)  // Limit name width to prevent text from being too wide
             }
 
             val score = TextView(this).apply {
                 val gained = if (isCorrect) "+1" else "+0"
                 text = gained
-                textSize = 14f
+                textSize = 13f
                 setTextColor(if (isCorrect) Color.parseColor("#00FF88") else Color.LTGRAY)
                 gravity = Gravity.CENTER
             }
@@ -112,6 +133,9 @@ class ResultsActivity : AppCompatActivity() {
 
             container.addView(playerLayout)
         }
+
+        // If there are fewer players, adjust container to not stretch
+        container.requestLayout()
 
         // next round/ finish
         btnNext.setOnClickListener {
@@ -136,7 +160,6 @@ class ResultsActivity : AppCompatActivity() {
             }
         }
     }
-
 
     private fun dpToPx(dp: Int): Int {
         return (dp * resources.displayMetrics.density).toInt()

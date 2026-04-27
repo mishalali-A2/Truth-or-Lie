@@ -127,8 +127,7 @@ class VotingActivity : AppCompatActivity() {
 
             override fun onFinish() {
                 if (isLocked || isPaused) return
-                // Time's up - auto-lock with default answer?
-                // You can decide: either lock as incorrect or pick a default
+                // Time's up - auto-lock with default answer
                 if (selectedAnswer == null) {
                     // Default to false (Lie) when time runs out
                     selectAnswer(false)
@@ -221,8 +220,7 @@ class VotingActivity : AppCompatActivity() {
         frameTruth.requestLayout()
         frameLie.requestLayout()
 
-        // Auto-lock after selection with a small delay (optional)
-        // This gives visual feedback before moving on
+        // Auto-lock after selection with a small delay
         btnResume.postDelayed({
             if (!isLocked && selectedAnswer != null) {
                 lockAnswer()
@@ -246,7 +244,7 @@ class VotingActivity : AppCompatActivity() {
         val player = GameSession.getCurrentPlayer()
         val isCorrect = selectedAnswer == correctAnswer
         player.lastAnswer = selectedAnswer
-        if (isCorrect) player.score += 1
+        if (isCorrect) player.score += 100
 
         val totalPlayers = GameSession.players.size
         val nextTurn = GameSession.currPlayerTurn + 1

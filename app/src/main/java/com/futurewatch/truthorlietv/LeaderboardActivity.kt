@@ -171,6 +171,7 @@ class LeaderboardActivity : AppCompatActivity() {
                     if (players.isEmpty()) {
                         leaderboardScroll.visibility = View.GONE
                         messageContainer.visibility = View.VISIBLE
+                        backBtn.requestFocus()
                     } else {
                         messageContainer.visibility = View.GONE
                         leaderboardScroll.visibility = View.VISIBLE

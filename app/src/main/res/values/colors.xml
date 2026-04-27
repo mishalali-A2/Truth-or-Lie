@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="splash_bg">#0B0F1A</color>
+    <color name="purple_accent">#7C3AED</color>
+    <color name="white">#FFFFFF</color>
 </resources>

@@ -1,0 +1,1297 @@
+{
+  "category": "travel",
+  "version": 1,
+  "total": 258,
+  "questions": [
+    {
+      "id": "mf_001",
+      "statement": "Mount Everest is the tallest mountain above sea level",
+      "answer": true
+    },
+    {
+      "id": "mf_002",
+      "statement": "The Sahara is the smallest desert in the world",
+      "answer": false
+    },
+    {
+      "id": "mf_003",
+      "statement": "Paris is the capital of France",
+      "answer": true
+    },
+    {
+      "id": "mf_004",
+      "statement": "The Amazon River is the longest river in the world",
+      "answer": false
+    },
+    {
+      "id": "mf_005",
+      "statement": "Australia is both a country and a continent",
+      "answer": true
+    },
+    {
+      "id": "mf_006",
+      "statement": "The Great Wall of China can be seen from space",
+      "answer": false
+    },
+    {
+      "id": "mf_007",
+      "statement": "Japan is made up of many islands",
+      "answer": true
+    },
+    {
+      "id": "mf_008",
+      "statement": "The North Pole is located on land",
+      "answer": false
+    },
+    {
+      "id": "mf_009",
+      "statement": "Antarctica is the coldest continent",
+      "answer": true
+    },
+    {
+      "id": "mf_010",
+      "statement": "The Nile River flows through Egypt",
+      "answer": true
+    },
+    {
+      "id": "mf_011",
+      "statement": "The Eiffel Tower is in Italy",
+      "answer": false
+    },
+    {
+      "id": "mf_012",
+      "statement": "The Pacific Ocean is the largest ocean",
+      "answer": true
+    },
+    {
+      "id": "mf_013",
+      "statement": "There are 7 continents on Earth",
+      "answer": true
+    },
+    {
+      "id": "mf_014",
+      "statement": "The Dead Sea is below sea level",
+      "answer": true
+    },
+    {
+      "id": "mf_015",
+      "statement": "Mount Everest is located in Europe",
+      "answer": false
+    },
+    {
+      "id": "mf_016",
+      "statement": "The Grand Canyon is in the USA",
+      "answer": true
+    },
+    {
+      "id": "mf_017",
+      "statement": "Brazil is in South America",
+      "answer": true
+    },
+    {
+      "id": "mf_018",
+      "statement": "The Sahara Desert is in Africa",
+      "answer": true
+    },
+    {
+      "id": "mf_019",
+      "statement": "The Arctic is colder than Antarctica",
+      "answer": false
+    },
+    {
+      "id": "mf_020",
+      "statement": "The Amazon rainforest is the largest rainforest",
+      "answer": true
+    },
+    {
+      "id": "mf_021",
+      "statement": "The Great Barrier Reef is in Australia",
+      "answer": true
+    },
+    {
+      "id": "mf_022",
+      "statement": "The capital of Canada is Toronto",
+      "answer": false
+    },
+    {
+      "id": "mf_023",
+      "statement": "The capital of Canada is Ottawa",
+      "answer": true
+    },
+    {
+      "id": "mf_024",
+      "statement": "The United States has 50 states",
+      "answer": true
+    },
+    {
+      "id": "mf_025",
+      "statement": "Europe is a country",
+      "answer": false
+    },
+    {
+      "id": "mf_026",
+      "statement": "China is the most populous country",
+      "answer": true
+    },
+    {
+      "id": "mf_027",
+      "statement": "India is in Asia",
+      "answer": true
+    },
+    {
+      "id": "mf_028",
+      "statement": "The longest river in the world is the Nile",
+      "answer": true
+    },
+    {
+      "id": "mf_029",
+      "statement": "The tallest mountain in the world is K2",
+      "answer": false
+    },
+    {
+      "id": "mf_030",
+      "statement": "The Mediterranean Sea is between Europe and Africa",
+      "answer": true
+    },
+    {
+      "id": "mf_031",
+      "statement": "Greenland is the largest island",
+      "answer": true
+    },
+    {
+      "id": "mf_032",
+      "statement": "The equator divides Earth into two halves",
+      "answer": true
+    },
+    {
+      "id": "mf_033",
+      "statement": "The South Pole is in Antarctica",
+      "answer": true
+    },
+    {
+      "id": "mf_034",
+      "statement": "The United Kingdom is in Europe",
+      "answer": true
+    },
+    {
+      "id": "mf_035",
+      "statement": "The capital of Japan is Tokyo",
+      "answer": true
+    },
+    {
+      "id": "mf_036",
+      "statement": "The capital of Germany is Berlin",
+      "answer": true
+    },
+    {
+      "id": "mf_037",
+      "statement": "The capital of Italy is Rome",
+      "answer": true
+    },
+    {
+      "id": "mf_038",
+      "statement": "The capital of Spain is Madrid",
+      "answer": true
+    },
+    {
+      "id": "mf_039",
+      "statement": "The capital of Australia is Sydney",
+      "answer": false
+    },
+    {
+      "id": "mf_040",
+      "statement": "The capital of Australia is Canberra",
+      "answer": true
+    },
+    {
+      "id": "mf_041",
+      "statement": "The Himalayas are the highest mountain range",
+      "answer": true
+    },
+    {
+      "id": "mf_042",
+      "statement": "The Andes are in South America",
+      "answer": true
+    },
+    {
+      "id": "mf_043",
+      "statement": "The Rocky Mountains are in North America",
+      "answer": true
+    },
+    {
+      "id": "mf_044",
+      "statement": "The Amazon rainforest produces oxygen",
+      "answer": true
+    },
+    {
+      "id": "mf_045",
+      "statement": "Deserts are always hot",
+      "answer": false
+    },
+    {
+      "id": "mf_046",
+      "statement": "Some deserts are cold",
+      "answer": true
+    },
+    {
+      "id": "mf_047",
+      "statement": "The Arctic Ocean is the smallest ocean",
+      "answer": true
+    },
+    {
+      "id": "mf_048",
+      "statement": "The Atlantic Ocean is the second largest ocean",
+      "answer": true
+    },
+    {
+      "id": "mf_049",
+      "statement": "The Indian Ocean is between Africa and Australia",
+      "answer": true
+    },
+    {
+      "id": "mf_050",
+      "statement": "Traveling requires a passport for international trips",
+      "answer": true
+    },
+    {
+      "id": "mf_051",
+      "statement": "All countries use the same currency",
+      "answer": false
+    },
+    {
+      "id": "mf_052",
+      "statement": "Airplanes are faster than trains",
+      "answer": true
+    },
+    {
+      "id": "mf_053",
+      "statement": "Trains can travel underground",
+      "answer": true
+    },
+    {
+      "id": "mf_054",
+      "statement": "Cars are used for road travel",
+      "answer": true
+    },
+    {
+      "id": "mf_055",
+      "statement": "Ships travel on land",
+      "answer": false
+    },
+    {
+      "id": "mf_056",
+      "statement": "Airplanes fly in the sky",
+      "answer": true
+    },
+    {
+      "id": "mf_057",
+      "statement": "Traveling helps explore new cultures",
+      "answer": true
+    },
+    {
+      "id": "mf_058",
+      "statement": "All countries have the same language",
+      "answer": false
+    },
+    {
+      "id": "mf_059",
+      "statement": "English is spoken in many countries",
+      "answer": true
+    },
+    {
+      "id": "mf_060",
+      "statement": "Maps help with navigation",
+      "answer": true
+    },
+    {
+      "id": "mf_061",
+      "statement": "GPS helps find locations",
+      "answer": true
+    },
+    {
+      "id": "mf_062",
+      "statement": "All places have the same climate",
+      "answer": false
+    },
+    {
+      "id": "mf_063",
+      "statement": "Mountains are higher than hills",
+      "answer": true
+    },
+    {
+      "id": "mf_064",
+      "statement": "Rivers flow downhill",
+      "answer": true
+    },
+    {
+      "id": "mf_065",
+      "statement": "Oceans contain salt water",
+      "answer": true
+    },
+    {
+      "id": "mf_066",
+      "statement": "Lakes always contain salt water",
+      "answer": false
+    },
+    {
+      "id": "mf_067",
+      "statement": "Some lakes have fresh water",
+      "answer": true
+    },
+    {
+      "id": "mf_068",
+      "statement": "The Earth has different time zones",
+      "answer": true
+    },
+    {
+      "id": "mf_069",
+      "statement": "Traveling east or west can change time",
+      "answer": true
+    },
+    {
+      "id": "mf_070",
+      "statement": "The sun rises in the west",
+      "answer": false
+    },
+    {
+      "id": "mf_071",
+      "statement": "The sun rises in the east",
+      "answer": true
+    },
+    {
+      "id": "mf_072",
+      "statement": "Travel can be done by air land and sea",
+      "answer": true
+    },
+    {
+      "id": "mf_073",
+      "statement": "All countries are the same size",
+      "answer": false
+    },
+    {
+      "id": "mf_074",
+      "statement": "Some countries are very small",
+      "answer": true
+    },
+    {
+      "id": "mf_075",
+      "statement": "Some countries are very large",
+      "answer": true
+    },
+    {
+      "id": "mf_076",
+      "statement": "The world has many cultures",
+      "answer": true
+    },
+    {
+      "id": "mf_077",
+      "statement": "Travel helps learn geography",
+      "answer": true
+    },
+    {
+      "id": "mf_078",
+      "statement": "Explorers discovered new lands in history",
+      "answer": true
+    },
+    {
+      "id": "mf_079",
+      "statement": "Columbus reached America in 1492",
+      "answer": true
+    },
+    {
+      "id": "mf_080",
+      "statement": "Traveling always requires flying",
+      "answer": false
+    },
+    {
+      "id": "mf_081",
+      "statement": "You can travel by road or sea",
+      "answer": true
+    },
+    {
+      "id": "mf_082",
+      "statement": "Air travel is the fastest long-distance method",
+      "answer": true
+    },
+    {
+      "id": "mf_083",
+      "statement": "The world is flat",
+      "answer": false
+    },
+    {
+      "id": "mf_084",
+      "statement": "The Earth is round",
+      "answer": true
+    },
+    {
+      "id": "mf_085",
+      "statement": "Travel involves moving between places",
+      "answer": true
+    },
+    {
+      "id": "mf_086",
+      "statement": "All travel is expensive",
+      "answer": false
+    },
+    {
+      "id": "mf_087",
+      "statement": "Budget travel is possible",
+      "answer": true
+    },
+    {
+      "id": "mf_088",
+      "statement": "Traveling can be for fun or work",
+      "answer": true
+    },
+    {
+      "id": "mf_089",
+      "statement": "Tourism is a global industry",
+      "answer": true
+    },
+    {
+      "id": "mf_090",
+      "statement": "All countries have beaches",
+      "answer": false
+    },
+    {
+      "id": "mf_091",
+      "statement": "Some countries are landlocked",
+      "answer": true
+    },
+    {
+      "id": "mf_092",
+      "statement": "Mountains can have snow year-round",
+      "answer": true
+    },
+    {
+      "id": "mf_093",
+      "statement": "The equator is always cold",
+      "answer": false
+    },
+    {
+      "id": "mf_094",
+      "statement": "The equator is generally warm",
+      "answer": true
+    },
+    {
+      "id": "mf_095",
+      "statement": "Travel helps people relax",
+      "answer": true
+    },
+    {
+      "id": "mf_096",
+      "statement": "Travel requires planning",
+      "answer": true
+    },
+    {
+      "id": "mf_097",
+      "statement": "Maps are outdated and unused",
+      "answer": false
+    },
+    {
+      "id": "mf_098",
+      "statement": "Digital maps are widely used today",
+      "answer": true
+    },
+    {
+      "id": "mf_099",
+      "statement": "Travel can involve adventure activities",
+      "answer": true
+    },
+    {
+      "id": "mf_100",
+      "statement": "Hiking is an outdoor activity",
+      "answer": true
+    },
+    {
+      "id": "mf_101",
+      "statement": "Camping involves staying outdoors",
+      "answer": true
+    },
+    {
+      "id": "mf_102",
+      "statement": "Travel can include cultural experiences",
+      "answer": true
+    },
+    {
+      "id": "mf_103",
+      "statement": "Exploring new places can be exciting",
+      "answer": true
+    },
+    {
+      "id": "mf_104",
+      "statement": "The Amazon rainforest spans multiple countries",
+      "answer": true
+    },
+    {
+      "id": "mf_105",
+      "statement": "Mount Everest grows taller every year slightly",
+      "answer": true
+    },
+    {
+      "id": "mf_106",
+      "statement": "The Dead Sea is one of the saltiest bodies of water",
+      "answer": true
+    },
+    {
+      "id": "mf_107",
+      "statement": "Greenland is mostly covered in ice",
+      "answer": true
+    },
+    {
+      "id": "mf_108",
+      "statement": "The Sahara was once a green landscape",
+      "answer": true
+    },
+    {
+      "id": "mf_109",
+      "statement": "All rivers flow into oceans",
+      "answer": false
+    },
+    {
+      "id": "mf_110",
+      "statement": "Some rivers flow into lakes or deserts",
+      "answer": true
+    },
+    {
+      "id": "mf_111",
+      "statement": "The longest coastline belongs to Canada",
+      "answer": true
+    },
+    {
+      "id": "mf_112",
+      "statement": "The world's largest country is Russia",
+      "answer": true
+    },
+    {
+      "id": "mf_113",
+      "statement": "The smallest country is Vatican City",
+      "answer": true
+    },
+    {
+      "id": "mf_114",
+      "statement": "Some countries span multiple continents",
+      "answer": true
+    },
+    {
+      "id": "mf_115",
+      "statement": "Turkey is located in both Europe and Asia",
+      "answer": true
+    },
+    {
+      "id": "mf_116",
+      "statement": "All countries have four seasons",
+      "answer": false
+    },
+    {
+      "id": "mf_117",
+      "statement": "Tropical regions usually have warm climates",
+      "answer": true
+    },
+    {
+      "id": "mf_118",
+      "statement": "The Arctic Circle experiences polar day and night",
+      "answer": true
+    },
+    {
+      "id": "mf_119",
+      "statement": "The South Pole has no permanent residents",
+      "answer": true
+    },
+    {
+      "id": "mf_120",
+      "statement": "The highest waterfall is Angel Falls",
+      "answer": true
+    },
+    {
+      "id": "mf_121",
+      "statement": "Niagara Falls is the tallest waterfall in the world",
+      "answer": false
+    },
+    {
+      "id": "mf_122",
+      "statement": "The longest mountain range is underwater",
+      "answer": true
+    },
+    {
+      "id": "mf_123",
+      "statement": "The Mid-Ocean Ridge is the longest mountain range",
+      "answer": true
+    },
+    {
+      "id": "mf_124",
+      "statement": "Traveling across time zones can cause jet lag",
+      "answer": true
+    },
+    {
+      "id": "mf_125",
+      "statement": "Jet lag affects sleep patterns",
+      "answer": true
+    },
+    {
+      "id": "mf_126",
+      "statement": "All flights take the same amount of time",
+      "answer": false
+    },
+    {
+      "id": "mf_127",
+      "statement": "Flights can be longer due to routes and winds",
+      "answer": true
+    },
+    {
+      "id": "mf_128",
+      "statement": "The busiest airport in the world changes over time",
+      "answer": true
+    },
+    {
+      "id": "mf_129",
+      "statement": "All countries drive on the same side of the road",
+      "answer": false
+    },
+    {
+      "id": "mf_130",
+      "statement": "Some countries drive on the left side",
+      "answer": true
+    },
+    {
+      "id": "mf_131",
+      "statement": "Travel insurance helps cover unexpected issues",
+      "answer": true
+    },
+    {
+      "id": "mf_132",
+      "statement": "All travel is risk-free",
+      "answer": false
+    },
+    {
+      "id": "mf_133",
+      "statement": "Some cities are built below sea level",
+      "answer": true
+    },
+    {
+      "id": "mf_134",
+      "statement": "The Netherlands has land below sea level",
+      "answer": true
+    },
+    {
+      "id": "mf_135",
+      "statement": "All islands are small",
+      "answer": false
+    },
+    {
+      "id": "mf_136",
+      "statement": "Some islands are very large like Greenland",
+      "answer": true
+    },
+    {
+      "id": "mf_137",
+      "statement": "The equator passes through multiple countries",
+      "answer": true
+    },
+    {
+      "id": "mf_138",
+      "statement": "Mount Kilimanjaro is in Africa",
+      "answer": true
+    },
+    {
+      "id": "mf_139",
+      "statement": "Deserts can have extreme temperature changes",
+      "answer": true
+    },
+    {
+      "id": "mf_140",
+      "statement": "The coldest temperature recorded was in Antarctica",
+      "answer": true
+    },
+    {
+      "id": "mf_141",
+      "statement": "All beaches have white sand",
+      "answer": false
+    },
+    {
+      "id": "mf_142",
+      "statement": "Sand can be black pink or white",
+      "answer": true
+    },
+    {
+      "id": "mf_143",
+      "statement": "The Great Barrier Reef is visible from space with aid",
+      "answer": true
+    },
+    {
+      "id": "mf_144",
+      "statement": "All oceans have the same depth",
+      "answer": false
+    },
+    {
+      "id": "mf_145",
+      "statement": "The Mariana Trench is the deepest ocean point",
+      "answer": true
+    },
+    {
+      "id": "mf_146",
+      "statement": "Some places have midnight sun",
+      "answer": true
+    },
+    {
+      "id": "mf_147",
+      "statement": "Some places experience months of darkness",
+      "answer": true
+    },
+    {
+      "id": "mf_148",
+      "statement": "Travel can involve different currencies",
+      "answer": true
+    },
+    {
+      "id": "mf_149",
+      "statement": "All countries accept US dollars",
+      "answer": false
+    },
+    {
+      "id": "mf_150",
+      "statement": "Exchange rates vary between currencies",
+      "answer": true
+    },
+    {
+      "id": "mf_151",
+      "statement": "Travel can expose people to new foods",
+      "answer": true
+    },
+    {
+      "id": "mf_152",
+      "statement": "Every country has identical cuisine",
+      "answer": false
+    },
+    {
+      "id": "mf_153",
+      "statement": "Street food is popular in many countries",
+      "answer": true
+    },
+    {
+      "id": "mf_154",
+      "statement": "Travel can involve different languages",
+      "answer": true
+    },
+    {
+      "id": "mf_155",
+      "statement": "Translation apps help travelers",
+      "answer": true
+    },
+    {
+      "id": "mf_156",
+      "statement": "All signs worldwide are in English",
+      "answer": false
+    },
+    {
+      "id": "mf_157",
+      "statement": "Some places use multiple languages officially",
+      "answer": true
+    },
+    {
+      "id": "mf_158",
+      "statement": "Travel can involve cultural etiquette differences",
+      "answer": true
+    },
+    {
+      "id": "mf_159",
+      "statement": "All cultures have the same customs",
+      "answer": false
+    },
+    {
+      "id": "mf_160",
+      "statement": "Tipping customs vary by country",
+      "answer": true
+    },
+    {
+      "id": "mf_161",
+      "statement": "Some countries do not expect tips",
+      "answer": true
+    },
+    {
+      "id": "mf_162",
+      "statement": "Travel can include adventure sports",
+      "answer": true
+    },
+    {
+      "id": "mf_163",
+      "statement": "Scuba diving explores underwater environments",
+      "answer": true
+    },
+    {
+      "id": "mf_164",
+      "statement": "Skydiving involves jumping from aircraft",
+      "answer": true
+    },
+    {
+      "id": "mf_165",
+      "statement": "Hiking involves walking in nature",
+      "answer": true
+    },
+    {
+      "id": "mf_166",
+      "statement": "All adventure sports are safe",
+      "answer": false
+    },
+    {
+      "id": "mf_167",
+      "statement": "Safety gear is important in adventure activities",
+      "answer": true
+    },
+    {
+      "id": "mf_168",
+      "statement": "Travel can include historical sites",
+      "answer": true
+    },
+    {
+      "id": "mf_169",
+      "statement": "UNESCO protects heritage sites",
+      "answer": true
+    },
+    {
+      "id": "mf_170",
+      "statement": "All landmarks are natural",
+      "answer": false
+    },
+    {
+      "id": "mf_171",
+      "statement": "Some landmarks are man-made",
+      "answer": true
+    },
+    {
+      "id": "mf_172",
+      "statement": "Travel can involve different climates in one trip",
+      "answer": true
+    },
+    {
+      "id": "mf_173",
+      "statement": "Mountains can affect weather patterns",
+      "answer": true
+    },
+    {
+      "id": "mf_174",
+      "statement": "Altitude can affect breathing",
+      "answer": true
+    },
+    {
+      "id": "mf_175",
+      "statement": "High altitudes have less oxygen",
+      "answer": true
+    },
+    {
+      "id": "mf_176",
+      "statement": "All travelers experience altitude sickness",
+      "answer": false
+    },
+    {
+      "id": "mf_177",
+      "statement": "Preparation helps avoid travel issues",
+      "answer": true
+    },
+    {
+      "id": "mf_178",
+      "statement": "Travel planning can include itineraries",
+      "answer": true
+    },
+    {
+      "id": "mf_179",
+      "statement": "Spontaneous travel is also possible",
+      "answer": true
+    },
+    {
+      "id": "mf_180",
+      "statement": "Travel can be solo or group-based",
+      "answer": true
+    },
+    {
+      "id": "mf_181",
+      "statement": "All travel must be planned months ahead",
+      "answer": false
+    },
+    {
+      "id": "mf_182",
+      "statement": "Travel can be short or long-term",
+      "answer": true
+    },
+    {
+      "id": "mf_183",
+      "statement": "Backpacking involves traveling with minimal luggage",
+      "answer": true
+    },
+    {
+      "id": "mf_184",
+      "statement": "All travelers stay in hotels",
+      "answer": false
+    },
+    {
+      "id": "mf_185",
+      "statement": "Hostels are budget-friendly accommodations",
+      "answer": true
+    },
+    {
+      "id": "mf_186",
+      "statement": "Camping involves staying outdoors overnight",
+      "answer": true
+    },
+    {
+      "id": "mf_187",
+      "statement": "All countries have the same visa rules",
+      "answer": false
+    },
+    {
+      "id": "mf_188",
+      "statement": "Some countries require visas before entry",
+      "answer": true
+    },
+    {
+      "id": "mf_189",
+      "statement": "Airports require security checks",
+      "answer": true
+    },
+    {
+      "id": "mf_190",
+      "statement": "All flights depart on time always",
+      "answer": false
+    },
+    {
+      "id": "mf_191",
+      "statement": "Delays can happen due to weather or technical issues",
+      "answer": true
+    },
+    {
+      "id": "mf_192",
+      "statement": "Travel can involve connecting flights",
+      "answer": true
+    },
+    {
+      "id": "mf_193",
+      "statement": "All airports are the same size",
+      "answer": false
+    },
+    {
+      "id": "mf_194",
+      "statement": "Some airports are very large with multiple terminals",
+      "answer": true
+    },
+    {
+      "id": "mf_195",
+      "statement": "Travelers use boarding passes to board flights",
+      "answer": true
+    },
+    {
+      "id": "mf_196",
+      "statement": "All boarding passes are paper-based",
+      "answer": false
+    },
+    {
+      "id": "mf_197",
+      "statement": "Digital boarding passes exist",
+      "answer": true
+    },
+    {
+      "id": "mf_198",
+      "statement": "Travel can involve train journeys",
+      "answer": true
+    },
+    {
+      "id": "mf_199",
+      "statement": "High-speed trains exist in many countries",
+      "answer": true
+    },
+    {
+      "id": "mf_200",
+      "statement": "All trains run above ground",
+      "answer": false
+    },
+    {
+      "id": "mf_201",
+      "statement": "Subways run underground",
+      "answer": true
+    },
+    {
+      "id": "mf_202",
+      "statement": "Travel can include road trips",
+      "answer": true
+    },
+    {
+      "id": "mf_203",
+      "statement": "Driving long distances requires planning",
+      "answer": true
+    },
+    {
+      "id": "mf_204",
+      "statement": "All road trips are short",
+      "answer": false
+    },
+    {
+      "id": "mf_205",
+      "statement": "Travel can involve crossing borders",
+      "answer": true
+    },
+    {
+      "id": "mf_206",
+      "statement": "Passports are required for international travel",
+      "answer": true
+    },
+    {
+      "id": "mf_207",
+      "statement": "All passports are identical",
+      "answer": false
+    },
+    {
+      "id": "mf_208",
+      "statement": "Passports differ by country",
+      "answer": true
+    },
+    {
+      "id": "mf_209",
+      "statement": "Travel can involve cultural festivals",
+      "answer": true
+    },
+    {
+      "id": "mf_210",
+      "statement": "All festivals are the same worldwide",
+      "answer": false
+    },
+    {
+      "id": "mf_211",
+      "statement": "Local festivals reflect culture",
+      "answer": true
+    },
+    {
+      "id": "mf_212",
+      "statement": "Travel can involve wildlife experiences",
+      "answer": true
+    },
+    {
+      "id": "mf_213",
+      "statement": "Safaris are popular in Africa",
+      "answer": true
+    },
+    {
+      "id": "mf_214",
+      "statement": "All wildlife is safe to approach",
+      "answer": false
+    },
+    {
+      "id": "mf_215",
+      "statement": "Guides help ensure safety during wildlife tours",
+      "answer": true
+    },
+    {
+      "id": "mf_216",
+      "statement": "Travel can involve different time zones",
+      "answer": true
+    },
+    {
+      "id": "mf_217",
+      "statement": "Jet lag can affect energy levels",
+      "answer": true
+    },
+    {
+      "id": "mf_218",
+      "statement": "All time zones are exactly one hour apart",
+      "answer": false
+    },
+    {
+      "id": "mf_219",
+      "statement": "Some time zones differ by 30 minutes",
+      "answer": true
+    },
+    {
+      "id": "mf_220",
+      "statement": "Travel can involve ocean cruises",
+      "answer": true
+    },
+    {
+      "id": "mf_221",
+      "statement": "Cruise ships travel across oceans",
+      "answer": true
+    },
+    {
+      "id": "mf_222",
+      "statement": "All ships are small",
+      "answer": false
+    },
+    {
+      "id": "mf_223",
+      "statement": "Some ships are very large",
+      "answer": true
+    },
+    {
+      "id": "mf_224",
+      "statement": "Travel can include island hopping",
+      "answer": true
+    },
+    {
+      "id": "mf_225",
+      "statement": "Islands can have unique ecosystems",
+      "answer": true
+    },
+    {
+      "id": "mf_226",
+      "statement": "All islands have airports",
+      "answer": false
+    },
+    {
+      "id": "mf_227",
+      "statement": "Some islands are accessible only by boat",
+      "answer": true
+    },
+    {
+      "id": "mf_228",
+      "statement": "Travel can involve mountain climbing",
+      "answer": true
+    },
+    {
+      "id": "mf_229",
+      "statement": "Climbing requires training and equipment",
+      "answer": true
+    },
+    {
+      "id": "mf_230",
+      "statement": "All mountains are easy to climb",
+      "answer": false
+    },
+    {
+      "id": "mf_231",
+      "statement": "Travel can involve deserts",
+      "answer": true
+    },
+    {
+      "id": "mf_232",
+      "statement": "Deserts can be extremely hot or cold",
+      "answer": true
+    },
+    {
+      "id": "mf_233",
+      "statement": "All deserts have sand dunes",
+      "answer": false
+    },
+    {
+      "id": "mf_234",
+      "statement": "Travel can include forest exploration",
+      "answer": true
+    },
+    {
+      "id": "mf_235",
+      "statement": "Rainforests are rich in biodiversity",
+      "answer": true
+    },
+    {
+      "id": "mf_236",
+      "statement": "All forests are the same",
+      "answer": false
+    },
+    {
+      "id": "mf_237",
+      "statement": "Travel can include city tourism",
+      "answer": true
+    },
+    {
+      "id": "mf_238",
+      "statement": "Cities have landmarks and attractions",
+      "answer": true
+    },
+    {
+      "id": "mf_239",
+      "statement": "All cities are identical",
+      "answer": false
+    },
+    {
+      "id": "mf_240",
+      "statement": "Travel can include cultural learning",
+      "answer": true
+    },
+    {
+      "id": "mf_241",
+      "statement": "Museums display history and artifacts",
+      "answer": true
+    },
+    {
+      "id": "mf_242",
+      "statement": "All museums are free",
+      "answer": false
+    },
+    {
+      "id": "mf_243",
+      "statement": "Travel can involve trying new cuisines",
+      "answer": true
+    },
+    {
+      "id": "mf_244",
+      "statement": "Food varies across regions",
+      "answer": true
+    },
+    {
+      "id": "mf_245",
+      "statement": "All foods taste the same",
+      "answer": false
+    },
+    {
+      "id": "mf_246",
+      "statement": "Travel can involve language barriers",
+      "answer": true
+    },
+    {
+      "id": "mf_247",
+      "statement": "Learning basic phrases helps travelers",
+      "answer": true
+    },
+    {
+      "id": "mf_248",
+      "statement": "Travel can be relaxing or adventurous",
+      "answer": true
+    },
+    {
+      "id": "mf_249",
+      "statement": "All travel is stressful",
+      "answer": false
+    },
+    {
+      "id": "mf_250",
+      "statement": "Travel experiences can create memories",
+      "answer": true
+    },
+    {
+      "id": "mf_251",
+      "statement": "Exploring new places can be exciting",
+      "answer": true
+    },
+    {
+      "id": "mf_252",
+      "statement": "Travel can broaden perspectives",
+      "answer": true
+    },
+    {
+      "id": "mf_253",
+      "statement": "Travel is only for leisure",
+      "answer": false
+    },
+    {
+      "id": "mf_254",
+      "statement": "Travel can be for work education or leisure",
+      "answer": true
+    },
+    {
+      "id": "mf_255",
+      "statement": "Travel can be local or international",
+      "answer": true
+    },
+    {
+      "id": "mf_256",
+      "statement": "All travel requires flying",
+      "answer": false
+    },
+    {
+      "id": "mf_257",
+      "statement": "Travel can happen by land sea or air",
+      "answer": true
+    },
+    {
+      "id": "mf_258",
+      "statement": "Travel is part of human culture",
+      "answer": true
+    }
+  ]
+}
