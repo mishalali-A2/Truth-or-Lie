@@ -77,6 +77,7 @@
         <item name="android:textSize">14sp</item>
         <item name="android:background">@drawable/chip_bg</item>
         <item name="android:focusable">true</item>
+        <item name="android:textAllCaps">false</item>
     </style>
 
     <style name="chip_selected">
@@ -88,6 +89,7 @@
         <item name="android:textSize">14sp</item>
         <item name="android:background">@drawable/btn_primary</item>
         <item name="android:focusable">true</item>
+        <item name="android:textAllCaps">false</item>
     </style>
 
     <!-- Option Text -->
@@ -97,7 +99,7 @@
         <item name="android:layout_marginTop">6dp</item>
     </style>
 
-    <style name="Theme_TruthorLieTV_Dialog" parent="Theme.AppCompat.Dialog">
+    <style name="Theme.TruthorLieTV.Dialog" parent="Theme.AppCompat.Dialog">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowIsFloating">true</item>
         <item name="android:windowContentOverlay">@null</item>

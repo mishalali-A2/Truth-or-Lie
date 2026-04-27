@@ -1,13 +1,33 @@
-<vector xmlns:android="http://schemas.android.com/apk/res/android" android:height="480dp" android:viewportHeight="24" android:viewportWidth="24" android:width="480dp">
-      
-    <path android:fillColor="#00000000" android:pathData="M19,12s-3.13,4 -7,4 -7,-4 -7,-4 3.13,-4 7,-4S19,12 19,12ZM12,10a2,2 0,1 0,2 2A2,2 0,0 0,12 10Z" android:strokeColor="#2ca9bc" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeWidth="2"/>
-      
-    <path android:fillColor="#00000000" android:pathData="M3,7V4A1,1 0,0 1,4 3H7" android:strokeColor="#000000" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeWidth="2"/>
-      
-    <path android:fillColor="#00000000" android:pathData="M21,7V4a1,1 0,0 0,-1 -1H17" android:strokeColor="#000000" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeWidth="2"/>
-      
-    <path android:fillColor="#00000000" android:pathData="M3,17v3a1,1 0,0 0,1 1H7" android:strokeColor="#000000" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeWidth="2"/>
-      
-    <path android:fillColor="#00000000" android:pathData="M21,17v3a1,1 0,0 1,-1 1H17" android:strokeColor="#000000" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeWidth="2"/>
-    
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Larger Circular Background -->
+    <path
+        android:fillColor="#2d2d53"
+        android:pathData="M12,0.5 A11.5,11.5 0 1,1 12,23.5 A11.5,11.5 0 1,1 12,0.5" />
+
+    <!-- Smaller Eye Outline -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#5b52f9"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M12,6C7.8,6 4.2,8.8 2.5,12c1.7,3.2 5.3,6 9.5,6s7.8,-2.8 9.5,-6c-1.7,-3.2 -5.3,-6 -9.5,-6z"/>
+
+    <!-- Smaller Inner iris -->
+    <path
+        android:fillColor="#5b52f9"
+        android:pathData="M12,9.5c-1.38,0 -2.5,1.12 -2.5,2.5s1.12,2.5 2.5,2.5 2.5,-1.12 2.5,-2.5 -1.12,-2.5 -2.5,-2.5z"/>
+
+    <!-- Pupil - using correct attributes -->
+    <circle
+        android:fillColor="#FFFFFF"
+        android:centerX="12.8"
+        android:centerY="11"
+        android:radius="0.7dp" />
+
 </vector>
