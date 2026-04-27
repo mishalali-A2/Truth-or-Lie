@@ -1,23 +1,28 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- OUTER GLOW -->
     <item>
-        <shape>
-            <corners android:radius="16dp"/>
+        <shape android:shape="rectangle">
+            <corners android:radius="24dp"/>
 
             <gradient
-                android:type="linear"
-                android:startColor="#007B61FF"
-                android:centerColor="#AA7B61FF"
+                android:type="radial"
+                android:gradientRadius="200dp"
+                android:centerX="50%"
+                android:centerY="50%"
+                android:startColor="#667B61FF"
                 android:endColor="#007B61FF"/>
         </shape>
     </item>
 
+    <!-- INNER BUTTON -->
     <item
-        android:left="3dp"
-        android:right="3dp"
-        android:bottom="8dp">
+        android:left="6dp"
+        android:right="6dp"
+        android:top="6dp"
+        android:bottom="6dp">
 
-        <shape>
+        <shape android:shape="rectangle">
             <solid android:color="#1A2238"/>
             <corners android:radius="20dp"/>
         </shape>

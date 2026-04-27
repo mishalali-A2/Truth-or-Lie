@@ -17,13 +17,17 @@
         android:clipChildren="false"
         android:clipToPadding="false">
 
+        <!-- Background Glow (Optional for consistency) -->
+        <!-- Since it's a ScrollView, we might not want a fixed glow unless it's in a parent FrameLayout -->
+
         <!-- TITLE -->
         <TextView
-            android:text="SETTINGS"
+            android:text="Settings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#FFFFFF"
-            android:textSize="28sp"
+            android:textSize="32sp"
+            android:fontFamily="@font/plus_jakarta_sans"
             android:textStyle="bold"
             android:layout_marginBottom="30dp"/>
 
@@ -56,6 +60,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="#FFFFFF"
                     android:textSize="18sp"
+                    android:fontFamily="@font/plus_jakarta_sans"
                     android:layout_weight="1"/>
 
                 <androidx.appcompat.widget.SwitchCompat
@@ -150,6 +155,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#FFFFFF"
+                    android:fontFamily="@font/plus_jakarta_sans"
                     android:textSize="18sp"/>
             </LinearLayout>
 
@@ -194,7 +200,7 @@
 
         </LinearLayout>
 
-        <!-- OTHER APPS CARD - Now matching Music section style -->
+        <!-- OTHER APPS CARD -->
         <LinearLayout
             android:id="@+id/otherAppsCard"
             android:layout_width="600dp"
@@ -218,14 +224,14 @@
                     android:src="@drawable/game" />
 
                 <TextView
-                    android:text=" OTHER APPS"
+                    android:text=" Other Apps"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#FFFFFF"
+                    android:fontFamily="@font/plus_jakarta_sans"
                     android:textSize="18sp"/>
             </LinearLayout>
 
-            <!-- Other Apps Container - where chips will be dynamically added -->
             <LinearLayout
                 android:id="@+id/otherAppsContainer"
                 android:layout_width="match_parent"
@@ -234,6 +240,7 @@
                 android:layout_marginTop="15dp"
                 android:clipChildren="false" />
         </LinearLayout>
+
         <!-- OTHER SETTINGS CARD -->
         <LinearLayout
             android:id="@+id/otherSettings"
@@ -274,12 +281,14 @@
                         style="@style/optionText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/plus_jakarta_sans"
                         android:text="Remove Ads"/>
 
                     <TextView
                         style="@style/optionSub"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/plus_jakarta_sans"
                         android:text="One-time purchase"/>
                 </LinearLayout>
             </LinearLayout>
@@ -306,6 +315,7 @@
                     style="@style/optionText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/plus_jakarta_sans"
                     android:text="Restore Purchases"
                     android:layout_marginStart="12dp"
                     android:layout_weight="1"/>
@@ -374,6 +384,7 @@
                     style="@style/optionText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/plus_jakarta_sans"
                     android:layout_marginStart="12dp"
                     android:layout_weight="1"
                     android:text="Rate App" />
@@ -401,6 +412,7 @@
                     style="@style/optionText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/plus_jakarta_sans"
                     android:text="Terms &amp; Privacy"
                     android:layout_marginStart="12dp"
                     android:layout_weight="1"/>
@@ -411,6 +423,7 @@
                 android:text="Version 1.0.0"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/plus_jakarta_sans"
                 android:textColor="#6B7280"
                 android:textSize="12sp"
                 android:layout_marginTop="12dp"/>
@@ -420,11 +433,14 @@
         <!-- BACK BUTTON -->
         <Button
             android:id="@+id/btnBack"
-            android:layout_width="253dp"
-            android:layout_height="57dp"
-            android:layout_marginTop="30dp"
+            android:layout_width="280dp"
+            android:layout_height="70dp"
+            android:layout_marginTop="40dp"
             android:background="@drawable/btn_secondary"
             android:text="Back to Menu"
+            android:textAllCaps="false"
+            android:fontFamily="@font/plus_jakarta_sans"
+            android:textSize="20sp"
             android:textColor="#FFFFFF"
             android:padding="16dp"/>
     </LinearLayout>

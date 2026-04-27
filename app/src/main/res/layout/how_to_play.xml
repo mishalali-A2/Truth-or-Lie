@@ -9,8 +9,8 @@
         android:layout_width="700dp"
         android:layout_height="700dp"
         android:layout_gravity="center"
-        android:background="@drawable/bg_glow_prim"
-        android:alpha="0.15" />
+        android:alpha="0.15"
+        android:background="@drawable/bg_glow_prim" />
 
     <!-- Scrollable Content -->
     <ScrollView
@@ -37,7 +37,6 @@
                 android:textSize="42sp"
                 android:textStyle="bold"
                 android:textColor="@android:color/white"
-                android:letterSpacing="0.1"
                 android:layout_marginBottom="32dp" />
 
             <!-- TOP ROW (3 CARDS) -->
@@ -48,10 +47,10 @@
                 android:gravity="center"
                 android:weightSum="3">
 
-                <!-- CARD 1 -->
+                <!-- CARD 1: Read the Statement -->
                 <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="220dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
                     android:gravity="center"
@@ -59,45 +58,16 @@
                     android:layout_margin="12dp"
                     android:background="@drawable/card_bg">
 
-                    <ImageView
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:src="@drawable/multiplayer" />
+                    <FrameLayout
+                        android:layout_width="80dp"
+                        android:layout_height="60dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Select a Category"
-                        android:textColor="@android:color/white"
-                        android:textStyle="bold"
-                        android:textSize="16sp"
-                        android:layout_marginTop="16dp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Then select players and enter names."
-                        android:textColor="#AAAAAA"
-                        android:textSize="13sp"
-                        android:gravity="center"
-                        android:layout_marginTop="8dp" />
-                </LinearLayout>
-
-                <!-- CARD 2 -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="220dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:padding="20dp"
-                    android:layout_margin="12dp"
-                    android:background="@drawable/card_bg">
-
-                    <ImageView
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:src="@drawable/eye" />
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/eye" />
+                    </FrameLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -106,22 +76,22 @@
                         android:textColor="@android:color/white"
                         android:textStyle="bold"
                         android:textSize="16sp"
-                        android:layout_marginTop="16dp" />
+                        android:layout_marginTop="5dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Is it real or made up?"
+                        android:text="A fun fact will appear on screen. Is it real or completely made up?"
                         android:textColor="#AAAAAA"
                         android:textSize="13sp"
                         android:gravity="center"
                         android:layout_marginTop="8dp" />
                 </LinearLayout>
 
-                <!-- CARD 3 -->
+                <!-- CARD 2: Vote True or Lie -->
                 <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="220dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
                     android:gravity="center"
@@ -129,51 +99,17 @@
                     android:layout_margin="12dp"
                     android:background="@drawable/card_bg">
 
-                    <ImageView
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:src="@drawable/message" />
+                    <!-- Circular Background for Icon -->
+                    <FrameLayout
+                        android:layout_width="80dp"
+                        android:layout_height="60dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Discuss"
-                        android:textColor="@android:color/white"
-                        android:textStyle="bold"
-                        android:textSize="16sp"
-                        android:layout_marginTop="16dp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Debate and bluff!"
-                        android:textColor="#AAAAAA"
-                        android:textSize="13sp"
-                        android:gravity="center"
-                        android:layout_marginTop="8dp" />
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <!-- BOTTOM ROW (CENTERED CARD) -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center">
-
-                <LinearLayout
-                    android:layout_width="340dp"
-                    android:layout_height="220dp"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:padding="20dp"
-                    android:layout_marginTop="16dp"
-                    android:background="@drawable/card_bg">
-
-                    <ImageView
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:src="@drawable/game" />
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/game" />
+                    </FrameLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -182,25 +118,66 @@
                         android:textColor="@android:color/white"
                         android:textStyle="bold"
                         android:textSize="16sp"
-                        android:layout_marginTop="16dp" />
+                        android:layout_marginTop="5dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Highest score wins!"
+                        android:text="Each player picks their answer. Points for correct guesses!"
                         android:textColor="#AAAAAA"
                         android:textSize="13sp"
                         android:gravity="center"
                         android:layout_marginTop="8dp" />
                 </LinearLayout>
 
+                <!-- CARD 3: Discuss with the Room -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="20dp"
+                    android:layout_margin="12dp"
+                    android:background="@drawable/card_bg">
+
+                    <!-- Circular Background for Icon -->
+                    <FrameLayout
+                        android:layout_width="80dp"
+                        android:layout_height="60dp">
+
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/message" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Discuss with the Room"
+                        android:textColor="@android:color/white"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:layout_marginTop="5dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Debate, argue, bluff - that's where the fun is!"
+                        android:textColor="#AAAAAA"
+                        android:textSize="13sp"
+                        android:gravity="center"
+                        android:layout_marginTop="8dp" />
+                </LinearLayout>
             </LinearLayout>
 
-            <!-- Footer -->
+            <!-- Footer Message -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="This game is for fun. Don't ruin friendships over facts."
+                android:text="This game is for fun. Don't ruin friendships over facts. 😉"
                 android:textSize="13sp"
                 android:textColor="#777777"
                 android:layout_marginTop="32dp" />
