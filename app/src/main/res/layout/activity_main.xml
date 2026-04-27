@@ -6,6 +6,16 @@
     android:layout_height="match_parent"
     android:background="#0B0F1A">
 
+    <View
+        android:layout_width="800dp"
+        android:layout_height="800dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/bg_glow_prim"
+        android:alpha="0.12" />
+
     <!-- left side title-->
     <LinearLayout
         android:id="@+id/leftSection"
@@ -34,26 +44,31 @@
                 android:layout_height="wrap_content"
                 android:text="TRUTH"
                 android:textColor="#22C55E"
-                android:textSize="64sp"
-                android:textStyle="bold"/>
+                android:textSize="68sp"
+                android:fontFamily="@font/plus_jakarta_sans"
+                android:textStyle="bold"
+                android:letterSpacing="0"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="or"
+                android:text="OR"
                 android:textColor="#9CA3AF"
-                android:textSize="32sp"
+                android:textSize="34sp"
+                android:fontFamily="@font/plus_jakarta_sans"
                 android:textStyle="bold"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"/>
+                android:layout_marginStart="18dp"
+                android:layout_marginEnd="18dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="LIE"
                 android:textColor="#EF4444"
-                android:textSize="64sp"
-                android:textStyle="bold"/>
+                android:textSize="68sp"
+                android:fontFamily="@font/plus_jakarta_sans"
+                android:textStyle="bold"
+                android:letterSpacing="0"/>
 
         </LinearLayout>
 
@@ -63,8 +78,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Fun Fact Party Game for TV"
-            android:textColor="#9CA3AF"
-            android:textSize="20sp"/>
+            android:textColor="#D1D5DB"
+            android:fontFamily="@font/plus_jakarta_sans"
+            android:textSize="22sp"
+            android:letterSpacing="0.01"/>
 
         <!-- Quote -->
         <TextView
@@ -72,8 +89,10 @@
             android:layout_height="wrap_content"
             android:text='"The truth is out there. The lies are in this room."'
             android:textColor="#6B7280"
-            android:textSize="16sp"
-            android:layout_marginTop="32dp"/>
+            android:fontFamily="@font/plus_jakarta_sans"
+            android:textSize="18sp"
+            android:layout_marginTop="36dp"
+            android:fontStyle="italic"/>
 
     </LinearLayout>
 
@@ -95,53 +114,81 @@
         <!-- Start Game Button -->
         <Button
             android:id="@+id/btnStart"
-            android:layout_width="300dp"
-            android:layout_height="70dp"
+            android:layout_width="260dp"
+            android:layout_height="72dp"
             android:background="@drawable/btn_main"
+            app:backgroundTint="@null"
+            app:cornerRadius="18dp"
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:nextFocusDown="@id/btnHowToPlay"
             android:text="Start Game"
+            android:textStyle="bold"
+            android:fontFamily="@font/plus_jakarta_sans"
             android:textColor="#FFFFFF"
-            android:textSize="20sp" />
+            android:textSize="22sp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            app:elevation="12dp" />
 
         <!-- How to Play -->
         <Button
             android:id="@+id/btnHowToPlay"
-            android:layout_width="312dp"
-            android:layout_height="70dp"
-            android:layout_marginTop="20dp"
+            android:layout_width="260dp"
+            android:layout_height="72dp"
+            android:layout_marginTop="16dp"
+            android:textStyle="bold"
+            android:fontFamily="@font/plus_jakarta_sans"
             android:background="@drawable/btn_secondary"
+            app:backgroundTint="@null"
+            app:cornerRadius="18dp"
             android:nextFocusUp="@id/btnStart"
             android:nextFocusDown="@id/btnLeaderboard"
             android:text="How to Play"
             android:textColor="#FFFFFF"
-            android:textSize="18sp" />
+            android:textSize="20sp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            app:elevation="4dp" />
 
         <!-- Leaderboard -->
         <Button
             android:id="@+id/btnLeaderboard"
-            android:layout_width="300dp"
-            android:layout_height="70dp"
+            android:layout_width="260dp"
+            android:layout_height="72dp"
             android:text="Leaderboard"
-            android:textSize="18sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/plus_jakarta_sans"
+            android:textSize="20sp"
             android:textColor="#FFFFFF"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="16dp"
             android:background="@drawable/btn_secondary"
+            app:backgroundTint="@null"
+            app:cornerRadius="18dp"
             android:nextFocusDown="@id/btnSettings"
-            android:nextFocusUp="@id/btnHowToPlay"/>
+            android:nextFocusUp="@id/btnHowToPlay"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            app:elevation="4dp" />
 
         <!-- Settings -->
         <Button
             android:id="@+id/btnSettings"
-            android:layout_width="300dp"
-            android:layout_height="70dp"
+            android:layout_width="260dp"
+            android:layout_height="72dp"
             android:text="Settings"
-            android:textSize="18sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/plus_jakarta_sans"
+            android:textSize="20sp"
             android:textColor="#9CA3AF"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="16dp"
             android:background="@drawable/btn_ghost"
-            android:nextFocusUp="@id/btnLeaderboard"/>
+            app:backgroundTint="@null"
+            app:cornerRadius="18dp"
+            android:nextFocusUp="@id/btnLeaderboard"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            app:elevation="2dp" />
 
     </LinearLayout>
 

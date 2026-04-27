@@ -5,15 +5,17 @@ import android.animation.ValueAnimator
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Looper
 import android.os.Handler
 import android.util.Log
+import android.view.animation.LinearInterpolator
+import android.widget.Button
 
 
 class MainActivity : AppCompatActivity(), InfaticaConsentDialog.ConsentListener {
-    private lateinit var floatAnim: ObjectAnimator
+    private var titleAnim: ObjectAnimator? = null
+    private var subtitleAnim: ObjectAnimator? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,18 +38,19 @@ class MainActivity : AppCompatActivity(), InfaticaConsentDialog.ConsentListener 
 
         // title anim -> loop
         fun createFloatAnim(view: View): ObjectAnimator {
-            return ObjectAnimator.ofFloat(view, "translationY", -6f, 6f).apply {
-                duration = 2000
+            return ObjectAnimator.ofFloat(view, "translationY", -10f, 10f).apply {
+                duration = 2500
                 repeatCount = ValueAnimator.INFINITE
                 repeatMode = ValueAnimator.REVERSE
+                interpolator = LinearInterpolator() // Smooth linear movement
             }
         }
 
-        val titleAnim = createFloatAnim(title)
-        val subtitleAnim = createFloatAnim(subtitle)
+        titleAnim = createFloatAnim(title)
+        subtitleAnim = createFloatAnim(subtitle)
 
-        titleAnim.start()
-        subtitleAnim.start()
+        titleAnim?.start()
+        subtitleAnim?.start()
 
         // btn anim
         val focusListener = View.OnFocusChangeListener { v, hasFocus ->
@@ -68,6 +71,7 @@ class MainActivity : AppCompatActivity(), InfaticaConsentDialog.ConsentListener 
                     .translationZ(0f)
                     .setDuration(150)
                     .start()
+                v.translationZ = 0f
             }
         }
 
@@ -142,13 +146,14 @@ class MainActivity : AppCompatActivity(), InfaticaConsentDialog.ConsentListener 
 
     override fun onPause() {
         super.onPause()
-        if (::floatAnim.isInitialized) {
-            floatAnim.cancel()
-        }
+        titleAnim?.cancel()
+        subtitleAnim?.cancel()
         MusicManager.pauseMusic()
     }
     override fun onResume() {
         super.onResume()
+        titleAnim?.start()
+        subtitleAnim?.start()
         MusicManager.resumeMusic()
     }
 
