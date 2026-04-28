@@ -8,7 +8,6 @@
     <uses-permission android:name="com.android.vending.BILLING" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-    <!--infatica permissions-->
 <!--        Wi-fi-->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"
         android:required="false"
@@ -101,24 +100,13 @@
             android:name=".MainActivity"
             android:exported="true" />
 
-<!--        infatica sdk service overridden-->
-        <service
-            android:name="com.infatica.agent.service.Service"
-            android:exported="true"
-            android:foregroundServiceType="dataSync"
-            tools:replace="android:exported" />
-
+<!--        infatica sdk service overridden&ndash;&gt;-->
 <!--        <service-->
 <!--            android:name="com.infatica.agent.service.Service"-->
 <!--            android:exported="true"-->
 <!--            android:foregroundServiceType="dataSync"-->
-<!--            android:permission="android.permission.BIND_JOB_SERVICE"-->
-<!--            tools:replace="android:exported,android:foregroundServiceType"-->
-<!--            tools:targetApi="upside_down_cake">-->
-<!--            <property-->
-<!--                android:name="android.foreground_service_type_data_sync_reason"-->
-<!--                android:value="This service enables P2B network resource sharing in the background to support the app's functionality" />-->
-<!--        </service>-->
+<!--            tools:replace="android:exported" />-->
+
     </application>
 
 </manifest>

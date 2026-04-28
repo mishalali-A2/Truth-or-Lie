@@ -13,7 +13,7 @@ import android.view.animation.LinearInterpolator
 import android.widget.Button
 
 
-class MainActivity : AppCompatActivity(), InfaticaConsentDialog.ConsentListener {
+class MainActivity : AppCompatActivity() {
     private var titleAnim: ObjectAnimator? = null
     private var subtitleAnim: ObjectAnimator? = null
 
@@ -25,7 +25,6 @@ class MainActivity : AppCompatActivity(), InfaticaConsentDialog.ConsentListener 
 
         setContentView(R.layout.activity_main)
 
-        checkAndShowInfaticaConsent()
         Handler(Looper.getMainLooper()).postDelayed({
             MusicManager.startMusic()
             Log.d("MainActivity", "Music started")
@@ -102,46 +101,6 @@ class MainActivity : AppCompatActivity(), InfaticaConsentDialog.ConsentListener 
 
         // Default
         startBtn.requestFocus()
-    }
-    private fun checkAndShowInfaticaConsent() {
-        if (InfaticaConsentDialog.shouldShowConsent(this)) {
-            val consentDialog = InfaticaConsentDialog()
-            consentDialog.show(supportFragmentManager, "InfaticaConsentDialog")
-        } else if (InfaticaConsentDialog.hasAccepted(this)) {
-            val prefs = getSharedPreferences("app_settings", MODE_PRIVATE)
-            val manuallyDisabled = prefs.getBoolean("network_sdk_manually_disabled", false)
-
-            if (!manuallyDisabled) {
-                prefs.edit().putBoolean("network_sdk_enabled", true).apply()
-                InfaticaConsentDialog.updateNetworkSdkToggle(this, true)
-                InfaticaManager.saveConsent(this, true)
-                InfaticaManager.setEnabled(this, true)
-            } else {
-                InfaticaConsentDialog.updateNetworkSdkToggle(this, false)
-            }
-        }else{
-            InfaticaConsentDialog.updateNetworkSdkToggle(this, false)
-        }
-    }
-
-    override fun onConsentAccepted() {
-        Log.d("MainActivity", "Infatica consent accepted - toggle turned ON")
-        val prefs = getSharedPreferences("app_settings", MODE_PRIVATE)
-        prefs.edit()
-            .putBoolean("network_sdk_enabled", true)
-            .putBoolean("network_sdk_manually_disabled", false)
-            .apply()
-        InfaticaManager.saveConsent(this, true)
-        InfaticaManager.setEnabled(this, true)
-    }
-
-    override fun onConsentDeclined() {
-        Log.d("MainActivity", "Infatica consent declined - toggle turned OFF")
-        val prefs = getSharedPreferences("app_settings", MODE_PRIVATE)
-        prefs.edit()
-            .putBoolean("network_sdk_enabled", false)
-            .apply()
-        InfaticaManager.saveConsent(this, false)
     }
 
     override fun onPause() {
