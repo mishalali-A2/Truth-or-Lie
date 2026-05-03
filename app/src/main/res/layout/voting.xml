@@ -232,4 +232,67 @@
         </LinearLayout>
     </FrameLayout>
 
+    <FrameLayout
+        android:id="@+id/nextPlayerOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#CC0B0F1A"
+        android:visibility="gone"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
+
+        <!-- Center Card -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:padding="40dp">
+
+            <!-- Icon (reuse or change if you want) -->
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/game"
+                android:layout_marginBottom="20dp"/>
+
+            <!-- Title -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Next Player"
+                android:textSize="36sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:layout_marginBottom="10dp" />
+
+            <!-- Player Name (dynamic) -->
+            <TextView
+                android:id="@+id/nextPlayerText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Player 2's Turn"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:textColor="#AAAAAA"
+                android:layout_marginBottom="30dp" />
+
+            <!-- Continue Button -->
+            <Button
+                android:id="@+id/btnNextPlayerContinue"
+                android:layout_width="220dp"
+                android:layout_height="60dp"
+                android:text="Continue"
+                android:textAllCaps="false"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/btn_primary"
+                android:focusable="true"
+                android:focusableInTouchMode="true"/>
+
+        </LinearLayout>
+
+    </FrameLayout>
 </FrameLayout>

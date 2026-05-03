@@ -63,7 +63,7 @@
         <!-- LEADERBOARD -->
         <LinearLayout
             android:id="@+id/leaderboardContainer"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_marginBottom="60dp"

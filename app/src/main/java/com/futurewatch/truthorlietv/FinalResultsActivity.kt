@@ -97,6 +97,8 @@ class FinalResultsActivity : AppCompatActivity() {
                 LinearLayout.LayoutParams.WRAP_CONTENT
             )
             row.setPadding(0, 16, 0, 16)
+            row.gravity = android.view.Gravity.CENTER
+
             val left = TextView(this)
             left.text = "#${index + 1}  ${player.name}"
             left.textSize = 18f
@@ -108,22 +110,12 @@ class FinalResultsActivity : AppCompatActivity() {
             } else {
                 left.setTextColor(Color.parseColor("#AAAAAA"))
             }
-            left.layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            )
-            val spacer = View(this)
-            spacer.layoutParams = LinearLayout.LayoutParams(
-                0,
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                1f
-            )
+
             val right = TextView(this)
-            right.text = "${player.score}"
+            right.text = "             ${player.score}"
             right.textSize = 18f
             right.setTextColor(Color.parseColor("#7F3FFF"))
             row.addView(left)
-            row.addView(spacer)
             row.addView(right)
 
             leaderboardContainer.addView(row)
