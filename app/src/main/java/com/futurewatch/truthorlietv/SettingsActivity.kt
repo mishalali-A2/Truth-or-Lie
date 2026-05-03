@@ -33,6 +33,7 @@ class SettingsActivity : AppCompatActivity() {
         switchMusic = findViewById(R.id.switchMusic)
         backBtn = findViewById(R.id.btnBack)
         musicContainer = findViewById(R.id.musicContainer)
+        switchMusic.isChecked = MusicManager.isEnabled()
         musicContainer.visibility =
             if (switchMusic.isChecked) View.VISIBLE else View.GONE
 

@@ -54,7 +54,7 @@
                     <ImageView
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        android:src="@drawable/general_knowledge"
+                        android:src="@drawable/brain"
                         android:layout_marginBottom="12dp"/>
 
                     <TextView
@@ -196,7 +196,7 @@
                             style="@style/CategoryTextLocked"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Technology"/>
+                            android:text="Technology &amp; Future AI"/>
                     </LinearLayout>
 
                     <View
@@ -284,7 +284,7 @@
                 </FrameLayout>
 
                 <FrameLayout
-                    android:id="@+id/card_mixed_facts"
+                    android:id="@+id/card_random_chaos"
                     android:layout_width="260dp"
                     android:layout_height="180dp"
                     android:focusable="true"
@@ -304,7 +304,223 @@
                             style="@style/CategoryTextLocked"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Mixed Facts"/>
+                            android:text="Party Mode"/>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#66000000"/>
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/locked"
+                        android:layout_gravity="center"/>
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/card_relations_social"
+                    android:layout_width="260dp"
+                    android:layout_height="180dp"
+                    android:focusable="true"
+                    android:clickable="true">
+
+                    <LinearLayout
+                        style="@style/CategoryCardDisabled"
+                        android:alpha="0.5">
+
+                        <ImageView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:src="@drawable/relations"
+                            android:layout_marginBottom="12dp"/>
+
+                        <TextView
+                            style="@style/CategoryTextLocked"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Relationships &amp; Socials"/>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#66000000"/>
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/locked"
+                        android:layout_gravity="center"/>
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/card_travel"
+                    android:layout_width="260dp"
+                    android:layout_height="180dp"
+                    android:focusable="true"
+                    android:clickable="true">
+
+                    <LinearLayout
+                        style="@style/CategoryCardDisabled"
+                        android:alpha="0.5">
+
+                        <ImageView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:src="@drawable/travel"
+                            android:layout_marginBottom="12dp"/>
+
+                        <TextView
+                            style="@style/CategoryTextLocked"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Adventure &amp; Travel"/>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#66000000"/>
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/locked"
+                        android:layout_gravity="center"/>
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/card_money_luxury"
+                    android:layout_width="260dp"
+                    android:layout_height="180dp"
+                    android:focusable="true"
+                    android:clickable="true">
+
+                    <LinearLayout
+                        style="@style/CategoryCardDisabled"
+                        android:alpha="0.5">
+
+                        <ImageView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:src="@drawable/money"
+                            android:layout_marginBottom="12dp"/>
+
+                        <TextView
+                            style="@style/CategoryTextLocked"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Money &amp; Luxury"/>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#66000000"/>
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/locked"
+                        android:layout_gravity="center"/>
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/card_movie"
+                    android:layout_width="260dp"
+                    android:layout_height="180dp"
+                    android:focusable="true"
+                    android:clickable="true">
+
+                    <LinearLayout
+                        style="@style/CategoryCardDisabled"
+                        android:alpha="0.5">
+
+                        <ImageView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:src="@drawable/movie"
+                            android:layout_marginBottom="12dp"/>
+
+                        <TextView
+                            style="@style/CategoryTextLocked"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Movies &amp; Entertainment"/>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#66000000"/>
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/locked"
+                        android:layout_gravity="center"/>
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/card_survival"
+                    android:layout_width="260dp"
+                    android:layout_height="180dp"
+                    android:focusable="true"
+                    android:clickable="true">
+
+                    <LinearLayout
+                        style="@style/CategoryCardDisabled"
+                        android:alpha="0.5">
+
+                        <ImageView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:src="@drawable/survival"
+                            android:layout_marginBottom="12dp"/>
+
+                        <TextView
+                            style="@style/CategoryTextLocked"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Survival"/>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#66000000"/>
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/locked"
+                        android:layout_gravity="center"/>
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/card_family_mode"
+                    android:layout_width="260dp"
+                    android:layout_height="180dp"
+                    android:focusable="true"
+                    android:clickable="true">
+
+                    <LinearLayout
+                        style="@style/CategoryCardDisabled"
+                        android:alpha="0.5">
+
+                        <ImageView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:src="@drawable/family"
+                            android:layout_marginBottom="12dp"/>
+
+                        <TextView
+                            style="@style/CategoryTextLocked"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Kids &amp; Family Mode"/>
                     </LinearLayout>
 
                     <View
