@@ -24,19 +24,8 @@ class CategoriesActivity : AppCompatActivity() {
       //for testing
       //  resetAllPurchasesForTesting()
         MusicManager.resumeMusic()
-        //        caused flickering -> parent in XML steals the focus
-//        val focusListener = View.OnFocusChangeListener { v, hasFocus ->
-//            if (hasFocus) {
-//                v.startAnimation(AnimationUtils.loadAnimation(this, R.anim.scaleup))
-//                v.elevation = 20f
-//            } else {
-//                v.startAnimation(AnimationUtils.loadAnimation(this, R.anim.scaledown))
-//                v.elevation = 0f
-//            }
-//        }
 
 
-        // Initialize Overlay Views
         unlockOverlay = findViewById(R.id.unlockOverlay)
         unlockTitle = findViewById(R.id.unlockTitle)
         unlockDescription = findViewById(R.id.unlockDescription)
@@ -76,7 +65,13 @@ class CategoriesActivity : AppCompatActivity() {
             R.id.card_technology to "technology",
             R.id.card_human_body to "human_body",
             R.id.card_crazy_facts to "crazy_facts",
-            R.id.card_mixed_facts to "mixed_facts"
+            R.id.card_money_luxury to "money_luxury",
+            R.id.card_movie to "movie",
+            R.id.card_random_chaos to "random_chaos",
+            R.id.card_relations_social to "relations_social",
+            R.id.card_survival to "survival",
+            R.id.card_travel to "travel",
+            R.id.card_family_mode to "family_mode"
         )
 
         categoryMap.forEach { (id, categoryName) ->
@@ -123,7 +118,10 @@ class CategoriesActivity : AppCompatActivity() {
 
         val lockedCategoryIds = listOf(
             R.id.card_history, R.id.card_space, R.id.card_technology,
-            R.id.card_human_body, R.id.card_crazy_facts, R.id.card_mixed_facts
+            R.id.card_human_body, R.id.card_crazy_facts,
+            R.id.card_money_luxury, R.id.card_movie , R.id.card_random_chaos,
+            R.id.card_relations_social , R.id.card_survival, R.id.card_travel,
+            R.id.card_family_mode
         )
 
         lockedCategoryIds.forEach { id ->
@@ -135,7 +133,13 @@ class CategoriesActivity : AppCompatActivity() {
                 R.id.card_technology -> "technology"
                 R.id.card_human_body -> "human_body"
                 R.id.card_crazy_facts -> "crazy_facts"
-                R.id.card_mixed_facts -> "mixed_facts"
+                R.id.card_money_luxury -> "money_luxury"
+                R.id.card_movie -> "movie"
+                R.id.card_random_chaos -> "random_chaos"
+                R.id.card_relations_social -> "relations_social"
+                R.id.card_survival -> "survival"
+                R.id.card_travel -> "travel"
+                R.id.card_family_mode -> "family_mode"
                 else -> return@forEach
             }
 
@@ -254,7 +258,7 @@ class CategoriesActivity : AppCompatActivity() {
 
         if (allCategoriesUnlocked) {
             val allCategories = listOf(
-                "history", "space", "technology", "human_body", "crazy_facts", "mixed_facts"
+                "history", "space", "technology", "human_body", "crazy_facts", "money_luxury", "movie",  "random_chaos", "relations_social", "survival", "travel", "family_mode"
             )
             allCategories.forEach { category ->
                 CategoryManager.unlockTemporarily(category)
