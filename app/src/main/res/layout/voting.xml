@@ -2,6 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#0B0F1A">
 
     <View
@@ -37,17 +38,15 @@
             android:textSize="16sp"
             android:layout_marginEnd="20dp" />
 
-        <Button
+        <ImageView
             android:id="@+id/btnPause"
-            android:layout_width="60dp"
-            android:layout_height="40dp"
-            android:text="⏸"
-            android:textSize="20sp"
-            android:textColor="#AAAAAA"
-            android:background="@android:color/transparent"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@drawable/pause"
+            app:tint="#888888"
             android:focusable="true"
             android:focusableInTouchMode="false"
-            android:alpha="0.6" />
+            android:alpha="0.7"/>
 
     </LinearLayout>
 
@@ -170,13 +169,12 @@
             android:background="@android:color/transparent">
 
             <!-- Pause Icon -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="⏸"
-                android:textSize="48sp"
-                android:textColor="#7C5CFF"
-                android:layout_marginBottom="20dp" />
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/pause"
+                app:tint="#7C5CFF"
+                android:layout_marginBottom="20dp"/>
 
             <!-- Title -->
             <TextView
@@ -203,15 +201,31 @@
                 android:layout_width="220dp"
                 android:layout_height="60dp"
                 android:text="Resume"
+                android:textAllCaps="false"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="#FFFFFF"
-
                 android:background="@drawable/btn_primary"
-
                 android:focusable="true"
                 android:focusableInTouchMode="false"
+                android:paddingLeft="24dp"
+                android:paddingRight="24dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="16dp"/>
 
+            <!-- End Game Button -->
+            <Button
+                android:id="@+id/btnEndGame"
+                android:layout_width="220dp"
+                android:layout_height="60dp"
+                android:text="End Game"
+                android:textAllCaps="false"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/btn_primary"
+                android:focusable="true"
+                android:focusableInTouchMode="false"
                 android:paddingLeft="24dp"
                 android:paddingRight="24dp"/>
 

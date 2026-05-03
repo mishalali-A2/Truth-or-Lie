@@ -6,10 +6,12 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
 import nl.dionsegijn.konfetti.xml.KonfettiView
 import com.futurewatch.truthorlietv.database.PlayerRepository
 import kotlin.concurrent.thread
@@ -27,8 +29,6 @@ class FinalResultsActivity : AppCompatActivity() {
     private lateinit var konfettiView: KonfettiView
     private lateinit var playerRepository: PlayerRepository
 
-    private val mainHandler = Handler(Looper.getMainLooper())
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.final_results)
@@ -37,12 +37,8 @@ class FinalResultsActivity : AppCompatActivity() {
         if (AdManager.isInterstitialReady()) {
             AdManager.showInterstitial(
                 activity = this,
-                onComplete = {
-                    Log.d("FinalResults", "Interstitial completed")
-                },
-                onFailed = {
-                    Log.d("FinalResults", "Interstitial not available, continuing")
-                }
+                onComplete = { Log.d("FinalResults", "Interstitial completed") },
+                onFailed = { Log.d("FinalResults", "Interstitial not available") }
             )
         }
 
@@ -70,14 +66,30 @@ class FinalResultsActivity : AppCompatActivity() {
     private fun showResults() {
         val sortedPlayers = GameSession.players.sortedByDescending { it.score }
         val winner = sortedPlayers.first()
-
-        tvWinnerName.text = winner.name
-        tvWinnerPoints.text = "${winner.score} pts"
-
+        val tvTie = findViewById<TextView>(R.id.tvTie)
+        val tvWinnerLabel = findViewById<TextView>(R.id.tvWinnerLabel)
+        val tvWinnerName = findViewById<TextView>(R.id.tvWinnerName)
+        val tvWinnerPoints = findViewById<TextView>(R.id.tvWinnerPoints)
+        val topScore = winner.score
+        val tiedPlayers = sortedPlayers.filter { it.score == topScore }
+        val isTie = tiedPlayers.size > 1
+        if (isTie) {
+            val names = tiedPlayers.joinToString(", ") { it.name }
+            tvTie.visibility = View.VISIBLE
+            tvTie.text = "It's a TIE!\n($names)"
+            tvWinnerLabel.visibility = View.GONE
+            tvWinnerName.visibility = View.GONE
+            tvWinnerPoints.visibility = View.GONE
+        } else {
+            tvTie.visibility = View.GONE
+            tvWinnerLabel.visibility = View.VISIBLE
+            tvWinnerName.visibility = View.VISIBLE
+            tvWinnerPoints.visibility = View.VISIBLE
+            tvWinnerName.text = winner.name
+            tvWinnerPoints.text = "${winner.score} pts"
+        }
         leaderboardContainer.removeAllViews()
-
         sortedPlayers.forEachIndexed { index, player ->
-
             val row = LinearLayout(this)
             row.orientation = LinearLayout.HORIZONTAL
             row.layoutParams = LinearLayout.LayoutParams(
@@ -85,31 +97,31 @@ class FinalResultsActivity : AppCompatActivity() {
                 LinearLayout.LayoutParams.WRAP_CONTENT
             )
             row.setPadding(0, 16, 0, 16)
-
             val left = TextView(this)
             left.text = "#${index + 1}  ${player.name}"
             left.textSize = 18f
-            left.setTextColor(
-                if (index == 0) Color.parseColor("#FFA500")
-                else Color.parseColor("#AAAAAA")
-            )
+            // Color logic: if tie, all tied players get orange, else only winner gets orange
+            if (isTie && player.score == topScore) {
+                left.setTextColor(Color.parseColor("#FFA500"))
+            } else if (!isTie && index == 0) {
+                left.setTextColor(Color.parseColor("#FFA500"))
+            } else {
+                left.setTextColor(Color.parseColor("#AAAAAA"))
+            }
             left.layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             )
-            val spacer = android.view.View(this)
+            val spacer = View(this)
             spacer.layoutParams = LinearLayout.LayoutParams(
                 0,
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 1f
             )
-
-
             val right = TextView(this)
             right.text = "${player.score}"
             right.textSize = 18f
             right.setTextColor(Color.parseColor("#7F3FFF"))
-
             row.addView(left)
             row.addView(spacer)
             row.addView(right)
@@ -142,12 +154,8 @@ class FinalResultsActivity : AppCompatActivity() {
                 maxSpeed = 5f,
                 damping = 0.95f,
                 spread = 360,
-                colors = listOf(
-                    Color.YELLOW, Color.GREEN, Color.MAGENTA, Color.BLUE, Color.CYAN, Color.RED,
-                    Color.parseColor("#FFA500"), Color.parseColor("#FF69B4"),
-                    Color.parseColor("#00CED1"), Color.parseColor("#9370DB")
-                ),
-                size = listOf(Size(12), Size(15), Size(18), Size(20)),
+                colors = listOf(Color.YELLOW, Color.GREEN, Color.MAGENTA, Color.BLUE, Color.RED),
+                size = listOf(Size(12), Size(20)),
                 emitter = Emitter(duration = 15000).perSecond(20),
                 position = Position.Relative(0.0, 0.0).between(Position.Relative(1.0, 0.0))
             )

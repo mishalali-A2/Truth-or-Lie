@@ -4,8 +4,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -18,7 +16,7 @@ import androidx.appcompat.widget.SwitchCompat
 import com.futurewatch.truthorlietv.CategoryManager.resetSession
 
 
-class SettingsActivity : AppCompatActivity(), InfaticaConsentDialog.ConsentListener {
+class SettingsActivity : AppCompatActivity() {
 
     private lateinit var switchMusic: SwitchCompat
     private lateinit var backBtn: Button
@@ -51,7 +49,6 @@ class SettingsActivity : AppCompatActivity(), InfaticaConsentDialog.ConsentListe
         switchMusic.setOnCheckedChangeListener { _, isChecked ->
             MusicManager.setEnabled(isChecked)
 
-            // Show / Hide with animation (optional but recommended)
             if (isChecked) {
                 musicContainer.visibility = View.VISIBLE
                 musicContainer.alpha = 0f
@@ -77,7 +74,7 @@ class SettingsActivity : AppCompatActivity(), InfaticaConsentDialog.ConsentListe
 
         //for billing debugging n testing
         //addDebugPanel()
-        // addInfaticaStatus()
+
         resetSession()
 
         backBtn.setOnClickListener {
@@ -186,27 +183,9 @@ class SettingsActivity : AppCompatActivity(), InfaticaConsentDialog.ConsentListe
     private fun setupOtherSettings() {
         setupTimerSelection()
 
-        val switchNetwork = findViewById<SwitchCompat>(R.id.switchNetwork)
+       // val switchNetwork = findViewById<SwitchCompat>(R.id.switchNetwork)
         val prefs = getSharedPreferences("app_settings", MODE_PRIVATE)
 
-        val isInfaticaEnabled = prefs.getBoolean("network_sdk_enabled", false)
-        switchNetwork?.isChecked = isInfaticaEnabled
-
-        switchNetwork?.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                // Check network connection first
-                if (!InfaticaManager.hasNetworkConnection(this)) {
-                    Toast.makeText(this, "No network connection available", Toast.LENGTH_SHORT).show()
-                    switchNetwork?.isChecked = false
-                    return@setOnCheckedChangeListener
-                }
-                showInfaticaConsentDialog()
-
-                switchNetwork.post { switchNetwork.isChecked = isInfaticaEnabled }
-            } else {
-                disableInfatica()
-            }
-        }
 
         // Remove Ads
         setupSettingsItemFocus(R.id.removeAds, "Remove Ads")
@@ -215,13 +194,6 @@ class SettingsActivity : AppCompatActivity(), InfaticaConsentDialog.ConsentListe
         setupSettingsItemFocus(R.id.termsPrivacy, "Terms & Privacy")
     }
 
-    override fun onConsentAccepted() {
-        enableInfatica()
-    }
-
-    override fun onConsentDeclined() {
-        disableInfatica()
-    }
 
     private fun setupSettingsItemFocus(itemId: Int, itemName: String) {
         val itemView = findViewById<View>(itemId)
@@ -296,7 +268,6 @@ class SettingsActivity : AppCompatActivity(), InfaticaConsentDialog.ConsentListe
     private fun setupOtherAppsSection() {
         val otherAppsContainer = findViewById<LinearLayout>(R.id.otherAppsContainer) ?: return
 
-        // Clear any existing views (in case this is called again)
         otherAppsContainer.removeAllViews()
 
         val apps = listOf(
@@ -304,12 +275,11 @@ class SettingsActivity : AppCompatActivity(), InfaticaConsentDialog.ConsentListe
             "World Clock TV" to "com.futurewatch.world_clock_tv",
             "Tranquil" to "com.tranquil.androidtv",
             "Minesweeper" to "com.futurewatch.minesweeper",
-            "Turborg 2D Racing" to "co.futurewatch.turborg2d.racing",
+            "Turborg 2D-Racing" to "co.futurewatch.turborg2d.racing",
             "Moodscreen TV" to "com.moodscreen.tv"
         )
 
-        // Create rows with 2 chips per row (EXACT same as music layout)
-        val chipsPerRow = 2
+        val chipsPerRow = 3
         val rows = apps.chunked(chipsPerRow)
 
         rows.forEachIndexed { rowIndex, rowApps ->
@@ -425,69 +395,6 @@ class SettingsActivity : AppCompatActivity(), InfaticaConsentDialog.ConsentListe
     private val Int.sp: Float
         get() = this.toFloat() * resources.displayMetrics.scaledDensity
 
-    private fun enableInfatica() {
-        val prefs = getSharedPreferences("app_settings", MODE_PRIVATE)
-        prefs.edit()
-            .putBoolean("network_sdk_enabled", true)
-            .putBoolean("network_sdk_manually_disabled", false)
-            .apply()
-        InfaticaManager.saveConsent(this, true)
-        InfaticaManager.setEnabled(this, true)
-        val switchNetwork = findViewById<SwitchCompat>(R.id.switchNetwork)
-        switchNetwork?.isChecked = true
-
-        Toast.makeText(this, "Network sharing enabled", Toast.LENGTH_SHORT).show()
-    }
-    private fun disableInfatica() {
-        val prefs = getSharedPreferences("app_settings", MODE_PRIVATE)
-        prefs.edit()
-            .putBoolean("network_sdk_enabled", false)
-            .putBoolean("network_sdk_manually_disabled", true)
-            .apply()
-        InfaticaManager.saveConsent(this, false)
-        InfaticaManager.setEnabled(this, false)
-        val switchNetwork = findViewById<SwitchCompat>(R.id.switchNetwork)
-        switchNetwork?.isChecked = false
-
-        Toast.makeText(this, "Network sharing disabled", Toast.LENGTH_SHORT).show()
-    }
-    private fun showInfaticaConsentDialog() {
-        val dialog = InfaticaConsentDialog()
-        dialog.show(supportFragmentManager, "InfaticaConsentDialog")
-    }
-
-    private fun addInfaticaStatus() {
-        val statusText = TextView(this).apply {
-            text = getInfaticaStatus()
-            textSize = 14f
-            setTextColor(Color.parseColor("#AAAAAA"))
-            setPadding(40, 10, 40, 10)
-            id = View.generateViewId()
-        }
-
-        val parentLayout = findViewById<LinearLayout>(R.id.settingsRoot)
-        parentLayout?.addView(statusText)
-
-        Handler(Looper.getMainLooper()).postDelayed({
-            statusText.text = getInfaticaStatus()
-        }, 2000)
-    }
-
-    private fun getInfaticaStatus(): String {
-        return buildString {
-            append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
-            append("📡 INFATICA STATUS\n")
-            append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
-            append("Network Connected: ${if (InfaticaManager.hasNetworkConnection(this@SettingsActivity)) "✅" else "❌"}\n")
-            append("SDK Enabled: ${if (InfaticaManager.isEnabled(this@SettingsActivity)) "✅" else "❌"}\n")
-            append("Service Running: ${if (InfaticaManager.isServiceRunning()) "✅" else "❌"}\n")
-            val sdkId = InfaticaManager.getSdkId()
-            if (sdkId.isNotEmpty()) {
-                append("SDK ID: ${sdkId.take(16)}...\n")
-            }
-            append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-        }
-    }
     private fun setupTimerSelection() {
         val timer10 = findViewById<Button>(R.id.timer10)
         val timer20 = findViewById<Button>(R.id.timer20)
@@ -809,21 +716,5 @@ class SettingsActivity : AppCompatActivity(), InfaticaConsentDialog.ConsentListe
             append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
             append("💡 Tap buttons above to simulate purchases")
         }
-    }
-
-
-
-    override fun onPause() {
-        super.onPause()
-        MusicManager.pauseMusic()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        MusicManager.resumeMusic()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
     }
 }

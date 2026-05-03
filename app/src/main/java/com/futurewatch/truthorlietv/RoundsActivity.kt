@@ -77,14 +77,4 @@ class RoundsActivity : AppCompatActivity() {
         // def
         btn5.requestFocus()
     }
-
-    override fun onPause() {
-        super.onPause()
-        //MusicManager.pauseMusic()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        MusicManager.resumeMusic()
-    }
 }

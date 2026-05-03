@@ -139,7 +139,7 @@ class TruthOrLieApplication : Application() {
             override fun onRestoreCompleted(hasPremium: Boolean) {
                 Log.d("Billing", "Restore completed - Premium: $hasPremium")
                 if (hasPremium) {
-                    // Update UI to show premium features
+
                 }
             }
         })
@@ -149,11 +149,6 @@ class TruthOrLieApplication : Application() {
 
     override fun onTerminate() {
         super.onTerminate()
-        try {
-            InfaticaManager.stop(this)
-        } catch (e: Exception) {
-            Log.e("TruthOrLieApp", "Error stopping Infatica: ${e.message}")
-        }
         MusicManager.onAppDestroy()
     }
 }

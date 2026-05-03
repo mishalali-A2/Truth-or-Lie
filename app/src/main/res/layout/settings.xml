@@ -334,46 +334,46 @@
                     android:layout_weight="1"/>
             </LinearLayout>
 
-            <!-- Network SDK -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="12dp"
-                android:padding="8dp"
-                android:clipChildren="false">
+<!--            &lt;!&ndash; Network SDK &ndash;&gt;-->
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:orientation="horizontal"-->
+<!--                android:gravity="center_vertical"-->
+<!--                android:layout_marginBottom="12dp"-->
+<!--                android:padding="8dp"-->
+<!--                android:clipChildren="false">-->
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/network"/>
+<!--                <ImageView-->
+<!--                    android:layout_width="24dp"-->
+<!--                    android:layout_height="24dp"-->
+<!--                    android:src="@drawable/network"/>-->
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginStart="12dp"
-                    android:layout_weight="1">
+<!--                <LinearLayout-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="vertical"-->
+<!--                    android:layout_marginStart="12dp"-->
+<!--                    android:layout_weight="1">-->
 
-                    <TextView
-                        style="@style/optionText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Network SDK"/>
+<!--                    <TextView-->
+<!--                        style="@style/optionText"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Network SDK"/>-->
 
-                    <TextView
-                        style="@style/optionSub"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Analytics &amp; ad network" />
-                </LinearLayout>
+<!--                    <TextView-->
+<!--                        style="@style/optionSub"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Analytics &amp; ad network" />-->
+<!--                </LinearLayout>-->
 
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/switchNetwork"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-            </LinearLayout>
+<!--                <androidx.appcompat.widget.SwitchCompat-->
+<!--                    android:id="@+id/switchNetwork"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"/>-->
+<!--            </LinearLayout>-->
 
             <!-- Rate App -->
             <LinearLayout

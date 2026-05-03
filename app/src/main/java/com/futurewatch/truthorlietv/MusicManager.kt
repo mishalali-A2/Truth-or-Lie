@@ -2,6 +2,10 @@ package com.futurewatch.truthorlietv
 
 import android.media.MediaPlayer
 import android.util.Log
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ProcessLifecycleOwner
+import android.content.Context
 
 object MusicManager {
     private var mediaPlayer: MediaPlayer? = null
@@ -19,17 +23,32 @@ object MusicManager {
         "Funky Groove" to R.raw.music_funky
     )
 
-    fun init(context: android.content.Context) {
+    fun init(context: Context) {
         if (appContext != null) return
 
         appContext = context.applicationContext
 
-        // Load saved preferences
-        val prefs = appContext?.getSharedPreferences("app_settings", android.content.Context.MODE_PRIVATE)
+        val prefs = appContext?.getSharedPreferences("app_settings", Context.MODE_PRIVATE)
         isEnabled = prefs?.getBoolean("music_enabled", true) ?: true
         currentGenre = prefs?.getString("music_genre", "Chill Lounge") ?: "Chill Lounge"
 
-        Log.d("MusicManager", "Initialized - Music will start when MainActivity requests")
+        Log.d("MusicManager", "Initialized")
+
+        // ✅ App lifecycle listener (THIS is the important part)
+        ProcessLifecycleOwner.get().lifecycle.addObserver(object : DefaultLifecycleObserver {
+
+            override fun onStop(owner: LifecycleOwner) {
+                Log.d("MusicManager", "App in background → stopping music")
+                stopMusic()
+            }
+
+            override fun onStart(owner: LifecycleOwner) {
+                Log.d("MusicManager", "App in foreground → starting music")
+                if (isEnabled) {
+                    startMusic()
+                }
+            }
+        })
     }
 
     fun startMusic() {

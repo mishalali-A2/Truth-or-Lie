@@ -17,10 +17,10 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        //infatica
-        manifestPlaceholders += mapOf(
-            "INFATICA_PARTNER_ID" to "FutureWatch"
-        )
+//        //infatica
+//        manifestPlaceholders += mapOf(
+//            "INFATICA_PARTNER_ID" to "FutureWatch"
+//        )
 
     }
 

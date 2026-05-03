@@ -144,14 +144,4 @@ class PlayerNamesActivity : AppCompatActivity() {
             finish()
         }
     }
-
-    override fun onPause() {
-        super.onPause()
-        MusicManager.pauseMusic()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        MusicManager.resumeMusic()
-    }
 }

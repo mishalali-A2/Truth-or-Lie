@@ -7,6 +7,7 @@ import android.view.KeyEvent
 import android.view.View
 import android.widget.Button
 import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
@@ -19,8 +20,9 @@ class VotingActivity : AppCompatActivity() {
     private lateinit var tvRound: TextView
     private lateinit var tvPlayer: TextView
 
-    private lateinit var btnPause: Button
+    private lateinit var btnPause: ImageView
     private lateinit var btnResume: Button
+    private lateinit var btnEndGame: Button
     private lateinit var pauseOverlay: FrameLayout
 
     private lateinit var barTimer: View
@@ -59,6 +61,7 @@ class VotingActivity : AppCompatActivity() {
         tvPlayer     = findViewById(R.id.tvPlayer)
         btnPause     = findViewById(R.id.btnPause)
         btnResume    = findViewById(R.id.btnResume)
+        btnEndGame    = findViewById(R.id.btnEndGame)
         pauseOverlay = findViewById(R.id.pauseOverlay)
         barTimer     = findViewById(R.id.barTimer)
         frameTruth   = findViewById(R.id.frameTruth)
@@ -70,10 +73,23 @@ class VotingActivity : AppCompatActivity() {
         frameLie.isFocusable = false
         frameLie.isFocusableInTouchMode = false
 
+        pauseOverlay.isFocusable = true
+        pauseOverlay.isFocusableInTouchMode = true
+
+        // Make pause overlay buttons focusable for DPAD navigation
+        btnResume.isFocusable = true
+        btnResume.isFocusableInTouchMode = true
+        btnEndGame.isFocusable = true
+        btnEndGame.isFocusableInTouchMode = true
+
+        // Set DPAD navigation order
+        btnResume.nextFocusDownId = R.id.btnEndGame
+        btnEndGame.nextFocusUpId = R.id.btnResume
+        btnResume.nextFocusUpId = R.id.btnEndGame
+        btnEndGame.nextFocusDownId = R.id.btnResume
+
         btnPause.isFocusable = true
         btnPause.isFocusableInTouchMode = false
-        btnResume.isFocusable = true
-        btnResume.isFocusableInTouchMode = false
 
         currentStatement = intent.getStringExtra("STATEMENT") ?: ""
         correctAnswer = intent.getBooleanExtra("ANSWER", false)
@@ -92,6 +108,7 @@ class VotingActivity : AppCompatActivity() {
         tvPlayer.text    = "${currentPlayer.name}, what do you think?"
 
         btnResume.setOnClickListener { resumeGame() }
+        btnEndGame.setOnClickListener { endGame() }
 
         focusAnchor.requestFocus()
 
@@ -161,12 +178,21 @@ class VotingActivity : AppCompatActivity() {
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
 
         if (isPaused) {
-            if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_BUTTON_A) {
-                resumeGame()
-            }
-            return true
-        }
+            return when (keyCode) {
 
+                KeyEvent.KEYCODE_DPAD_CENTER,
+                KeyEvent.KEYCODE_BUTTON_A -> {
+                    val focused = currentFocus
+                    when (focused?.id) {
+                        R.id.btnResume -> resumeGame()
+                        R.id.btnEndGame -> endGame()
+                    }
+                    true
+                }
+
+                else -> super.onKeyDown(keyCode, event)
+            }
+        }
         if (isLocked) return true
 
         return when (keyCode) {
@@ -273,14 +299,10 @@ class VotingActivity : AppCompatActivity() {
         finish()
     }
 
-    override fun onPause() {
-        super.onPause()
-        MusicManager.pauseMusic()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        MusicManager.resumeMusic()
+    private fun endGame() {
+        val intent = Intent(this, FinalResultsActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
     override fun onDestroy() {
