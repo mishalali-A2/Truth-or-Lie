@@ -113,7 +113,7 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         titleAnim?.start()
         subtitleAnim?.start()
-        MusicManager.resumeMusic()
+        MusicManager.startMusic()
     }
 
     override fun onDestroy() {

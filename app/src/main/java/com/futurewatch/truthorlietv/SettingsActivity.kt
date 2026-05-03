@@ -4,8 +4,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -718,21 +716,5 @@ class SettingsActivity : AppCompatActivity() {
             append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
             append("💡 Tap buttons above to simulate purchases")
         }
-    }
-
-
-
-    override fun onPause() {
-        super.onPause()
-        MusicManager.pauseMusic()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        MusicManager.resumeMusic()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
     }
 }

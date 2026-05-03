@@ -59,14 +59,4 @@ class PlayerCountActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
-
-    override fun onPause() {
-        super.onPause()
-        MusicManager.pauseMusic()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        MusicManager.resumeMusic()
-    }
 }

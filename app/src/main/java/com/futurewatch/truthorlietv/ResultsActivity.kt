@@ -68,7 +68,7 @@ class ResultsActivity : AppCompatActivity() {
 
         container.removeAllViews()
 
-        // Set container to wrap_content and center the players
+
         container.layoutParams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.WRAP_CONTENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
@@ -87,7 +87,7 @@ class ResultsActivity : AppCompatActivity() {
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 )
-                setPadding(16, 0, 16, 0)  // Reduced padding between players
+                setPadding(16, 0, 16, 0)
             }
 
             val icon = ImageView(this).apply {
@@ -98,7 +98,7 @@ class ResultsActivity : AppCompatActivity() {
                     setImageResource(R.drawable.wrong)
                 }
                 layoutParams = LinearLayout.LayoutParams(
-                    dpToPx(56),  // Slightly smaller icon
+                    dpToPx(56),
                     dpToPx(56)
                 )
                 setBackgroundResource(R.drawable.circle_bg)
@@ -108,7 +108,7 @@ class ResultsActivity : AppCompatActivity() {
 
             val name = TextView(this).apply {
                 text = player.name
-                textSize = 14f  // Slightly smaller font
+                textSize = 14f
                 setTextColor(Color.WHITE)
                 gravity = Gravity.CENTER
                 layoutParams = LinearLayout.LayoutParams(
@@ -116,11 +116,11 @@ class ResultsActivity : AppCompatActivity() {
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 )
                 setPadding(0, dpToPx(8), 0, dpToPx(4))
-                maxWidth = dpToPx(80)  // Limit name width to prevent text from being too wide
+                maxWidth = dpToPx(80)
             }
 
             val score = TextView(this).apply {
-                val gained = if (isCorrect) "+1" else "+0"
+                val gained = if (isCorrect) "+100" else "+0"
                 text = gained
                 textSize = 13f
                 setTextColor(if (isCorrect) Color.parseColor("#00FF88") else Color.LTGRAY)
@@ -163,15 +163,5 @@ class ResultsActivity : AppCompatActivity() {
 
     private fun dpToPx(dp: Int): Int {
         return (dp * resources.displayMetrics.density).toInt()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        MusicManager.pauseMusic()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        MusicManager.resumeMusic()
     }
 }

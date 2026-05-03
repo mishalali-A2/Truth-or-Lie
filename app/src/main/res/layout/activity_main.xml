@@ -114,8 +114,8 @@
         <!-- Start Game Button -->
         <Button
             android:id="@+id/btnStart"
-            android:layout_width="240dp"
-            android:layout_height="65dp"
+            android:layout_width="210dp"
+            android:layout_height="60dp"
             android:background="@drawable/btn_main"
             app:backgroundTint="@null"
             app:cornerRadius="18dp"
@@ -126,7 +126,7 @@
             android:textStyle="bold"
             android:fontFamily="@font/plus_jakarta_sans"
             android:textColor="#FFFFFF"
-            android:textSize="22sp"
+            android:textSize="18sp"
             android:insetTop="0dp"
             android:insetBottom="0dp"
             app:elevation="12dp" />
@@ -134,8 +134,8 @@
         <!-- How to Play -->
         <Button
             android:id="@+id/btnHowToPlay"
-            android:layout_width="240dp"
-            android:layout_height="65dp"
+            android:layout_width="210dp"
+            android:layout_height="60dp"
             android:layout_marginTop="16dp"
             android:textStyle="bold"
             android:fontFamily="@font/plus_jakarta_sans"
@@ -146,7 +146,7 @@
             android:nextFocusDown="@id/btnLeaderboard"
             android:text="How to Play"
             android:textColor="#FFFFFF"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:insetTop="0dp"
             android:insetBottom="0dp"
             app:elevation="4dp" />
@@ -154,12 +154,12 @@
         <!-- Leaderboard -->
         <Button
             android:id="@+id/btnLeaderboard"
-            android:layout_width="240dp"
-            android:layout_height="65dp"
+            android:layout_width="210dp"
+            android:layout_height="60dp"
             android:text="Leaderboard"
             android:textStyle="bold"
             android:fontFamily="@font/plus_jakarta_sans"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textColor="#FFFFFF"
             android:layout_marginTop="16dp"
             android:background="@drawable/btn_secondary"
@@ -174,12 +174,12 @@
         <!-- Settings -->
         <Button
             android:id="@+id/btnSettings"
-            android:layout_width="230dp"
-            android:layout_height="63dp"
+            android:layout_width="200dp"
+            android:layout_height="57dp"
             android:text="Settings"
             android:textStyle="bold"
             android:fontFamily="@font/plus_jakarta_sans"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textColor="#9CA3AF"
             android:layout_marginTop="16dp"
             android:background="@drawable/btn_secondary"
