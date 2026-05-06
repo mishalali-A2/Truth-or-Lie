@@ -301,6 +301,27 @@ class BillingManager(
                 Log.d(TAG, "Purchase ${purchase.purchaseToken} is not a premium product")
                 continue
             }
+            if (isPremiumPurchase) {
+                val prefs = context.getSharedPreferences("app_settings", Context.MODE_PRIVATE)
+
+                purchase.products.forEach { productId ->
+                    when (productId) {
+                        "remove_ads" -> {
+                            prefs.edit().putBoolean("ads_removed", true).apply()
+                        }
+                        "unlock_all_categories" -> {
+                            prefs.edit().putBoolean("all_categories_unlocked", true).apply()
+                        }
+                        "premium_monthly", "premium_yearly" -> {
+                            prefs.edit()
+                                .putBoolean("ads_removed", true)
+                                .putBoolean("all_categories_unlocked", true)
+                                .putBoolean("premium_access", true)
+                                .apply()
+                        }
+                    }
+                }
+            }
 
             hasPremiumAccess = true
             Log.d(TAG, "✓ Premium purchase found: ${purchase.products}")
