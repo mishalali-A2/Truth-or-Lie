@@ -8,6 +8,7 @@ import com.unity3d.ads.IUnityAdsInitializationListener
 import com.unity3d.ads.IUnityAdsLoadListener
 import android.os.Handler
 import android.os.Looper
+import android.content.Context
 
 object AdManager {
     private const val REWARDED_ID = "Rewarded_Android"
@@ -48,6 +49,15 @@ object AdManager {
         })
     }
 
+    private fun hasNoAds(context: Context): Boolean {
+        val billingPrefs = context.getSharedPreferences("billing_prefs", Context.MODE_PRIVATE)
+        val premium = billingPrefs.getBoolean("premium_access", false)
+
+        val appPrefs = context.getSharedPreferences("app_settings", Context.MODE_PRIVATE)
+        val adsRemoved = appPrefs.getBoolean("ads_removed", false)
+
+        return premium || adsRemoved
+    }
     fun preloadRewarded() {
         if (!isInitialized || isLoadingRewarded) return
 
@@ -108,6 +118,12 @@ object AdManager {
         onComplete: () -> Unit = {},
         onFailed: () -> Unit = {}
     ) {
+        if (hasNoAds(activity)) {
+            Log.d("AdManager", "🚫 Ads disabled (user purchased remove_ads)")
+            onComplete()
+            return
+        }
+
         Log.d("AdManager", "=== SHOW INTERSTITIAL CALLED ===")
         Log.d("AdManager", "isInitialized: $isInitialized")
         Log.d("AdManager", "isInterstitialPreloaded: $isInterstitialPreloaded")
@@ -264,6 +280,11 @@ object AdManager {
         onRewardEarned: () -> Unit,
         onFailed: () -> Unit = {}
     ) {
+        if (hasNoAds(activity)) {
+            onFailed()
+            return
+        }
+
         Log.d("AdManager", "=== SHOW REWARDED AD CALLED ===")
 
         if (!isInitialized) {

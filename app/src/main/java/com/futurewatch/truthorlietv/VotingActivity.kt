@@ -30,6 +30,11 @@ class VotingActivity : AppCompatActivity() {
     private lateinit var frameLie: FrameLayout
     private lateinit var focusAnchor: View
 
+    // Overlay for next player's turn
+    private lateinit var nextPlayerOverlay: FrameLayout
+    private lateinit var nextPlayerText: TextView
+    private lateinit var btnNextPlayerContinue: Button
+
     private var selectedAnswer: Boolean? = null
     private var isLocked = false
     private var isPaused = false
@@ -67,6 +72,16 @@ class VotingActivity : AppCompatActivity() {
         frameTruth   = findViewById(R.id.frameTruth)
         frameLie     = findViewById(R.id.frameLie)
         focusAnchor  = findViewById(R.id.focusAnchor)
+
+        // Next player overlay (must be added to layout XML)
+        nextPlayerOverlay = findViewById(R.id.nextPlayerOverlay)
+        nextPlayerText = findViewById(R.id.nextPlayerText)
+        btnNextPlayerContinue = findViewById(R.id.btnNextPlayerContinue)
+        nextPlayerOverlay.visibility = View.GONE
+        btnNextPlayerContinue.setOnClickListener {
+            nextPlayerOverlay.visibility = View.GONE
+            startNextPlayerTurn()
+        }
 
         frameTruth.isFocusable = false
         frameTruth.isFocusableInTouchMode = false
@@ -277,27 +292,55 @@ class VotingActivity : AppCompatActivity() {
         val isLast = nextTurn % totalPlayers == 0
         GameSession.currPlayerTurn = nextTurn
 
-        android.util.Log.d("VotingActivity", "Answer: ${selectedAnswer}, Correct: $correctAnswer, Score: ${player.score}")
+        android.util.Log.d("VotingActivity", "Answer: \\${selectedAnswer}, Correct: $correctAnswer, Score: \\${player.score}")
 
-        val intent = if (isLast) {
-            Intent(this, ResultsActivity::class.java).apply {
+        if (isLast) {
+            // Last player, go to results
+            val intent = Intent(this, ResultsActivity::class.java).apply {
                 putExtra("STATEMENT", currentStatement)
                 putExtra("ANSWER", correctAnswer)
             }
+            startActivity(intent)
+            finish()
         } else {
-            Intent(this, VotingActivity::class.java).apply {
-                putExtra("STATEMENT", currentStatement)
-                putExtra("ANSWER", correctAnswer)
-                putExtra("ROUND", intent.getIntExtra("ROUND", 1))
-                putExtra("TOTAL_ROUNDS", intent.getIntExtra("TOTAL_ROUNDS", 1))
-                putExtra("CATEGORY", intent.getStringExtra("CATEGORY") ?: "science")
-                putExtra("FACT_ID", intent.getStringExtra("FACT_ID") ?: "")
-            }
+            // Show next player overlay
+            val nextPlayer = GameSession.players[nextTurn % totalPlayers]
+            nextPlayerText.text = "Next player's turn: ${nextPlayer.name}"
+            nextPlayerOverlay.visibility = View.VISIBLE
+            btnNextPlayerContinue.requestFocus()
         }
+    }
 
+    private fun startNextPlayerTurn() {
+        val intent = Intent(this, VotingActivity::class.java).apply {
+            putExtra("STATEMENT", currentStatement)
+            putExtra("ANSWER", correctAnswer)
+            putExtra("ROUND", intent.getIntExtra("ROUND", 1))
+            putExtra("TOTAL_ROUNDS", intent.getIntExtra("TOTAL_ROUNDS", 1))
+            putExtra("CATEGORY", intent.getStringExtra("CATEGORY") ?: "science")
+            putExtra("FACT_ID", intent.getStringExtra("FACT_ID") ?: "")
+        }
         startActivity(intent)
         finish()
     }
+
+    // --- LIFECYCLE: Ensure these are at the class level, not inside another function ---
+    override fun onPause() {
+        super.onPause()
+        MusicManager.pauseMusic()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        MusicManager.resumeMusic()
+    }
+
+    // --- REMINDER: You must add the following to your voting.xml layout: ---
+    // <FrameLayout android:id="@+id/nextPlayerOverlay" ... >
+    //   <TextView android:id="@+id/nextPlayerText" ... />
+    //   <Button android:id="@+id/btnNextPlayerContinue" ... />
+    // </FrameLayout>
+    // Set nextPlayerOverlay visibility to gone by default and ensure it covers the screen when visible.
 
     private fun endGame() {
         val intent = Intent(this, FinalResultsActivity::class.java)

@@ -22,7 +22,7 @@ class CategoriesActivity : AppCompatActivity() {
         setContentView(R.layout.activity_categories)
 
       //for testing
-      //  resetAllPurchasesForTesting()
+        resetAllPurchasesForTesting()
         MusicManager.resumeMusic()
 
 

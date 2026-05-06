@@ -107,12 +107,16 @@
                     android:id="@+id/card_history"
                     android:layout_width="260dp"
                     android:layout_height="180dp"
+                    android:background="@drawable/card_bg_locked_selector"
                     android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:clickable="true">
 
                     <LinearLayout
                         style="@style/CategoryCardDisabled"
-                        android:alpha="0.5">
+                        android:alpha="0.6"
+                        android:scaleX="0.98"
+                        android:scaleY="0.98">
 
                         <ImageView
                             android:layout_width="48dp"
@@ -130,7 +134,7 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="#66000000"/>
+                        android:background="#AA000000"/>
 
                     <ImageView
                         android:layout_width="50dp"
@@ -143,12 +147,16 @@
                     android:id="@+id/card_space"
                     android:layout_width="260dp"
                     android:layout_height="180dp"
+                    android:background="@drawable/card_bg_locked_selector"
                     android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:clickable="true">
 
                     <LinearLayout
                         style="@style/CategoryCardDisabled"
-                        android:alpha="0.5">
+                        android:alpha="0.6"
+                        android:scaleX="0.98"
+                        android:scaleY="0.98">
 
                         <ImageView
                             android:layout_width="48dp"
@@ -166,7 +174,7 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="#66000000"/>
+                        android:background="#AA000000"/>
 
                     <ImageView
                         android:layout_width="50dp"
@@ -179,12 +187,16 @@
                     android:id="@+id/card_technology"
                     android:layout_width="260dp"
                     android:layout_height="180dp"
+                    android:background="@drawable/card_bg_locked_selector"
                     android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:clickable="true">
 
                     <LinearLayout
                         style="@style/CategoryCardDisabled"
-                        android:alpha="0.5">
+                        android:alpha="0.6"
+                        android:scaleX="0.98"
+                        android:scaleY="0.98">
 
                         <ImageView
                             android:layout_width="48dp"
@@ -202,7 +214,7 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="#66000000"/>
+                        android:background="#AA000000"/>
 
                     <ImageView
                         android:layout_width="50dp"
@@ -215,12 +227,16 @@
                     android:id="@+id/card_human_body"
                     android:layout_width="260dp"
                     android:layout_height="180dp"
+                    android:background="@drawable/card_bg_locked_selector"
                     android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:clickable="true">
 
                     <LinearLayout
                         style="@style/CategoryCardDisabled"
-                        android:alpha="0.5">
+                        android:alpha="0.6"
+                        android:scaleX="0.98"
+                        android:scaleY="0.98">
 
                         <ImageView
                             android:layout_width="48dp"
@@ -238,7 +254,7 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="#66000000"/>
+                        android:background="#AA000000"/>
 
                     <ImageView
                         android:layout_width="50dp"
@@ -251,12 +267,16 @@
                     android:id="@+id/card_crazy_facts"
                     android:layout_width="260dp"
                     android:layout_height="180dp"
+                    android:background="@drawable/card_bg_locked_selector"
                     android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:clickable="true">
 
                     <LinearLayout
                         style="@style/CategoryCardDisabled"
-                        android:alpha="0.5">
+                        android:alpha="0.6"
+                        android:scaleX="0.98"
+                        android:scaleY="0.98">
 
                         <ImageView
                             android:layout_width="48dp"
@@ -274,7 +294,7 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="#66000000"/>
+                        android:background="#AA000000"/>
 
                     <ImageView
                         android:layout_width="50dp"
@@ -287,12 +307,16 @@
                     android:id="@+id/card_random_chaos"
                     android:layout_width="260dp"
                     android:layout_height="180dp"
+                    android:background="@drawable/card_bg_locked_selector"
                     android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:clickable="true">
 
                     <LinearLayout
                         style="@style/CategoryCardDisabled"
-                        android:alpha="0.5">
+                        android:alpha="0.6"
+                        android:scaleX="0.98"
+                        android:scaleY="0.98">
 
                         <ImageView
                             android:layout_width="48dp"
@@ -310,7 +334,7 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="#66000000"/>
+                        android:background="#AA000000"/>
 
                     <ImageView
                         android:layout_width="50dp"
@@ -323,12 +347,16 @@
                     android:id="@+id/card_relations_social"
                     android:layout_width="260dp"
                     android:layout_height="180dp"
+                    android:background="@drawable/card_bg_locked_selector"
                     android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:clickable="true">
 
                     <LinearLayout
                         style="@style/CategoryCardDisabled"
-                        android:alpha="0.5">
+                        android:alpha="0.6"
+                        android:scaleX="0.98"
+                        android:scaleY="0.98">
 
                         <ImageView
                             android:layout_width="48dp"
@@ -346,7 +374,7 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="#66000000"/>
+                        android:background="#AA000000"/>
 
                     <ImageView
                         android:layout_width="50dp"
@@ -359,12 +387,16 @@
                     android:id="@+id/card_travel"
                     android:layout_width="260dp"
                     android:layout_height="180dp"
+                    android:background="@drawable/card_bg_locked_selector"
                     android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:clickable="true">
 
                     <LinearLayout
                         style="@style/CategoryCardDisabled"
-                        android:alpha="0.5">
+                        android:alpha="0.6"
+                        android:scaleX="0.98"
+                        android:scaleY="0.98">
 
                         <ImageView
                             android:layout_width="48dp"
@@ -382,7 +414,7 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="#66000000"/>
+                        android:background="#AA000000"/>
 
                     <ImageView
                         android:layout_width="50dp"
@@ -395,12 +427,16 @@
                     android:id="@+id/card_money_luxury"
                     android:layout_width="260dp"
                     android:layout_height="180dp"
+                    android:background="@drawable/card_bg_locked_selector"
                     android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:clickable="true">
 
                     <LinearLayout
                         style="@style/CategoryCardDisabled"
-                        android:alpha="0.5">
+                        android:alpha="0.6"
+                        android:scaleX="0.98"
+                        android:scaleY="0.98">
 
                         <ImageView
                             android:layout_width="48dp"
@@ -418,7 +454,7 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="#66000000"/>
+                        android:background="#AA000000"/>
 
                     <ImageView
                         android:layout_width="50dp"
@@ -431,12 +467,16 @@
                     android:id="@+id/card_movie"
                     android:layout_width="260dp"
                     android:layout_height="180dp"
+                    android:background="@drawable/card_bg_locked_selector"
                     android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:clickable="true">
 
                     <LinearLayout
                         style="@style/CategoryCardDisabled"
-                        android:alpha="0.5">
+                        android:alpha="0.6"
+                        android:scaleX="0.98"
+                        android:scaleY="0.98">
 
                         <ImageView
                             android:layout_width="48dp"
@@ -454,7 +494,7 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="#66000000"/>
+                        android:background="#AA000000"/>
 
                     <ImageView
                         android:layout_width="50dp"
@@ -467,12 +507,16 @@
                     android:id="@+id/card_survival"
                     android:layout_width="260dp"
                     android:layout_height="180dp"
+                    android:background="@drawable/card_bg_locked_selector"
                     android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:clickable="true">
 
                     <LinearLayout
                         style="@style/CategoryCardDisabled"
-                        android:alpha="0.5">
+                        android:alpha="0.6"
+                        android:scaleX="0.98"
+                        android:scaleY="0.98">
 
                         <ImageView
                             android:layout_width="48dp"
@@ -490,7 +534,7 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="#66000000"/>
+                        android:background="#AA000000"/>
 
                     <ImageView
                         android:layout_width="50dp"
@@ -503,12 +547,16 @@
                     android:id="@+id/card_family_mode"
                     android:layout_width="260dp"
                     android:layout_height="180dp"
+                    android:background="@drawable/card_bg_locked_selector"
                     android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:clickable="true">
 
                     <LinearLayout
                         style="@style/CategoryCardDisabled"
-                        android:alpha="0.5">
+                        android:alpha="0.6"
+                        android:scaleX="0.98"
+                        android:scaleY="0.98">
 
                         <ImageView
                             android:layout_width="48dp"
@@ -526,7 +574,7 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="#66000000"/>
+                        android:background="#AA000000"/>
 
                     <ImageView
                         android:layout_width="50dp"
