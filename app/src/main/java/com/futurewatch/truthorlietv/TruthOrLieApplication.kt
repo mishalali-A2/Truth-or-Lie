@@ -26,6 +26,8 @@ class TruthOrLieApplication : Application() {
         instance = this
         prefs = getSharedPreferences("app_settings", MODE_PRIVATE)
 
+        initializeDefaultSettings()
+
         UnityAds.initialize(this, "6069840", true, object : IUnityAdsInitializationListener {
             override fun onInitializationComplete() {
                 Log.d("UnityAds", "SDK Initialized Successfully")
@@ -63,6 +65,30 @@ class TruthOrLieApplication : Application() {
             true
         }
     }
+
+    private fun initializeDefaultSettings() {
+        // Check if we have already initialized settings
+        if (!prefs.contains("first_run_initialized")) {
+            Log.d("TruthOrLieApp", "First run detected! Initializing default settings...")
+
+            prefs.edit().apply {
+                // Audio Defaults
+                putBoolean("music_enabled", true)
+                putString("music_genre", "Chill Lounge")
+
+                // Gameplay Defaults
+                putInt("timer_seconds", 20)
+
+                // App State
+                putBoolean("network_sdk_enabled", false)
+                // Mark as initialized so this doesn't run again
+                putBoolean("first_run_initialized", true)
+
+                apply()
+            }
+        }
+    }
+
     private fun initializeInfaticaSafely() {
         try {
             // Check storage permissions + availability

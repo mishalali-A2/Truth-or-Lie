@@ -21,8 +21,8 @@ class CategoriesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_categories)
 
-      //for testing
-        resetAllPurchasesForTesting()
+        // Always reset purchases and locked categories on launch
+        resetAllPurchasesOnLaunch()
         MusicManager.resumeMusic()
 
 
@@ -209,39 +209,32 @@ class CategoriesActivity : AppCompatActivity() {
         btnBuyCategory.requestFocus()
     }
 
-    private fun resetAllPurchasesForTesting() {
+    private fun resetAllPurchasesOnLaunch() {
         val prefs = TruthOrLieApplication.prefs
-        val hasBeenReset = prefs.getBoolean("debug_has_been_reset", false)
+        // Clear all preferences
+        prefs.edit().clear().apply()
+        getSharedPreferences("app_settings", MODE_PRIVATE).edit().clear().apply()
+        CategoryManager.resetSession()
 
-        if (!hasBeenReset) {
-            // Clear all preferences
-            prefs.edit().clear().apply()
-            getSharedPreferences("app_settings", MODE_PRIVATE).edit().clear().apply()
-            CategoryManager.resetSession()
-
-            // Reset billing
-            try {
-                TruthOrLieApplication.billingRepository.clearPurchaseCache()
-                TruthOrLieApplication.billingRepository.resetBillingState()
-            } catch (e: Exception) {
-                Log.e("ResetDebug", "Error resetting billing", e)
-            }
-
-            // Set default values
-            prefs.edit()
-                .putBoolean("music_enabled", true)
-                .putInt("timer_seconds", 20)
-                .putBoolean("network_sdk_enabled", false)
-                .putBoolean("debug_has_been_reset", true)
-                .apply()
-
-            Log.d("ResetDebug", "========== RESET COMPLETE (WILL NOT RUN AGAIN) ==========")
-
-            Toast.makeText(this, "✅ Purchases reset for testing", Toast.LENGTH_SHORT).show()
-        } else {
-            Log.d("ResetDebug", "Skipping reset - already performed once")
+        // Reset billing
+        try {
+            TruthOrLieApplication.billingRepository.clearPurchaseCache()
+            TruthOrLieApplication.billingRepository.resetBillingState()
+        } catch (e: Exception) {
+            Log.e("ResetDebug", "Error resetting billing", e)
         }
+
+        // Set default values
+        prefs.edit()
+            .putBoolean("music_enabled", true)
+            .putInt("timer_seconds", 20)
+            .putBoolean("network_sdk_enabled", false)
+            .apply()
+
+        Log.d("ResetDebug", "========== RESET COMPLETE (ALWAYS RUNS ON LAUNCH) ==========")
+        Toast.makeText(this, "✅ Purchases reset, all categories locked", Toast.LENGTH_SHORT).show()
     }
+
     private fun hideUnlockOverlay() {
         unlockOverlay.animate().alpha(0f).setDuration(200).withEndAction {
             unlockOverlay.visibility = View.GONE
