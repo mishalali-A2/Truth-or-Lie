@@ -11,9 +11,9 @@ import androidx.core.view.WindowInsetsCompat
 
 class PlayerCountActivity : AppCompatActivity() {
 
-    private var playerCount = 2
+    private var playerCount = 1
 
-    private val MIN_PLAYERS = 2
+    private val MIN_PLAYERS = 1
     private val MAX_PLAYERS = 6
 
     override fun onCreate(savedInstanceState: Bundle?) {
