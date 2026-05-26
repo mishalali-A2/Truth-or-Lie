@@ -1,10 +1,14 @@
 package com.futurewatch.truthorlietv
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ValueAnimator
 import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.KeyEvent
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -12,6 +16,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.animation.doOnEnd
 
 class VotingActivity : AppCompatActivity() {
 
@@ -38,13 +43,13 @@ class VotingActivity : AppCompatActivity() {
     private var selectedAnswer: Boolean? = null
     private var isLocked = false
     private var isPaused = false
-    private var isPauseFocused = false
+    private var isSelectionAnimating = false
 
     private var currentStatement: String = ""
     private var correctAnswer = false
 
     // Dynamic timer values - read from settings
-    private var totalTime: Long = 20000L  // Will be set from TimerManager
+    private var totalTime: Long = 20000L
     private var timeLeft: Long = 20000L
     private lateinit var timer: CountDownTimer
 
@@ -60,20 +65,20 @@ class VotingActivity : AppCompatActivity() {
 
         android.util.Log.d("VotingActivity", "Timer duration: ${totalTime / 1000} seconds")
 
-        tvStatement  = findViewById(R.id.tvStatement)
-        tvTimer      = findViewById(R.id.tvTimer)
-        tvRound      = findViewById(R.id.tvRound)
-        tvPlayer     = findViewById(R.id.tvPlayer)
-        btnPause     = findViewById(R.id.btnPause)
-        btnResume    = findViewById(R.id.btnResume)
-        btnEndGame    = findViewById(R.id.btnEndGame)
+        tvStatement = findViewById(R.id.tvStatement)
+        tvTimer = findViewById(R.id.tvTimer)
+        tvRound = findViewById(R.id.tvRound)
+        tvPlayer = findViewById(R.id.tvPlayer)
+        btnPause = findViewById(R.id.btnPause)
+        btnResume = findViewById(R.id.btnResume)
+        btnEndGame = findViewById(R.id.btnEndGame)
         pauseOverlay = findViewById(R.id.pauseOverlay)
-        barTimer     = findViewById(R.id.barTimer)
-        frameTruth   = findViewById(R.id.frameTruth)
-        frameLie     = findViewById(R.id.frameLie)
-        focusAnchor  = findViewById(R.id.focusAnchor)
+        barTimer = findViewById(R.id.barTimer)
+        frameTruth = findViewById(R.id.frameTruth)
+        frameLie = findViewById(R.id.frameLie)
+        focusAnchor = findViewById(R.id.focusAnchor)
 
-        // Next player overlay (must be added to layout XML)
+        // Next player overlay
         nextPlayerOverlay = findViewById(R.id.nextPlayerOverlay)
         nextPlayerText = findViewById(R.id.nextPlayerText)
         btnNextPlayerContinue = findViewById(R.id.btnNextPlayerContinue)
@@ -120,7 +125,7 @@ class VotingActivity : AppCompatActivity() {
 
         tvStatement.text = currentStatement
         tvRound.text = "ROUND ${GameSession.currRound}/${GameSession.totalRounds}"
-        tvPlayer.text    = "${currentPlayer.name}, what do you think?"
+        tvPlayer.text = "${currentPlayer.name}, what do you think?"
 
         btnResume.setOnClickListener { resumeGame() }
         btnEndGame.setOnClickListener { endGame() }
@@ -130,7 +135,7 @@ class VotingActivity : AppCompatActivity() {
         startTimer(timeLeft)
 
         //callback
-        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 pauseGame()
             }
@@ -159,9 +164,7 @@ class VotingActivity : AppCompatActivity() {
 
             override fun onFinish() {
                 if (isLocked || isPaused) return
-                // Time's up - auto-lock with default answer
                 if (selectedAnswer == null) {
-                    // Default to false (Lie) when time runs out
                     selectAnswer(false)
                 }
                 lockAnswer()
@@ -169,7 +172,7 @@ class VotingActivity : AppCompatActivity() {
         }.start()
     }
 
-    //pause on navigating up
+    // Pause on navigating up
     private fun pauseGame() {
         if (isPaused) return
         isPaused = true
@@ -184,17 +187,13 @@ class VotingActivity : AppCompatActivity() {
         isPaused = false
         MusicManager.resumeMusic()
         pauseOverlay.visibility = View.GONE
-        isPauseFocused = false
-        highlightPauseButton(false)
         focusAnchor.requestFocus()
         startTimer(timeLeft)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-
         if (isPaused) {
             return when (keyCode) {
-
                 KeyEvent.KEYCODE_DPAD_CENTER,
                 KeyEvent.KEYCODE_BUTTON_A -> {
                     val focused = currentFocus
@@ -204,83 +203,119 @@ class VotingActivity : AppCompatActivity() {
                     }
                     true
                 }
-
                 else -> super.onKeyDown(keyCode, event)
             }
         }
-        if (isLocked) return true
+
+        if (isLocked || isSelectionAnimating) return true
 
         return when (keyCode) {
-
             KeyEvent.KEYCODE_DPAD_LEFT -> {
-                if (focusAnchor.hasFocus()) selectAnswer(true)
+                if (focusAnchor.hasFocus() && !isLocked && !isSelectionAnimating) {
+                    selectAnswer(true)  // Truth on LEFT
+                }
                 true
             }
-
             KeyEvent.KEYCODE_DPAD_RIGHT -> {
-                if (focusAnchor.hasFocus()) selectAnswer(false)
+                if (focusAnchor.hasFocus() && !isLocked && !isSelectionAnimating) {
+                    selectAnswer(false)  // Lie on RIGHT
+                }
                 true
             }
-
             KeyEvent.KEYCODE_DPAD_UP -> {
-                pauseGame() //pause on up
+                pauseGame()
                 true
             }
-
             KeyEvent.KEYCODE_DPAD_CENTER,
-            KeyEvent.KEYCODE_BUTTON_A ->{
-                if (selectedAnswer != null) {
+            KeyEvent.KEYCODE_BUTTON_A -> {
+                // When OK/Enter is pressed, submit the selected answer
+                if (selectedAnswer != null && !isLocked && !isSelectionAnimating) {
                     lockAnswer()
                 }
                 true
             }
-
             else -> super.onKeyDown(keyCode, event)
         }
     }
 
-    private fun highlightPauseButton(highlighted: Boolean) {
-        btnPause.alpha = if (highlighted) 1.0f else 0.6f
-    }
-
     private fun selectAnswer(answer: Boolean) {
+        if (isSelectionAnimating) return
+
         selectedAnswer = answer
+        isSelectionAnimating = true
+
         val truthParams = frameTruth.layoutParams as LinearLayout.LayoutParams
-        val lieParams   = frameLie.layoutParams as LinearLayout.LayoutParams
+        val lieParams = frameLie.layoutParams as LinearLayout.LayoutParams
+        val targetTruthWeight: Float
+        val targetLieWeight: Float
 
         if (answer) {
-            truthParams.weight = 0.85f
-            lieParams.weight   = 0.35f
+            targetTruthWeight = 0.85f
+            targetLieWeight = 0.35f
         } else {
-            lieParams.weight   = 0.85f
-            truthParams.weight = 0.35f
+            targetTruthWeight = 0.35f
+            targetLieWeight = 0.85f
         }
 
-        frameTruth.layoutParams = truthParams
-        frameLie.layoutParams   = lieParams
-        frameTruth.requestLayout()
-        frameLie.requestLayout()
+        // Animate the weight change smoothly
+        animateWeightChange(truthParams, targetTruthWeight, lieParams, targetLieWeight)
+    }
 
-        // Auto-lock after selection with a small delay
-        btnResume.postDelayed({
-            if (!isLocked && selectedAnswer != null) {
-                lockAnswer()
+    private fun animateWeightChange(
+        truthParams: LinearLayout.LayoutParams,
+        targetTruthWeight: Float,
+        lieParams: LinearLayout.LayoutParams,
+        targetLieWeight: Float
+    ) {
+        val startTruthWeight = truthParams.weight
+        val startLieWeight = lieParams.weight
+
+        val animator = ValueAnimator.ofFloat(0f, 1f).apply {
+            duration = 300
+            interpolator = AccelerateDecelerateInterpolator()
+
+            addUpdateListener { animation ->
+                val fraction = animation.animatedFraction
+
+                truthParams.weight =
+                    startTruthWeight + (targetTruthWeight - startTruthWeight) * fraction
+
+                lieParams.weight =
+                    startLieWeight + (targetLieWeight - startLieWeight) * fraction
+
+                frameTruth.layoutParams = truthParams
+                frameLie.layoutParams = lieParams
             }
-        }, 500)
+
+            addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    isSelectionAnimating = false
+
+                }
+            })
+
+            start()
+        }
     }
 
     private fun lockAnswer() {
+        if (isLocked) return
+
         isLocked = true
         if (::timer.isInitialized) timer.cancel()
 
-        //visual feedback
-        if (selectedAnswer == true) {
-            frameTruth.alpha = 1.0f
-            frameLie.alpha = 0.3f
-        } else {
-            frameLie.alpha = 1.0f
-            frameTruth.alpha = 0.3f
-        }
+        // Animate the alpha for visual feedback
+        val targetTruthAlpha = if (selectedAnswer == true) 1.0f else 0.3f
+        val targetLieAlpha = if (selectedAnswer == false) 1.0f else 0.3f
+
+        frameTruth.animate()
+            .alpha(targetTruthAlpha)
+            .setDuration(200)
+            .start()
+        frameLie.animate()
+            .alpha(targetLieAlpha)
+            .setDuration(200)
+            .start()
 
         val player = GameSession.getCurrentPlayer()
         val isCorrect = selectedAnswer == correctAnswer
@@ -292,7 +327,7 @@ class VotingActivity : AppCompatActivity() {
         val isLast = nextTurn % totalPlayers == 0
         GameSession.currPlayerTurn = nextTurn
 
-        android.util.Log.d("VotingActivity", "Answer: \\${selectedAnswer}, Correct: $correctAnswer, Score: \\${player.score}")
+        android.util.Log.d("VotingActivity", "Answer: ${selectedAnswer}, Correct: $correctAnswer, Score: ${player.score}")
 
         if (isLast) {
             // Last player, go to results
@@ -324,7 +359,12 @@ class VotingActivity : AppCompatActivity() {
         finish()
     }
 
-    // --- LIFECYCLE: Ensure these are at the class level, not inside another function ---
+    private fun endGame() {
+        val intent = Intent(this, FinalResultsActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
     override fun onPause() {
         super.onPause()
         MusicManager.pauseMusic()
@@ -333,19 +373,6 @@ class VotingActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         MusicManager.resumeMusic()
-    }
-
-    // --- REMINDER: You must add the following to your voting.xml layout: ---
-    // <FrameLayout android:id="@+id/nextPlayerOverlay" ... >
-    //   <TextView android:id="@+id/nextPlayerText" ... />
-    //   <Button android:id="@+id/btnNextPlayerContinue" ... />
-    // </FrameLayout>
-    // Set nextPlayerOverlay visibility to gone by default and ensure it covers the screen when visible.
-
-    private fun endGame() {
-        val intent = Intent(this, FinalResultsActivity::class.java)
-        startActivity(intent)
-        finish()
     }
 
     override fun onDestroy() {

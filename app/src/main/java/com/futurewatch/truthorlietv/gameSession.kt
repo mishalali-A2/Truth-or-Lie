@@ -9,7 +9,7 @@ object GameSession {
 
     var category: String = "science"
     var totalRounds: Int = 5
-    var playerCount: Int = 2
+    var playerCount: Int = 1
 
     var currRound: Int = 1
     var currPlayerTurn: Int = 0
