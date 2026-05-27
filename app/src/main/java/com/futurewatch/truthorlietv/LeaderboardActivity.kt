@@ -4,7 +4,6 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.ScrollView
@@ -22,7 +21,7 @@ class LeaderboardActivity : AppCompatActivity() {
     private lateinit var backBtn: Button
     private lateinit var messageContainer: LinearLayout
     private lateinit var leaderboardContainer: LinearLayout
-    private lateinit var leaderboardScroll: ScrollView
+    private lateinit var rootScrollView: ScrollView
     private lateinit var playerRepository: PlayerRepository
     private val rowViews = mutableListOf<View>()
     private var currentFocusIndex = -1
@@ -32,28 +31,22 @@ class LeaderboardActivity : AppCompatActivity() {
         setContentView(R.layout.leaderboard)
 
         MusicManager.resumeMusic()
-        MusicManager.resumeMusic()
 
         backBtn = findViewById(R.id.btnBack)
         messageContainer = findViewById(R.id.messageContainer)
         leaderboardContainer = findViewById(R.id.leaderboardContainer)
-        leaderboardScroll = findViewById(R.id.leaderboardScroll)
+        rootScrollView = findViewById(R.id.rootScrollView)
         playerRepository = PlayerRepository(this)
 
         backBtn.setOnClickListener {
             finish()
         }
+
         setupFocusAnimations()
         loadLeaderboard()
     }
 
     private fun setupFocusAnimations() {
-        val scaleUp = AnimationUtils.loadAnimation(this, android.R.anim.fade_in)
-        scaleUp.duration = 150
-
-        val scaleDown = AnimationUtils.loadAnimation(this, android.R.anim.fade_out)
-        scaleDown.duration = 150
-
         backBtn.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
                 v.animate()
@@ -62,8 +55,12 @@ class LeaderboardActivity : AppCompatActivity() {
                     .translationZ(20f)
                     .setDuration(150)
                     .start()
+                v.setBackgroundResource(R.drawable.tv_edittext_bg)
 
-                v.setBackgroundResource(R.drawable.tv_edittext_bg) // glow
+                // Scroll to show the button if needed
+                rootScrollView.post {
+                    rootScrollView.smoothScrollTo(0, rootScrollView.bottom)
+                }
             } else {
                 v.animate()
                     .scaleX(1f)
@@ -71,7 +68,6 @@ class LeaderboardActivity : AppCompatActivity() {
                     .translationZ(0f)
                     .setDuration(150)
                     .start()
-
                 v.setBackgroundResource(R.drawable.text_input)
             }
         }
@@ -81,6 +77,7 @@ class LeaderboardActivity : AppCompatActivity() {
         row.isFocusable = true
         row.isFocusableInTouchMode = true
 
+        // Setup DPAD navigation
         if (position > 0) {
             row.nextFocusUpId = rowViews[position - 1].id
         } else {
@@ -98,19 +95,21 @@ class LeaderboardActivity : AppCompatActivity() {
                 currentFocusIndex = position
 
                 view.animate()
-                    .scaleX(1.01f)
-                    .scaleY(1.01f)
+                    .scaleX(1.02f)
+                    .scaleY(1.02f)
                     .translationZ(20f)
                     .setDuration(150)
                     .start()
 
                 view.setBackgroundResource(R.drawable.row_focused)
 
-                leaderboardScroll.smoothScrollTo(0, view.top - leaderboardScroll.top - 100)
+                // Smooth scroll to focused item within the main ScrollView
+                rootScrollView.post {
+                    val scrollAmount = view.top - rootScrollView.height / 2 + view.height / 2
+                    rootScrollView.smoothScrollTo(0, maxOf(0, scrollAmount))
+                }
 
                 updateRowTextColors(view, player, position, focused = true)
-
-                Log.d("LeaderboardActivity", "Row focused: ${player.name} at position $position")
             } else {
                 view.animate()
                     .scaleX(1f)
@@ -119,7 +118,7 @@ class LeaderboardActivity : AppCompatActivity() {
                     .setDuration(150)
                     .start()
 
-                // Reset bg
+                // Reset background based on position
                 if (position % 2 == 0) {
                     view.setBackgroundResource(R.drawable.row_normal)
                 } else {
@@ -132,18 +131,13 @@ class LeaderboardActivity : AppCompatActivity() {
     }
 
     private fun updateRowTextColors(row: View, player: PlayerEntity, position: Int, focused: Boolean) {
-
-        val leftText = (row as LinearLayout).getChildAt(0) as TextView
-        val rightText = row.getChildAt(1) as TextView
+        val rowLayout = row as LinearLayout
+        val leftText = rowLayout.getChildAt(0) as TextView
+        val rightText = rowLayout.getChildAt(1) as TextView
 
         if (focused) {
-            leftText.setTextColor(when (position) {
-                0 -> Color.parseColor("#FFE44D")
-                1 -> Color.parseColor("#E0E0E0")
-                2 -> Color.parseColor("#FFA04D")
-                else -> Color.parseColor("#FFFFFF")
-            })
-            rightText.setTextColor(Color.parseColor("#B87CFF"))
+            leftText.setTextColor(Color.parseColor("#FFFFFF"))
+            rightText.setTextColor(Color.parseColor("#FFA500"))
             leftText.textSize = 22f
             rightText.textSize = 22f
         } else {
@@ -169,12 +163,12 @@ class LeaderboardActivity : AppCompatActivity() {
 
                 withContext(Dispatchers.Main) {
                     if (players.isEmpty()) {
-                        leaderboardScroll.visibility = View.GONE
+                        leaderboardContainer.visibility = View.GONE
                         messageContainer.visibility = View.VISIBLE
                         backBtn.requestFocus()
                     } else {
                         messageContainer.visibility = View.GONE
-                        leaderboardScroll.visibility = View.VISIBLE
+                        leaderboardContainer.visibility = View.VISIBLE
                         displayLeaderboard(players)
 
                         if (rowViews.isNotEmpty()) {
@@ -187,7 +181,7 @@ class LeaderboardActivity : AppCompatActivity() {
             } catch (e: Exception) {
                 Log.e("LeaderboardActivity", "Error loading leaderboard", e)
                 withContext(Dispatchers.Main) {
-                    leaderboardScroll.visibility = View.GONE
+                    leaderboardContainer.visibility = View.GONE
                     messageContainer.visibility = View.VISIBLE
                     findViewById<TextView>(R.id.tvEmptyTitle)?.text = "Error Loading Data"
                     findViewById<TextView>(R.id.tvEmptySubtitle)?.text = "Please try again later."
@@ -220,20 +214,22 @@ class LeaderboardActivity : AppCompatActivity() {
         )
         row.setPadding(48, 24, 48, 24)
 
+        // Alternating background colors
         if (position % 2 == 0) {
             row.setBackgroundResource(R.drawable.row_normal)
         } else {
             row.setBackgroundResource(R.drawable.row_normal_dark)
         }
 
+        // Left side: Rank icon + Player name
         val leftText = TextView(this)
-        val rankIcon = when (position) {
-            0 -> "🥇 "
-            1 -> "🥈 "
-            2 -> "🥉 "
-            else -> "${position + 1}  "
+        val rankDisplay = when (position) {
+            0 -> "🥇  "
+            1 -> "🥈  "
+            2 -> "🥉  "
+            else -> "${position + 1}.  "
         }
-        leftText.text = "$rankIcon${player.name}"
+        leftText.text = "$rankDisplay${player.name}"
         leftText.textSize = 20f
         leftText.setTextColor(when (position) {
             0 -> Color.parseColor("#FFD700")
@@ -243,6 +239,7 @@ class LeaderboardActivity : AppCompatActivity() {
         })
         leftText.layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
 
+        // Right side: Points
         val rightText = TextView(this)
         rightText.text = "${player.points} pts"
         rightText.textSize = 20f
@@ -252,5 +249,16 @@ class LeaderboardActivity : AppCompatActivity() {
         row.addView(rightText)
 
         return row
+    }
+
+    override fun onResume() {
+        super.onResume()
+        MusicManager.resumeMusic()
+        loadLeaderboard()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        MusicManager.pauseMusic()
     }
 }

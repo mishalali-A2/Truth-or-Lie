@@ -34,10 +34,11 @@
         android:orientation="horizontal"
         android:padding="20dp">
 
-        <Button
+        <ImageButton
             android:id="@+id/btnMinus"
             style="@style/TVControlButton"
-            android:text="-" />
+            android:src="@drawable/ic_minus"
+            android:scaleType="center" />
 
         <TextView
             android:id="@+id/txtPlayerCount"
@@ -49,10 +50,11 @@
             android:textColor="#6C5CE7"
             android:textSize="60sp" />
 
-        <Button
+        <ImageButton
             android:id="@+id/btnPlus"
             style="@style/TVControlButton"
-            android:text="+" />
+            android:src="@drawable/ic_plus"
+            android:scaleType="center" />
     </LinearLayout>
 
     <Button
