@@ -3,6 +3,7 @@ package com.futurewatch.truthorlietv
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -31,8 +32,8 @@ class PlayerCountActivity : AppCompatActivity() {
             insets
         }
 
-        val btnMinus = findViewById<Button>(R.id.btnMinus)
-        val btnPlus = findViewById<Button>(R.id.btnPlus)
+        val btnMinus = findViewById<ImageButton>(R.id.btnMinus)
+        val btnPlus = findViewById<ImageButton>(R.id.btnPlus)
         val txtPlayerCount = findViewById<TextView>(R.id.txtPlayerCount)
         val btnPlayers = findViewById<Button>(R.id.btnPlayers)
 
