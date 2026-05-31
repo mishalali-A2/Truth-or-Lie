@@ -111,7 +111,7 @@ class SettingsActivity : AppCompatActivity() {
 
                     button.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
                         if (hasFocus) {
-                            v.animate().scaleX(1.06f).scaleY(1.06f).setDuration(150).start()
+                            v.animate().scaleX(1.03f).scaleY(1.03f).setDuration(150).start()
                             v.translationZ = 20f
                         } else {
                             v.animate().scaleX(1f).scaleY(1f).setDuration(150).start()
@@ -187,12 +187,12 @@ class SettingsActivity : AppCompatActivity() {
        // val switchNetwork = findViewById<SwitchCompat>(R.id.switchNetwork)
         val prefs = getSharedPreferences("app_settings", MODE_PRIVATE)
 
-
         // Remove Ads
         setupSettingsItemFocus(R.id.removeAds, "Remove Ads")
         setupSettingsItemFocus(R.id.restorePurchases, "Restore Purchases")
         setupSettingsItemFocus(R.id.rateApp, "Rate App")
-        setupSettingsItemFocus(R.id.termsPrivacy, "Terms & Privacy")
+        setupSettingsItemFocus(R.id.privacyPolicy, "Privacy Policy")
+        setupSettingsItemFocus(R.id.termsOfService, "Terms of Service")
     }
 
 
@@ -206,8 +206,8 @@ class SettingsActivity : AppCompatActivity() {
                 if (hasFocus) {
                     // Highlight when focused
                     v.animate()
-                        .scaleX(1.02f)
-                        .scaleY(1.02f)
+                        .scaleX(1.01f)
+                        .scaleY(1.01f)
                         .translationZ(20f)
                         .setDuration(150)
                         .start()
@@ -240,29 +240,24 @@ class SettingsActivity : AppCompatActivity() {
                     R.id.rateApp -> {
                         Toast.makeText(this@SettingsActivity, "Rating will be available once live!", Toast.LENGTH_SHORT).show()
                     }
-                    R.id.termsPrivacy -> {
-                        showTermsPrivacyDialog()
+                    R.id.privacyPolicy -> {
+                        openUrl("https://boiling-laundry-978.notion.site/Privacy-Policy-Truth-or-Lie-TV-35d45d80e4fb809680cae0e906a63a52?source=copy_link")
+                    }
+                    R.id.termsOfService -> {
+                        openUrl("https://futurewatch.co/terms")
                     }
                 }
             }
         }
     }
 
-    private fun showTermsPrivacyDialog() {
-        val options = arrayOf("Privacy Policy", "Terms of Service")
-        AlertDialog.Builder(this, R.style.Theme_TruthorLieTV_Dialog)
-            .setTitle("Terms & Privacy")
-            .setItems(options) { _, which ->
-                val url = if (which == 0) {
-                    "https://infatica-sdk.io/uploads/privacy-policy.pdf"
-                } else {
-                    "https://futurewatch.co/terms"
-                }
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                startActivity(intent)
-            }
-            .setNegativeButton("Close", null)
-            .show()
+    private fun openUrl(url: String) {
+        try {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(this, "Unable to open link", Toast.LENGTH_SHORT).show()
+        }
     }
 
 
@@ -276,7 +271,7 @@ class SettingsActivity : AppCompatActivity() {
             "World Clock TV" to "com.futurewatch.world_clock_tv",
             "Tranquil" to "com.tranquil.androidtv",
             "Minesweeper" to "com.futurewatch.minesweeper",
-            "Turborg 2D-Racing" to "co.futurewatch.turborg2d.racing",
+            "2D Turbo Racing" to "co.futurewatch.turborg2d.racing",
             "Moodscreen TV" to "com.moodscreen.tv"
         )
 
@@ -318,7 +313,7 @@ class SettingsActivity : AppCompatActivity() {
                     // Focus animation matching music buttons
                     onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
                         if (hasFocus) {
-                            v.animate().scaleX(1.06f).scaleY(1.06f).setDuration(150).start()
+                            v.animate().scaleX(1.03f).scaleY(1.03f).setDuration(150).start()
                             v.translationZ = 20f
                             setBackgroundResource(R.drawable.chip_selected)
                         } else {

@@ -137,7 +137,7 @@
             android:background="@drawable/btn_primary"
             android:paddingStart="32dp"
             android:paddingEnd="32dp"
-            android:text="Unlock All Categories ($2.99)"
+            android:text="Unlock All Categories for $5.99"
             android:textAllCaps="false"
             android:textColor="#FFFFFF"
             android:textSize="20sp"

@@ -10,7 +10,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import android.view.ViewGroup
 
 class ResultsActivity : AppCompatActivity() {
 
@@ -22,6 +21,7 @@ class ResultsActivity : AppCompatActivity() {
         MusicManager.resumeMusic()
 
         val tvResult = findViewById<TextView>(R.id.tvResult)
+        val tvResultGlow1 = findViewById<TextView>(R.id.tvResultGlow1)
         val tvStatement = findViewById<TextView>(R.id.tvStatement)
         val container = findViewById<LinearLayout>(R.id.playersContainer)
         val btnNext = findViewById<Button>(R.id.btnNext)
@@ -44,30 +44,40 @@ class ResultsActivity : AppCompatActivity() {
             btnNext.text = "See Final Scores"
         }
 
+        // Setup the letter-tracing glow effect
         if (correctAnswer) {
+            // TRUTH - Green glow
             tvResult.text = "TRUTH"
             tvResult.setTextColor(Color.parseColor("#22C55E"))
+            tvResultGlow1.text = "TRUTH"
+            tvResultGlow1.setTextColor(Color.parseColor("#AAFFDF"))
 
-            tvResult.setShadowLayer(
-                60f,
-                0f,
-                0f,
-                Color.parseColor("#22C55E")
-            )
+            tvResult.setShadowLayer(12f, 0f, 0f, Color.parseColor("#66FF4444"))
+
+            tvResultGlow1.setShadowLayer(25f, 0f, 0f, Color.parseColor("#33FF2D55"))
+            tvResultGlow1.alpha = 0.4f
+
+            animateGlow(tvResultGlow1, true)
+
         } else {
+            // LIE - Red glow
             tvResult.text = "LIE"
             tvResult.setTextColor(Color.parseColor("#EF4444"))
+            tvResultGlow1.text = "LIE"
+            tvResultGlow1.setTextColor(Color.parseColor("#EF4444"))
 
-            tvResult.setShadowLayer(
-                60f,
-                0f,
-                0f,
-                Color.parseColor("#EF4444")
-            )
+            // Main text shadow
+            tvResult.setShadowLayer(12f, 0f, 0f, Color.parseColor("#66FF0000"))
+
+            // Outer glow layer
+            tvResultGlow1.setShadowLayer(25f, 0f, 0f, Color.parseColor("#66FF0000"))
+            tvResultGlow1.alpha = 0.4f
+
+            // Add pulsing animation
+            animateGlow(tvResultGlow1, false)
         }
 
         container.removeAllViews()
-
 
         container.layoutParams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -82,7 +92,6 @@ class ResultsActivity : AppCompatActivity() {
             val playerLayout = LinearLayout(this).apply {
                 orientation = LinearLayout.VERTICAL
                 gravity = Gravity.CENTER
-                // Remove weight, use WRAP_CONTENT instead
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
@@ -91,7 +100,6 @@ class ResultsActivity : AppCompatActivity() {
             }
 
             val icon = ImageView(this).apply {
-
                 if (isCorrect) {
                     setImageResource(R.drawable.right)
                 } else {
@@ -134,18 +142,15 @@ class ResultsActivity : AppCompatActivity() {
             container.addView(playerLayout)
         }
 
-        // If there are fewer players, adjust container to not stretch
         container.requestLayout()
 
         // next round/ finish
         btnNext.setOnClickListener {
-
             if (isFinal) {
                 startActivity(Intent(this, FinalResultsActivity::class.java))
                 finish()
             } else {
                 if (GameSession.currRound >= GameSession.totalRounds) {
-                    //final round to result
                     val finalIntent = Intent(this, ResultsActivity::class.java)
                     finalIntent.putExtra("STATEMENT", statement)
                     finalIntent.putExtra("ANSWER", correctAnswer)
@@ -159,6 +164,26 @@ class ResultsActivity : AppCompatActivity() {
                 finish()
             }
         }
+    }
+
+    private fun animateGlow(glowTextView: TextView, isTruth: Boolean) {
+        val startAlpha = 0.3f
+        val endAlpha = 0.6f
+        val glowColor = if (isTruth) "#AAFFDF" else "#66FF0000"
+
+        // Create pulsing animation for softer glow effect
+        val animator = android.animation.ValueAnimator.ofFloat(startAlpha, endAlpha, startAlpha)
+        animator.duration = 2000
+        animator.repeatCount = android.animation.ValueAnimator.INFINITE
+        animator.addUpdateListener {
+            val alpha = it.animatedValue as Float
+            glowTextView.alpha = alpha
+            // Adjust shadow radius for breathing effect
+            val shadowRadius = 20f + (alpha * 15f)
+            glowTextView.setShadowLayer(shadowRadius, 0f, 0f, Color.parseColor(glowColor))
+            glowTextView.invalidate()
+        }
+        animator.start()
     }
 
     private fun dpToPx(dp: Int): Int {

@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Intent
 import android.os.Bundle
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Looper
@@ -38,10 +39,10 @@ class MainActivity : AppCompatActivity() {
         // title anim -> loop
         fun createFloatAnim(view: View): ObjectAnimator {
             return ObjectAnimator.ofFloat(view, "translationY", -10f, 10f).apply {
-                duration = 2500
+                duration = 3000
                 repeatCount = ValueAnimator.INFINITE
                 repeatMode = ValueAnimator.REVERSE
-                interpolator = LinearInterpolator() // Smooth linear movement
+                interpolator = AccelerateDecelerateInterpolator() // smooth ease in/out
             }
         }
 
@@ -58,8 +59,8 @@ class MainActivity : AppCompatActivity() {
 
             if (hasFocus) {
                 v.animate()
-                    .scaleX(1.04f)
-                    .scaleY(1.04f)
+                    .scaleX(1.05f)
+                    .scaleY(1.05f)
                     .translationZ(20f)
                     .setDuration(150)
                     .start()

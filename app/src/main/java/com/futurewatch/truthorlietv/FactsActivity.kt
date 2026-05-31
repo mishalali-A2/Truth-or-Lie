@@ -30,9 +30,9 @@ class FactsActivity : AppCompatActivity() {
         val tvStatement = findViewById<TextView>(R.id.tvStatement)
         val btnStartVoting = findViewById<Button>(R.id.btnStartVoting)
 
-        // Load + shuffle facts -> no repeat
-        factsList = loadFacts(GameSession.category)
-        factsList = ensureBalancedFacts(factsList, GameSession.totalRounds).shuffled().toMutableList()
+        // Load facts and create a properly randomized list for this game session
+        val allFacts = loadFacts(GameSession.category)
+        factsList = createFactSequence(allFacts, GameSession.totalRounds)
         currentIndex = 0
 
         tvCategory.text = GameSession.category.replace("_", " ").uppercase()
@@ -67,13 +67,46 @@ class FactsActivity : AppCompatActivity() {
         }
     }
 
+    private fun createFactSequence(allFacts: MutableList<Facts>, totalRounds: Int): MutableList<Facts> {
+        if (allFacts.isEmpty()) return mutableListOf()
+
+        android.util.Log.d("FactsActivity", "Creating fact sequence with ${allFacts.size} available facts for $totalRounds rounds")
+
+        val sequence = mutableListOf<Facts>()
+        val availableFacts = allFacts.toMutableList()
+
+        // If we have enough unique facts, use them all and shuffle for randomness
+        if (availableFacts.size >= totalRounds) {
+            // Shuffle and take exactly what we need
+            availableFacts.shuffle()
+            sequence.addAll(availableFacts.take(totalRounds))
+        } else {
+            // If we don't have enough unique facts, distribute them and fill gaps
+            val factsNeeded = totalRounds
+            val cycles = (factsNeeded / availableFacts.size) + 1
+
+            // Create a pool by repeating all facts enough times
+            val factsPool = mutableListOf<Facts>()
+            repeat(cycles) {
+                factsPool.addAll(availableFacts)
+            }
+
+            // Shuffle the pool and take exactly what we need
+            factsPool.shuffle()
+            sequence.addAll(factsPool.take(factsNeeded))
+        }
+
+        android.util.Log.d("FactsActivity", "Fact sequence created with ${sequence.size} facts")
+        return sequence
+    }
+
     private fun ensureBalancedFacts(facts: MutableList<Facts>, totalRounds: Int): MutableList<Facts> {
         if (facts.isEmpty()) return facts
 
         val truths = facts.filter { it.answer }.toMutableList()
         val lies = facts.filter { !it.answer }.toMutableList()
 
-        android.util.Log.d("FactsActivity", "Original - Truths: ${truths.size}, Lies: ${lies.size}")
+        android.util.Log.d("FactsActivity", "Original - Truths: ${truths.size}, Lies: ${lies.size}, Total: ${facts.size}")
 
         // If we have no lies at all, we need to generate some
         if (lies.isEmpty()) {
@@ -81,23 +114,39 @@ class FactsActivity : AppCompatActivity() {
             return generateMixedFacts(facts, totalRounds)
         }
 
-        // If we have very few lies, duplicate them
+        // Calculate required balance
         val requiredLies = (totalRounds / 2) + (totalRounds % 2)
         val requiredTruths = totalRounds / 2
 
+        // Shuffle both lists for better randomization
+        truths.shuffle()
+        lies.shuffle()
+
         val balancedList = mutableListOf<Facts>()
 
-        // Add truths (with repetition if needed)
+        // Try to use unique facts first, then repeat if necessary
+        val usedTruths = mutableListOf<Facts>()
+        val usedLies = mutableListOf<Facts>()
+
+        // Add truths - use all unique ones first, then recycle if needed
         for (i in 0 until requiredTruths) {
-            balancedList.add(truths[i % truths.size])
+            val truthIndex = i % truths.size
+            balancedList.add(truths[truthIndex])
+            if (i < truths.size && usedTruths.size < truths.size) {
+                usedTruths.add(truths[truthIndex])
+            }
         }
 
-        // Add lies (with repetition if needed)
+        // Add lies - use all unique ones first, then recycle if needed
         for (i in 0 until requiredLies) {
-            balancedList.add(lies[i % lies.size])
+            val lieIndex = i % lies.size
+            balancedList.add(lies[lieIndex])
+            if (i < lies.size && usedLies.size < lies.size) {
+                usedLies.add(lies[lieIndex])
+            }
         }
 
-        android.util.Log.d("FactsActivity", "Balanced - Truths: $requiredTruths, Lies: $requiredLies")
+        android.util.Log.d("FactsActivity", "Balanced - Required Truths: $requiredTruths (Available: ${truths.size}), Required Lies: $requiredLies (Available: ${lies.size})")
         return balancedList
     }
     private fun generateMixedFacts(facts: MutableList<Facts>, totalRounds: Int): MutableList<Facts> {
