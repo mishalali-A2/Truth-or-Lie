@@ -46,7 +46,7 @@ class PurchaseActivity : AppCompatActivity() {
                 finish()
                 return@setOnClickListener
             }
-            purchaseProduct("unlock_all_categories")
+            purchaseProduct("premium.access")
         }
 
         // Cancel button

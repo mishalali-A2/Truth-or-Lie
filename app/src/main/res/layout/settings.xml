@@ -17,12 +17,9 @@
         android:clipChildren="false"
         android:clipToPadding="false">
 
-        <!-- Background Glow (Optional for consistency) -->
-        <!-- Since it's a ScrollView, we might not want a fixed glow unless it's in a parent FrameLayout -->
-
         <!-- TITLE -->
         <TextView
-            android:text="Settings"
+            android:text="SETTINGS"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#FFFFFF"
@@ -86,28 +83,26 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:weightSum="3"
+                    android:padding="2dp"
                     android:clipChildren="false">
 
                     <Button
                         android:id="@+id/chipPartyVibes"
                         style="@style/chip_music"
                         android:text="Party Vibes"
-                        android:layout_weight="1"
-                        android:layout_margin="4dp"/>
+                        android:layout_weight="1"/>
 
                     <Button
                         android:id="@+id/chipChillLounge"
                         style="@style/chip_selected_music"
                         android:text="Chill Lounge"
-                        android:layout_weight="1"
-                        android:layout_margin="4dp"/>
+                        android:layout_weight="1" />
 
                     <Button
                         android:id="@+id/chipRetroArcade"
                         style="@style/chip_music"
                         android:text="Retro Arcade"
-                        android:layout_weight="1"
-                        android:layout_margin="4dp"/>
+                        android:layout_weight="1"/>
 
                 </LinearLayout>
 
@@ -118,21 +113,20 @@
                     android:layout_marginTop="10dp"
                     android:orientation="horizontal"
                     android:weightSum="2"
+                    android:padding="2dp"
                     android:clipChildren="false">
 
                     <Button
                         android:id="@+id/chipEpicAdventure"
                         style="@style/chip_music"
                         android:text="Epic Adventure"
-                        android:layout_weight="1"
-                        android:layout_margin="4dp"/>
+                        android:layout_weight="1"/>
 
                     <Button
                         android:id="@+id/chipFunkyGroove"
                         style="@style/chip_music"
                         android:text="Funky Groove"
-                        android:layout_weight="1"
-                        android:layout_margin="4dp"/>
+                        android:layout_weight="1"/>
 
                 </LinearLayout>
 
@@ -400,12 +394,13 @@
                     android:fontFamily="@font/plus_jakarta_sans"
                     android:layout_marginStart="12dp"
                     android:layout_weight="1"
+                    android:paddingBottom="3dp"
                     android:text="Rate App" />
             </LinearLayout>
 
-            <!-- Terms & Privacy -->
+            <!-- Privacy Policy -->
             <LinearLayout
-                android:id="@+id/termsPrivacy"
+                android:id="@+id/privacyPolicy"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -426,8 +421,38 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/plus_jakarta_sans"
-                    android:text="Terms &amp; Privacy"
+                    android:text="Privacy Policy"
                     android:layout_marginStart="12dp"
+                    android:paddingBottom="3dp"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+
+            <!-- Terms of Service -->
+            <LinearLayout
+                android:id="@+id/termsOfService"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="12dp"
+                android:focusable="true"
+                android:clickable="true"
+                android:padding="8dp"
+                android:clipChildren="false">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/sheild"/>
+
+                <TextView
+                    style="@style/optionText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/plus_jakarta_sans"
+                    android:text="Terms of Service"
+                    android:layout_marginStart="12dp"
+                    android:paddingBottom="3dp"
                     android:layout_weight="1"/>
             </LinearLayout>
 

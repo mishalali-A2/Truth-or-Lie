@@ -26,20 +26,43 @@
         android:paddingHorizontal="40dp">
 
         <!-- RESULT -->
-        <TextView
-            android:id="@+id/tvResult"
+        <!-- RESULT with letter-tracing glow -->
+        <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TRUTH"
-            android:textSize="72sp"
-            android:textStyle="bold"
-            android:textColor="#00FF88"
-            android:letterSpacing="0.05"
-            android:shadowColor="#6600FF88"
-            android:shadowDx="0"
-            android:shadowDy="0"
-            android:shadowRadius="30"
-            android:layout_marginBottom="20dp"/>
+            android:layout_marginBottom="20dp">
+
+            <!-- Glow layer 1 (outer, softer) -->
+            <TextView
+                android:id="@+id/tvResultGlow1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TRUTH"
+                android:textSize="72sp"
+                android:textStyle="bold"
+                android:textColor="#00FF88"
+                android:alpha="0.3"
+                android:shadowColor="#00FF88"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:shadowRadius="5"
+                android:layout_gravity="center"/>
+
+            <!-- Main text -->
+            <TextView
+                android:id="@+id/tvResult"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TRUTH"
+                android:textSize="72sp"
+                android:textStyle="bold"
+                android:textColor="#00FF88"
+                android:shadowColor="#AAFFDF"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:shadowRadius="10"
+                android:layout_gravity="center"/>
+        </FrameLayout>
 
         <!-- STATEMENT -->
         <TextView
@@ -72,6 +95,7 @@
             android:textAllCaps="false"
             android:textSize="20sp"
             android:textStyle="bold"
+            android:layout_marginTop="50dp"
             android:textColor="#FFFFFF"
             android:focusable="true"/>
     </LinearLayout>

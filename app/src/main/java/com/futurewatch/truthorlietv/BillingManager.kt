@@ -37,10 +37,21 @@ class BillingManager(
         private const val PREFS_NAME = "billing_prefs"
         private const val KEY_PREMIUM = "premium_access"
 
-        // product ids: to match the console rn only dummy for testing
+        // product ids: In-app products for unlocking categories and removing ads
         val INAPP_PRODUCT_IDS = listOf(
-            "remove_ads",
-            "unlock_all_categories"
+            "premium.access",              // $5.99 - Removes ads and unlocks all categories
+            "buy.history",                 // History category
+            "buy.space",                   // Space category
+            "buy.technology",              // Technology category
+            "buy.humanbodycategory",       // Human Body category
+            "buy.crazyfacts",              // Crazy Facts category
+            "buy.partymode",               // Party Mode
+            "buy.relationships",           // Relationships category
+            "buy.adventure",               // Adventure category
+            "buy.money",                   // Money & Luxury category
+            "buy.movies",                  // Movies category
+            "buy.survival",                // Survival category
+            "buy.familymode"               // Family Mode
         )
 
         val SUBS_PRODUCT_IDS = listOf(
@@ -53,10 +64,9 @@ class BillingManager(
 
         // Premium product IDs (anything that gives premium access)
         val PREMIUM_PRODUCT_IDS = setOf(
-            "remove_ads",
+            "premium.access",              // Remove ads + unlock all categories ($5.99)
             "premium_monthly",
-            "premium_yearly",
-            "unlock_all_categories"
+            "premium_yearly"
         )
     }
 
@@ -306,11 +316,12 @@ class BillingManager(
 
                 purchase.products.forEach { productId ->
                     when (productId) {
-                        "remove_ads" -> {
-                            prefs.edit().putBoolean("ads_removed", true).apply()
-                        }
-                        "unlock_all_categories" -> {
-                            prefs.edit().putBoolean("all_categories_unlocked", true).apply()
+                        "premium.access" -> {
+                            // $5.99 product that removes ads and unlocks all categories
+                            prefs.edit()
+                                .putBoolean("ads_removed", true)
+                                .putBoolean("all_categories_unlocked", true)
+                                .apply()
                         }
                         "premium_monthly", "premium_yearly" -> {
                             prefs.edit()
@@ -430,8 +441,13 @@ class BillingManager(
         val prefs = context.getSharedPreferences("app_settings", Context.MODE_PRIVATE)
 
         when (productId) {
-            "remove_ads" -> prefs.edit().putBoolean("ads_removed", true).apply()
-            "unlock_all_categories" -> prefs.edit().putBoolean("all_categories_unlocked", true).apply()
+            "premium.access" -> {
+                // $5.99 product: remove ads + unlock all categories
+                prefs.edit()
+                    .putBoolean("ads_removed", true)
+                    .putBoolean("all_categories_unlocked", true)
+                    .apply()
+            }
             "premium_monthly", "premium_yearly" -> {
                 prefs.edit()
                     .putBoolean("ads_removed", true)

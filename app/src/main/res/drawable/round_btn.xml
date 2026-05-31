@@ -1,30 +1,22 @@
+<!-- round_btn.xml -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <!-- Focused -->
     <item android:state_focused="true">
         <shape android:shape="oval">
-            <solid android:color="#2A2F45"/>
-            <stroke
-                android:width="3dp"
-                android:color="#6C5CE7"/>
+            <solid android:color="#6C5CE7"/>
+            <stroke android:width="2dp" android:color="#FFFFFF"/>
         </shape>
     </item>
 
-    <!-- Pressed -->
     <item android:state_pressed="true">
         <shape android:shape="oval">
-            <solid android:color="#32385A"/>
+            <solid android:color="#5A4BCF"/>
         </shape>
     </item>
 
-    <!-- Default -->
     <item>
         <shape android:shape="oval">
-            <solid android:color="#1E2235"/>
-            <stroke
-                android:width="1dp"
-                android:color="#2E3350"/>
+            <solid android:color="#2A2F45"/>
+            <stroke android:width="1dp" android:color="#6C5CE7"/>
         </shape>
     </item>
-
 </selector>
