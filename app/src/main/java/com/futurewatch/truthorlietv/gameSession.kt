@@ -37,5 +37,7 @@ object GameSession {
         currRound = 1
         currPlayerTurn = 0
         players.forEach { it.score = 0 }
+        // Reset facts tracking for new game
+        FactsActivity.resetUsedFacts()
     }
 }

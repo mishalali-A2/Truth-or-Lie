@@ -13,6 +13,22 @@ class FactsActivity : AppCompatActivity() {
     private lateinit var factsList: MutableList<Facts>
     private var currentIndex = 0
 
+    companion object {
+        private val usedFactIds = mutableSetOf<String>()
+
+        fun resetUsedFacts() {
+            usedFactIds.clear()
+        }
+
+        fun hasBeenUsed(factId: String): Boolean {
+            return usedFactIds.contains(factId)
+        }
+
+        fun markAsUsed(factId: String) {
+            usedFactIds.add(factId)
+        }
+    }
+
     data class Facts(
         val id: String,
         val statement: String,
@@ -25,14 +41,39 @@ class FactsActivity : AppCompatActivity() {
 
         MusicManager.resumeMusic()
 
+        // Reset used facts only at the start of the first round
+        if (GameSession.currRound == 1) {
+            resetUsedFacts()
+        }
+
         val tvCategory = findViewById<TextView>(R.id.tvCategory)
         val tvRound = findViewById<TextView>(R.id.tvRound)
         val tvStatement = findViewById<TextView>(R.id.tvStatement)
         val btnStartVoting = findViewById<Button>(R.id.btnStartVoting)
 
-        // Load facts and create a properly randomized list for this game session
         val allFacts = loadFacts(GameSession.category)
-        factsList = createFactSequence(allFacts, GameSession.totalRounds)
+
+        // Separate truths and lies, excluding already used facts
+        var truths = allFacts.filter { it.answer && !hasBeenUsed(it.id) }.toMutableList()
+        var lies = allFacts.filter { !it.answer && !hasBeenUsed(it.id) }.toMutableList()
+
+        android.util.Log.d("FactsActivity", "Available - Truths: ${truths.size}, Lies: ${lies.size}")
+
+        // If we run out of either truths or lies, reset and use all facts
+        if (truths.isEmpty() || lies.isEmpty()) {
+            android.util.Log.w("FactsActivity", "Ran out of ${if(truths.isEmpty()) "truths" else "lies"}! Resetting used facts.")
+            resetUsedFacts()
+            val allFactsRefresh = loadFacts(GameSession.category)
+            truths = allFactsRefresh.filter { it.answer }.toMutableList()
+            lies = allFactsRefresh.filter { !it.answer }.toMutableList()
+            android.util.Log.d("FactsActivity", "Refreshed - Truths: ${truths.size}, Lies: ${lies.size}")
+        }
+
+        // Combine all available facts
+        val availableFacts = (truths + lies).toMutableList()
+
+        // Create fact sequence for all remaining rounds
+        factsList = createFactSequence(availableFacts, GameSession.totalRounds - GameSession.currRound + 1)
         currentIndex = 0
 
         tvCategory.text = GameSession.category.replace("_", " ").uppercase()
@@ -40,9 +81,9 @@ class FactsActivity : AppCompatActivity() {
 
         val currentFact = getNextFact()
         tvStatement.text = currentFact.statement
+        markAsUsed(currentFact.id)
 
-        // Log the answer for debugging
-        android.util.Log.d("FactsActivity", "Fact ${GameSession.currRound}: Answer = ${if(currentFact.answer) "TRUTH" else "LIE"}")
+        android.util.Log.d("FactsActivity", "Fact ${GameSession.currRound}: Answer = ${if(currentFact.answer) "TRUTH" else "LIE"}, Statement: ${currentFact.statement}")
 
         btnStartVoting.setOnFocusChangeListener { v, hasFocus ->
             v.animate()
@@ -52,9 +93,8 @@ class FactsActivity : AppCompatActivity() {
                 .start()
         }
 
-        // goto to Voting Screen
+        // Go to Voting Screen
         btnStartVoting.setOnClickListener {
-
             val intent = Intent(this, VotingActivity::class.java)
             intent.putExtra("ROUND", GameSession.currRound)
             intent.putExtra("TOTAL_ROUNDS", GameSession.totalRounds)
@@ -68,109 +108,76 @@ class FactsActivity : AppCompatActivity() {
     }
 
     private fun createFactSequence(allFacts: MutableList<Facts>, totalRounds: Int): MutableList<Facts> {
-        if (allFacts.isEmpty()) return mutableListOf()
+        if (allFacts.isEmpty()) {
+            android.util.Log.w("FactsActivity", "No facts available!")
+            return mutableListOf()
+        }
 
         android.util.Log.d("FactsActivity", "Creating fact sequence with ${allFacts.size} available facts for $totalRounds rounds")
 
         val sequence = mutableListOf<Facts>()
         val availableFacts = allFacts.toMutableList()
 
-        // If we have enough unique facts, use them all and shuffle for randomness
-        if (availableFacts.size >= totalRounds) {
-            // Shuffle and take exactly what we need
+        // For single round, just pick randomly
+        if (totalRounds == 1) {
             availableFacts.shuffle()
-            sequence.addAll(availableFacts.take(totalRounds))
-        } else {
-            // If we don't have enough unique facts, distribute them and fill gaps
-            val factsNeeded = totalRounds
-            val cycles = (factsNeeded / availableFacts.size) + 1
-
-            // Create a pool by repeating all facts enough times
-            val factsPool = mutableListOf<Facts>()
-            repeat(cycles) {
-                factsPool.addAll(availableFacts)
-            }
-
-            // Shuffle the pool and take exactly what we need
-            factsPool.shuffle()
-            sequence.addAll(factsPool.take(factsNeeded))
+            sequence.add(availableFacts[0])
+            return sequence
         }
 
-        android.util.Log.d("FactsActivity", "Fact sequence created with ${sequence.size} facts")
+        var lastWasTruth: Boolean? = null
+        var sameTypeCount = 0
+
+        repeat(totalRounds) {
+            val currentAvailable = if (sequence.isNotEmpty()) {
+                availableFacts.filter { it.id != sequence.last().id }.toMutableList()
+            } else {
+                availableFacts
+            }
+
+            if (currentAvailable.isEmpty()) {
+                availableFacts.shuffle()
+                sequence.add(availableFacts[0])
+                lastWasTruth = availableFacts[0].answer
+                sameTypeCount = 1
+                return@repeat
+            }
+
+            //avoid 3+ of same type
+            if (sameTypeCount >= 2 && lastWasTruth != null) {
+                val oppositeTypeFacts = currentAvailable.filter { it.answer != lastWasTruth }
+                if (oppositeTypeFacts.isNotEmpty()) {
+                    // Force pick oppos type
+                    val forcedFact = oppositeTypeFacts.random()
+                    sequence.add(forcedFact)
+                    lastWasTruth = forcedFact.answer
+                    sameTypeCount = 1
+                    android.util.Log.d("FactsActivity", "Forced ${if(forcedFact.answer) "TRUTH" else "LIE"} to break pattern")
+                    return@repeat
+                }
+            }
+
+            val selectedFact = if (sequence.size < 2) {
+                currentAvailable.random()
+            } else {
+                currentAvailable.random()
+            }
+
+            sequence.add(selectedFact)
+
+            if (lastWasTruth == selectedFact.answer) {
+                sameTypeCount++
+            } else {
+                sameTypeCount = 1
+            }
+            lastWasTruth = selectedFact.answer
+        }
+
+        android.util.Log.d("FactsActivity", "Created sequence: ${sequence.map { if(it.answer) "T" else "L" }.joinToString(", ")}")
         return sequence
     }
 
-    private fun ensureBalancedFacts(facts: MutableList<Facts>, totalRounds: Int): MutableList<Facts> {
-        if (facts.isEmpty()) return facts
-
-        val truths = facts.filter { it.answer }.toMutableList()
-        val lies = facts.filter { !it.answer }.toMutableList()
-
-        android.util.Log.d("FactsActivity", "Original - Truths: ${truths.size}, Lies: ${lies.size}, Total: ${facts.size}")
-
-        // If we have no lies at all, we need to generate some
-        if (lies.isEmpty()) {
-            android.util.Log.w("FactsActivity", "No lies found in database! Converting some truths to lies for balance.")
-            return generateMixedFacts(facts, totalRounds)
-        }
-
-        // Calculate required balance
-        val requiredLies = (totalRounds / 2) + (totalRounds % 2)
-        val requiredTruths = totalRounds / 2
-
-        // Shuffle both lists for better randomization
-        truths.shuffle()
-        lies.shuffle()
-
-        val balancedList = mutableListOf<Facts>()
-
-        // Try to use unique facts first, then repeat if necessary
-        val usedTruths = mutableListOf<Facts>()
-        val usedLies = mutableListOf<Facts>()
-
-        // Add truths - use all unique ones first, then recycle if needed
-        for (i in 0 until requiredTruths) {
-            val truthIndex = i % truths.size
-            balancedList.add(truths[truthIndex])
-            if (i < truths.size && usedTruths.size < truths.size) {
-                usedTruths.add(truths[truthIndex])
-            }
-        }
-
-        // Add lies - use all unique ones first, then recycle if needed
-        for (i in 0 until requiredLies) {
-            val lieIndex = i % lies.size
-            balancedList.add(lies[lieIndex])
-            if (i < lies.size && usedLies.size < lies.size) {
-                usedLies.add(lies[lieIndex])
-            }
-        }
-
-        android.util.Log.d("FactsActivity", "Balanced - Required Truths: $requiredTruths (Available: ${truths.size}), Required Lies: $requiredLies (Available: ${lies.size})")
-        return balancedList
-    }
-    private fun generateMixedFacts(facts: MutableList<Facts>, totalRounds: Int): MutableList<Facts> {
-        val mixedFacts = mutableListOf<Facts>()
-        val halfRounds = totalRounds / 2
-
-        for (i in 0 until totalRounds) {
-            val originalFact = facts[i % facts.size]
-            // Make half of them lies (every other round starting from round 1)
-            val isLie = if (i < halfRounds) i % 2 == 1 else (i + halfRounds) % 2 == 1
-
-            val mixedFact = Facts(
-                id = "${originalFact.id}_${if(isLie) "lie" else "truth"}",
-                statement = originalFact.statement,
-                answer = !isLie // If it's a lie, answer = false
-            )
-            mixedFacts.add(mixedFact)
-        }
-
-        return mixedFacts
-    }
-
-
-    //  facts from JSON
+    // Load facts from JSON
     private fun loadFacts(category: String): MutableList<Facts> {
         val list = mutableListOf<Facts>()
 
@@ -197,7 +204,7 @@ class FactsActivity : AppCompatActivity() {
                     )
                 }
 
-                if (list.isNotEmpty()) break // Use the first one that works
+                if (list.isNotEmpty()) break // Use the first category that works
 
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -207,10 +214,9 @@ class FactsActivity : AppCompatActivity() {
         return list
     }
 
-    //next fact
+    // Get next fact from the sequence
     private fun getNextFact(): Facts {
-
-        // If all facts used → reshuffle
+        // If we've used all facts in the sequence, reshuffle
         if (currentIndex >= factsList.size) {
             factsList.shuffle()
             currentIndex = 0
