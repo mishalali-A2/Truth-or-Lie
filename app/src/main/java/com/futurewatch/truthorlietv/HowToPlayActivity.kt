@@ -23,11 +23,9 @@ class HowToPlayActivity : AppCompatActivity() {
                 v.animate()
                     .scaleX(1.06f)
                     .scaleY(1.06f)
-                    .translationZ(20f)
+                    .translationZ(30f)
                     .setDuration(150)
                     .start()
-
-                v.setBackgroundResource(R.drawable.tv_edittext_bg) // glow
             } else {
                 v.animate()
                     .scaleX(1f)

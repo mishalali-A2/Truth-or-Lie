@@ -55,7 +55,7 @@ class LeaderboardActivity : AppCompatActivity() {
                     .translationZ(20f)
                     .setDuration(150)
                     .start()
-                v.setBackgroundResource(R.drawable.tv_edittext_bg)
+                //v.setBackgroundResource(R.drawable.tv_edittext_bg)
 
                 // Scroll to show the button if needed
                 rootScrollView.post {
