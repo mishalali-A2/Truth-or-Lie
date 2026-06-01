@@ -25,8 +25,8 @@ class BillingRepository private constructor(private val billingManager: BillingM
         return emptyList()
     }
 
-    fun purchaseProduct(activity: Activity, productId: String) {
-        billingManager.launchPurchaseFlow(activity, productId)
+    fun purchaseProduct(activity: Activity, productId: String, category: String? = null) {
+        billingManager.launchPurchaseFlow(activity, productId, category)
     }
 
     fun clearPurchaseCache() {

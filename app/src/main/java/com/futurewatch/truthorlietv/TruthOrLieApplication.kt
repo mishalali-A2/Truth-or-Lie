@@ -43,6 +43,8 @@ class TruthOrLieApplication : Application() {
         MusicManager.init(this)
 
         TimerManager.init(this)
+        
+        CategoryManager.initialize(this)
 
         initializeBilling()
 
@@ -137,19 +139,24 @@ class TruthOrLieApplication : Application() {
 
             override fun onPurchaseSuccess(productId: String) {
                 Log.d("Billing", "Purchase success: $productId")
-                // Handle different purchase types
-                when (productId) {
-                    "remove_ads" -> {
+                when {
+                    productId == "premium.access" -> {
+                        prefs.edit().putBoolean("all_categories_unlocked", true).apply()
+                        Log.d("Billing", "Premium access purchased!")
+                    }
+                    productId in setOf("premium_monthly", "premium_yearly") -> {
+                        Log.d("Billing", "Premium subscription active!")
+                    }
+                    productId.startsWith("buy.") -> {
+                        Log.d("Billing", "Category purchased: $productId - unlocked for 24h")
+                    }
+                    productId == "remove_ads" -> {
                         prefs.edit().putBoolean("ads_removed", true).apply()
                         Log.d("Billing", "Ads removed permanently!")
                     }
-                    "unlock_all_categories" -> {
+                    productId == "unlock_all_categories" -> {
                         prefs.edit().putBoolean("all_categories_unlocked", true).apply()
                         Log.d("Billing", "All categories unlocked!")
-                    }
-                    "premium_monthly", "premium_yearly" -> {
-                        // Premium subscription - handled via getHasPremiumAccess()
-                        Log.d("Billing", "Premium subscription active!")
                     }
                 }
             }

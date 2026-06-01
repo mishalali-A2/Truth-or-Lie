@@ -13,7 +13,8 @@ class BillingManager(
     private val listener: BillingListener
 
 ) : PurchasesUpdatedListener, BillingClientStateListener {
-    private val isFakeBilling = isDebugBuild()
+    // Set to false to use real Google Play billing. Set to true for local testing.
+    private val isFakeBilling = false
 
     private fun isDebugBuild(): Boolean {
         return try {
@@ -40,6 +41,7 @@ class BillingManager(
         // product ids: In-app products for unlocking categories and removing ads
         val INAPP_PRODUCT_IDS = listOf(
             "premium.access",              // $5.99 - Removes ads and unlocks all categories
+            "premium.unlock_category",     // $2.99 - Unlocks a single category for 24 hours
             "buy.history",                 // History category
             "buy.space",                   // Space category
             "buy.technology",              // Technology category
@@ -65,8 +67,6 @@ class BillingManager(
         // Premium product IDs (anything that gives premium access)
         val PREMIUM_PRODUCT_IDS = setOf(
             "premium.access",              // Remove ads + unlock all categories ($5.99)
-            "premium_monthly",
-            "premium_yearly"
         )
     }
 
@@ -306,36 +306,44 @@ class BillingManager(
                 continue
             }
 
-            val isPremiumPurchase = purchase.products.any { it in PREMIUM_PRODUCT_IDS }
-            if (!isPremiumPurchase) {
-                Log.d(TAG, "Purchase ${purchase.purchaseToken} is not a premium product")
-                continue
-            }
-            if (isPremiumPurchase) {
+            purchase.products.forEach { productId ->
                 val prefs = context.getSharedPreferences("app_settings", Context.MODE_PRIVATE)
+                val billingPrefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
-                purchase.products.forEach { productId ->
-                    when (productId) {
-                        "premium.access" -> {
-                            // $5.99 product that removes ads and unlocks all categories
+                when {
+                    productId == "premium.access" -> {
+                        // $5.99 product that removes ads and unlocks all categories
+                        prefs.edit()
+                            .putBoolean("ads_removed", true)
+                            .putBoolean("all_categories_unlocked", true)
+                            .apply()
+                        hasPremiumAccess = true
+                    }
+                    productId in setOf("premium_monthly", "premium_yearly") -> {
+                        // Subscription products
+                        prefs.edit()
+                            .putBoolean("ads_removed", true)
+                            .putBoolean("all_categories_unlocked", true)
+                            .putBoolean("premium_access", true)
+                            .apply()
+                        hasPremiumAccess = true
+                    }
+                    productId in INAPP_PRODUCT_IDS && productId != "premium.access" -> {
+                        // Individual category purchase (buy.history, buy.technology, etc.)
+                        val category = billingPrefs.getString("pending_purchase_category", null)
+                        if (category != null) {
                             prefs.edit()
-                                .putBoolean("ads_removed", true)
-                                .putBoolean("all_categories_unlocked", true)
+                                .putBoolean("category_${category}_unlocked_24h", true)
+                                .putLong("category_${category}_unlock_time", System.currentTimeMillis())
                                 .apply()
+                            Log.d(TAG, "Category unlocked for 24h: $category (productId: $productId)")
                         }
-                        "premium_monthly", "premium_yearly" -> {
-                            prefs.edit()
-                                .putBoolean("ads_removed", true)
-                                .putBoolean("all_categories_unlocked", true)
-                                .putBoolean("premium_access", true)
-                                .apply()
-                        }
+                        billingPrefs.edit().remove("pending_purchase_category").apply()
                     }
                 }
+                
+                Log.d(TAG, "✓ Purchase processed: $productId")
             }
-
-            hasPremiumAccess = true
-            Log.d(TAG, "✓ Premium purchase found: ${purchase.products}")
 
             // Acknowledge if not already done
             if (!purchase.isAcknowledged) {
@@ -364,10 +372,16 @@ class BillingManager(
             }
         }
     }
-    fun launchPurchaseFlow(activity: Activity, productId: String) {
-        Log.d(TAG, "launchPurchaseFlow called for productId=$productId")
+    fun launchPurchaseFlow(activity: Activity, productId: String, category: String? = null) {
+        Log.d(TAG, "launchPurchaseFlow called for productId=$productId (category=$category)")
 
-      //FAKE BILLING -> for testing
+        if (category != null) {
+            context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                .edit()
+                .putString("pending_purchase_category", category)
+                .apply()
+        }
+
         if (isFakeBilling) {
             Log.d(TAG, "⚡ Using FAKE billing for $productId")
 
@@ -439,6 +453,7 @@ class BillingManager(
         }
 
         val prefs = context.getSharedPreferences("app_settings", Context.MODE_PRIVATE)
+        val billingPrefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
         when (productId) {
             "premium.access" -> {
@@ -447,6 +462,28 @@ class BillingManager(
                     .putBoolean("ads_removed", true)
                     .putBoolean("all_categories_unlocked", true)
                     .apply()
+            }
+            "premium.unlock_category" -> {
+                val category = billingPrefs.getString("pending_purchase_category", null)
+                if (category != null) {
+                    prefs.edit()
+                        .putBoolean("category_${category}_unlocked_24h", true)
+                        .putLong("category_${category}_unlock_time", System.currentTimeMillis())
+                        .apply()
+                    Log.d(TAG, "Single category unlocked for 24h: $category")
+                }
+                billingPrefs.edit().remove("pending_purchase_category").apply()
+            }
+            in INAPP_PRODUCT_IDS -> {
+                val category = billingPrefs.getString("pending_purchase_category", null)
+                if (category != null) {
+                    prefs.edit()
+                        .putBoolean("category_${category}_unlocked_24h", true)
+                        .putLong("category_${category}_unlock_time", System.currentTimeMillis())
+                        .apply()
+                    Log.d(TAG, "Category unlocked for 24h: $category (productId: $productId)")
+                }
+                billingPrefs.edit().remove("pending_purchase_category").apply()
             }
             "premium_monthly", "premium_yearly" -> {
                 prefs.edit()
