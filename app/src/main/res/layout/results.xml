@@ -55,6 +55,7 @@
                 android:layout_height="wrap_content"
                 android:text="TRUTH"
                 android:textSize="72sp"
+                android:padding="6dp"
                 android:textStyle="bold"
                 android:textColor="#00FF88"
                 android:shadowColor="#AAFFDF"

@@ -38,8 +38,8 @@ class MainActivity : AppCompatActivity() {
 
         // title anim -> loop
         fun createFloatAnim(view: View): ObjectAnimator {
-            return ObjectAnimator.ofFloat(view, "translationY", -10f, 10f).apply {
-                duration = 3000
+            return ObjectAnimator.ofFloat(view, "translationY", -14f, 14f).apply {
+                duration = 2000
                 repeatCount = ValueAnimator.INFINITE
                 repeatMode = ValueAnimator.REVERSE
                 interpolator = AccelerateDecelerateInterpolator() // smooth ease in/out

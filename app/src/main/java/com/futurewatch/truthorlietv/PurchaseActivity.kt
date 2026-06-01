@@ -15,6 +15,9 @@ class PurchaseActivity : AppCompatActivity() {
     private lateinit var txtRestore: TextView
     private lateinit var titlePremium: TextView
     private lateinit var description: TextView
+    
+    private var purchaseType = "all_categories"  // Default: unlock all categories
+    private var selectedCategory: String? = null // For single category unlock
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,31 +25,58 @@ class PurchaseActivity : AppCompatActivity() {
 
         btnPurchase = findViewById(R.id.btnPurchase)
         btnCancel = findViewById(R.id.btnCancel)
-        txtRestore = findViewById(R.id.txtRestore)
+        //txtRestore = findViewById(R.id.txtRestore)
         titlePremium = findViewById(R.id.titlePremium)
         description = findViewById(R.id.description)
+
+        // Get purchase type and category from intent
+        purchaseType = intent.getStringExtra("purpose") ?: "all_categories"
+        selectedCategory = intent.getStringExtra("category")
 
         // Check if already purchased
         val prefs = TruthOrLieApplication.prefs
         val allCategoriesUnlocked = prefs.getBoolean("all_categories_unlocked", false)
 
-        if (allCategoriesUnlocked) {
-            // Show already purchased state
-            titlePremium.text = "ALREADY UNLOCKED!"
-            description.text = "You already have full access to all categories!"
-            btnPurchase.text = "Unlocked ✓"
-            btnPurchase.isEnabled = false
-            btnPurchase.alpha = 0.5f
+        // Update UI based on purchase type
+        when (purchaseType) {
+            "unlock_single_category" -> {
+                val friendlyName = selectedCategory?.replace("_", " ")?.split(" ")?.joinToString(" ") { 
+                    it.replaceFirstChar { char -> char.uppercase() } 
+                } ?: "Category"
+                
+                titlePremium.text = "Unlock $friendlyName"
+                description.text = "Get 24-hour access to all $friendlyName statements!"
+                btnPurchase.text = "Buy for $2.99"
+            }
+            else -> {
+                // All categories unlock
+                if (allCategoriesUnlocked) {
+                    // Show already purchased state
+                    titlePremium.text = "ALREADY UNLOCKED!"
+                    description.text = "You already have full access to all categories!"
+                    btnPurchase.text = "Unlocked ✓"
+                    btnPurchase.isEnabled = false
+                    btnPurchase.alpha = 0.5f
+                } else {
+                    titlePremium.text = "All Categories"
+                    description.text = "Unlock all categories and get permanent access!"
+                    btnPurchase.text = "Buy for $5.99"
+                }
+            }
         }
 
         // Purchase button click
         btnPurchase.setOnClickListener {
-            if (allCategoriesUnlocked) {
-                Toast.makeText(this, "Already unlocked!", Toast.LENGTH_SHORT).show()
-                finish()
-                return@setOnClickListener
+            if (purchaseType == "unlock_single_category") {
+                purchaseProduct("premium.unlock_category")
+            } else {
+                if (allCategoriesUnlocked) {
+                    Toast.makeText(this, "Already unlocked!", Toast.LENGTH_SHORT).show()
+                    finish()
+                    return@setOnClickListener
+                }
+                purchaseProduct("premium.access")
             }
-            purchaseProduct("premium.access")
         }
 
         // Cancel button
@@ -54,10 +84,10 @@ class PurchaseActivity : AppCompatActivity() {
             finish()
         }
 
-        // Restore purchases
-        txtRestore.setOnClickListener {
-            restorePurchases()
-        }
+//        // Restore purchases
+//        txtRestore.setOnClickListener {
+//            restorePurchases()
+//        }
 
         // Handle back press - close overlay
         btnCancel.requestFocus()
@@ -68,16 +98,16 @@ class PurchaseActivity : AppCompatActivity() {
     private fun purchaseProduct(productId: String) {
         val prefs = TruthOrLieApplication.prefs
 
-        // Check if already owned
-        if (prefs.getBoolean("all_categories_unlocked", false)) {
+        // Check if already owned for all categories
+        if (productId == "premium.access" && prefs.getBoolean("all_categories_unlocked", false)) {
             Toast.makeText(this, "Already unlocked!", Toast.LENGTH_SHORT).show()
             finish()
             return
         }
 
-        Log.d("PurchaseActivity", "Initiating purchase for: $productId")
+        Log.d("PurchaseActivity", "Initiating purchase for: $productId (category: $selectedCategory)")
         try {
-            TruthOrLieApplication.billingRepository.purchaseProduct(this, productId)
+            TruthOrLieApplication.billingRepository.purchaseProduct(this, productId, selectedCategory)
         } catch (e: Exception) {
             Log.e("PurchaseActivity", "Error launching purchase flow", e)
             Toast.makeText(this, "Billing error: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -114,7 +144,6 @@ class PurchaseActivity : AppCompatActivity() {
 
         btnPurchase.onFocusChangeListener = focusListener
         btnCancel.onFocusChangeListener = focusListener
-        txtRestore.onFocusChangeListener = focusListener
     }
 
     override fun onResume() {

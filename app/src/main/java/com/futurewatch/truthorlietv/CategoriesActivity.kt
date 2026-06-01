@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
+
 class CategoriesActivity : AppCompatActivity() {
 
     private lateinit var unlockOverlay: View
@@ -17,12 +18,27 @@ class CategoriesActivity : AppCompatActivity() {
     private lateinit var btnBuyCategory: Button
     private lateinit var btnWatchAd: Button
 
+    // Map category names to their product IDs
+    private val categoryProductMap = mapOf(
+        "history" to "buy.history",
+        "space" to "buy.space",
+        "technology" to "buy.technology",
+        "human_body" to "buy.humanbodycategory",
+        "crazy_facts" to "buy.crazyfacts",
+        "money_luxury" to "buy.money",
+        "movie" to "buy.movies",
+        "random_chaos" to "buy.partymode",  // Party Mode
+        "relations_social" to "buy.relationships",
+        "survival" to "buy.survival",
+        "travel" to "buy.adventure",
+        "family_mode" to "buy.familymode"
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_categories)
-
-        // Always reset purchases and locked categories on launch
-        resetAllPurchasesOnLaunch()
+//for testing purposes
+        // resetAllPurchasesOnLaunch()
         MusicManager.resumeMusic()
 
 
@@ -176,9 +192,7 @@ class CategoriesActivity : AppCompatActivity() {
         unlockOverlay.animate().alpha(1f).setDuration(200).start()
         
         btnBuyCategory.setOnClickListener {
-            val intent = Intent(this, PurchaseActivity::class.java)
-            intent.putExtra("purpose", "unlock_categories")
-            startActivity(intent)
+            purchaseSingleCategory(category)
         }
         
         btnWatchAd.setOnClickListener {
@@ -259,6 +273,31 @@ class CategoriesActivity : AppCompatActivity() {
             updateCategoryUI()
         } else {
             updateCategoryUI()
+        }
+    }
+
+    private fun purchaseSingleCategory(category: String) {
+        Log.d("CategoriesActivity", "Initiating purchase for category: $category")
+        
+        // Get the specific product ID for this category
+        val productId = categoryProductMap[category]
+        if (productId == null) {
+            Log.e("CategoriesActivity", "No product ID mapping for category: $category")
+            Toast.makeText(this, "Error: Category not found", Toast.LENGTH_SHORT).show()
+            return
+        }
+        
+        Toast.makeText(this, "Loading payment...", Toast.LENGTH_SHORT).show()
+        
+        try {
+            // Use category-specific product ID (e.g., buy.history, buy.technology)
+            Log.d("CategoriesActivity", "Purchasing productId=$productId for category=$category")
+            TruthOrLieApplication.billingRepository.purchaseProduct(this, productId, category)
+            // Hide overlay after purchase initiated
+            hideUnlockOverlay()
+        } catch (e: Exception) {
+            Log.e("CategoriesActivity", "Error initiating purchase", e)
+            Toast.makeText(this, "Purchase error: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 }

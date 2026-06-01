@@ -44,20 +44,17 @@ class ResultsActivity : AppCompatActivity() {
             btnNext.text = "See Final Scores"
         }
 
-        // Setup the letter-tracing glow effect
         if (correctAnswer) {
             // TRUTH - Green glow
             tvResult.text = "TRUTH"
-            tvResult.setTextColor(Color.parseColor("#22C55E"))
+            tvResult.setTextColor(Color.parseColor("#00FF88"))
             tvResultGlow1.text = "TRUTH"
             tvResultGlow1.setTextColor(Color.parseColor("#AAFFDF"))
 
-            tvResult.setShadowLayer(12f, 0f, 0f, Color.parseColor("#66FF4444"))
+            tvResult.setShadowLayer(12f, 0f, 0f, Color.parseColor("#00FF88"))
 
-            tvResultGlow1.setShadowLayer(25f, 0f, 0f, Color.parseColor("#33FF2D55"))
+            tvResultGlow1.setShadowLayer(25f, 0f, 0f, Color.parseColor("#AAFFDF"))
             tvResultGlow1.alpha = 0.4f
-
-            animateGlow(tvResultGlow1, true)
 
         } else {
             // LIE - Red glow
@@ -66,15 +63,10 @@ class ResultsActivity : AppCompatActivity() {
             tvResultGlow1.text = "LIE"
             tvResultGlow1.setTextColor(Color.parseColor("#EF4444"))
 
-            // Main text shadow
             tvResult.setShadowLayer(12f, 0f, 0f, Color.parseColor("#66FF0000"))
 
-            // Outer glow layer
             tvResultGlow1.setShadowLayer(25f, 0f, 0f, Color.parseColor("#66FF0000"))
             tvResultGlow1.alpha = 0.4f
-
-            // Add pulsing animation
-            animateGlow(tvResultGlow1, false)
         }
 
         container.removeAllViews()
@@ -164,26 +156,6 @@ class ResultsActivity : AppCompatActivity() {
                 finish()
             }
         }
-    }
-
-    private fun animateGlow(glowTextView: TextView, isTruth: Boolean) {
-        val startAlpha = 0.3f
-        val endAlpha = 0.6f
-        val glowColor = if (isTruth) "#AAFFDF" else "#66FF0000"
-
-        // Create pulsing animation for softer glow effect
-        val animator = android.animation.ValueAnimator.ofFloat(startAlpha, endAlpha, startAlpha)
-        animator.duration = 2000
-        animator.repeatCount = android.animation.ValueAnimator.INFINITE
-        animator.addUpdateListener {
-            val alpha = it.animatedValue as Float
-            glowTextView.alpha = alpha
-            // Adjust shadow radius for breathing effect
-            val shadowRadius = 20f + (alpha * 15f)
-            glowTextView.setShadowLayer(shadowRadius, 0f, 0f, Color.parseColor(glowColor))
-            glowTextView.invalidate()
-        }
-        animator.start()
     }
 
     private fun dpToPx(dp: Int): Int {
