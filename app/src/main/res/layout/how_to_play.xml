@@ -88,7 +88,7 @@
                         android:layout_marginTop="8dp" />
                 </LinearLayout>
 
-                <!-- CARD 3: Discuss with the Room -->
+                <!-- CARD 2: Discuss with the Room -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -99,7 +99,6 @@
                     android:layout_margin="12dp"
                     android:background="@drawable/card_bg">
 
-                    <!-- Circular Background for Icon -->
                     <FrameLayout
                         android:layout_width="80dp"
                         android:layout_height="60dp">
@@ -130,7 +129,7 @@
                         android:layout_marginTop="8dp" />
                 </LinearLayout>
 
-                <!-- CARD 2: Vote True or Lie -->
+                <!-- CARD 3: Vote True or Lie -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -141,7 +140,6 @@
                     android:layout_margin="12dp"
                     android:background="@drawable/card_bg">
 
-                    <!-- Circular Background for Icon -->
                     <FrameLayout
                         android:layout_width="80dp"
                         android:layout_height="60dp">
@@ -182,18 +180,25 @@
                 android:textColor="#777777"
                 android:layout_marginTop="32dp" />
 
-            <!-- Back Button -->
+            <!-- Back Button with Shadow -->
             <Button
                 android:id="@+id/btnBacktoMenu"
                 android:layout_width="220dp"
                 android:layout_height="wrap_content"
                 android:text="Back to Menu"
                 android:textAllCaps="false"
-                android:layout_marginTop="24dp"
+                android:textSize="18sp"
+                android:textStyle="bold"
                 android:background="@drawable/btn_secondary"
                 android:textColor="@android:color/white"
                 android:focusable="true"
-                android:focusableInTouchMode="true" />
+                android:focusableInTouchMode="true"
+                android:paddingVertical="14dp"
+                android:stateListAnimator="@null"
+                android:elevation="10dp"
+                android:outlineAmbientShadowColor="#494589"
+                android:outlineSpotShadowColor="#9D4EDD"
+                android:layout_marginTop="24dp" />
 
         </LinearLayout>
 

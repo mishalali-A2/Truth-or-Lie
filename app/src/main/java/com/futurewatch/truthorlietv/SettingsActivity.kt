@@ -82,6 +82,24 @@ class SettingsActivity : AppCompatActivity() {
             finish()
         }
 
+        backBtn.setOnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                v.animate()
+                    .scaleX(1.06f)
+                    .scaleY(1.06f)
+                    .translationZ(20f)
+                    .setDuration(150)
+                    .start()
+            } else {
+                v.animate()
+                    .scaleX(1f)
+                    .scaleY(1f)
+                    .translationZ(0f)
+                    .setDuration(150)
+                    .start()
+            }
+        }
+
         switchMusic.requestFocus()
     }
 

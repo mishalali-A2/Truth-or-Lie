@@ -73,6 +73,9 @@ class PlayerNamesActivity : AppCompatActivity() {
 
                 isFocusable = true
                 isFocusableInTouchMode = true
+                elevation = 0f
+                outlineAmbientShadowColor = Color.parseColor("#B78BDE")
+                outlineSpotShadowColor = Color.parseColor("#B78BDE")
 
                 filters = arrayOf(InputFilter.LengthFilter(10))
 

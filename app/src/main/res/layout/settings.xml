@@ -480,6 +480,10 @@
             android:fontFamily="@font/plus_jakarta_sans"
             android:textSize="20sp"
             android:textColor="#FFFFFF"
+            android:stateListAnimator="@null"
+            android:elevation="10dp"
+            android:outlineAmbientShadowColor="#494589"
+            android:outlineSpotShadowColor="#9D4EDD"
             android:padding="16dp"/>
     </LinearLayout>
 

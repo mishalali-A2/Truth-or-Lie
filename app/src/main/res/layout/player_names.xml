@@ -37,6 +37,10 @@
             android:padding="12dp"
             android:text="Let's Go!"
             android:textAllCaps="false"
+            android:stateListAnimator="@null"
+            android:elevation="20dp"
+            android:outlineAmbientShadowColor="#494589"
+            android:outlineSpotShadowColor="#9D4EDD"
             android:textColor="@android:color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
