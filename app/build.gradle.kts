@@ -14,24 +14,29 @@ android {
         applicationId = "com.futurewatch.truthorlietv"
         minSdk = 24
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 6
+        versionName = "1.6"
 
-//        //infatica
-//        manifestPlaceholders += mapOf(
-//            "INFATICA_PARTNER_ID" to "FutureWatch"
-//        )
+    }
 
+    signingConfigs {
+        create("release") {
+            storeFile = rootProject.file(System.getenv("KEYSTORE_PATH") ?: "release-keystore.jks")
+            storePassword = System.getenv("KEYSTORE_PASSWORD") ?: "fwQalandarr"
+            keyAlias = System.getenv("KEY_ALIAS") ?: "upload"
+            keyPassword = System.getenv("KEY_PASSWORD") ?: "fwQalandarr"
+        }
     }
 
     buildTypes {
         debug {
             isMinifyEnabled = false
-            applicationIdSuffix = ".debug"
             versionNameSuffix = "-DEBUG"
         }
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -45,6 +50,7 @@ android {
     buildFeatures {
         compose = false
         viewBinding = true
+        buildConfig = true
     }
 }
 
@@ -58,7 +64,6 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation("com.android.billingclient:billing-ktx:7.1.1")
     implementation ("androidx.datastore:datastore-preferences:1.1.1")
-    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar", "*.jar"))))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("com.unity3d.ads:unity-ads:4.9.2")
     implementation("nl.dionsegijn:konfetti-xml:2.0.2")

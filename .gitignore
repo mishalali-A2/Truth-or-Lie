@@ -14,3 +14,14 @@
 .cxx
 local.properties
 imgs/
+
+# Keystores and signing credentials
+*.jks
+*.keystore
+*.p12
+*.pem
+*.key
+
+# Reports and temp files
+reports/
+issues.txt
