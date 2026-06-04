@@ -1,21 +1,30 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# Keep line numbers for crash reporting
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Google Play Billing
+-keep class com.android.billingclient.** { *; }
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Unity Ads
+-keep class com.unity3d.ads.** { *; }
+-keep interface com.unity3d.ads.** { *; }
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Konfetti
+-keep class nl.dionsegijn.konfetti.** { *; }
+
+# App data classes used with JSON / SQLite
+-keep class com.futurewatch.truthorlietv.database.PlayerEntity { *; }
+-keep class com.futurewatch.truthorlietv.Player { *; }
+
+# Keep enum names (used in billing response comparisons)
+-keepclassmembers enum * { *; }
+
+# Lifecycle (ProcessLifecycleOwner used in Application)
+-keep class androidx.lifecycle.** { *; }
+-keep interface androidx.lifecycle.** { *; }
+
+# Keep app classes (Application, Activities, anonymous listeners)
+-keep class com.futurewatch.truthorlietv.** { *; }
+
+# Keep font resources referenced from themes
+-keep class androidx.core.content.res.** { *; }
