@@ -8,31 +8,6 @@
     <uses-permission android:name="com.android.vending.BILLING" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-<!--        Wi-fi-->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"
-        android:required="false"
-        tools:ignore="WifiPermission" />
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"
-        android:required="false"
-        tools:ignore="WifiPermission" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"
-        android:required="false"
-        tools:ignore="LocationPermission" />
-<!--    Storage-->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28"
-        tools:ignore="ScopedStorage" />
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-
-    <!-- Foreground  -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC"
-        tools:ignore="ProtectedPermissions" />
-    <!-- Notification  -->
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <!--  optimized background operation -->
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
 
     <uses-feature
@@ -40,7 +15,7 @@
         android:required="false" />
     <uses-feature
         android:name="android.software.leanback"
-        android:required="false" />
+        android:required="true" />
 
     <application
         android:name=".TruthOrLieApplication"
@@ -90,6 +65,11 @@
 
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".HowToPlayActivity"
@@ -99,14 +79,8 @@
             android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="true" />
+            android:exported="false" />
 
-<!--        infatica sdk service overridden&ndash;&gt;-->
-<!--        <service-->
-<!--            android:name="com.infatica.agent.service.Service"-->
-<!--            android:exported="true"-->
-<!--            android:foregroundServiceType="dataSync"-->
-<!--            tools:replace="android:exported" />-->
 
     </application>
 
