@@ -20,11 +20,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        AdManager.initialize(this, testMode = true) {
+        setContentView(R.layout.activity_main)
+
+        AdManager.initialize(this, testMode = false) {
             Log.d("MainActivity", "Unity Ads ready - Rewarded: ${AdManager.isRewardedReady()}, Interstitial: ${AdManager.isInterstitialReady()}")
         }
-
-        setContentView(R.layout.activity_main)
 
         Handler(Looper.getMainLooper()).postDelayed({
             MusicManager.startMusic()

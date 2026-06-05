@@ -24,7 +24,7 @@ object AdManager {
     private var isShowingInterstitial = false
     private val mainHandler = Handler(Looper.getMainLooper())
 
-    fun initialize(activity: Activity, testMode: Boolean = true, onComplete: () -> Unit = {}) {
+    fun initialize(activity: Activity, testMode: Boolean = false, onComplete: () -> Unit = {}) {
         if (isInitialized) {
             onComplete()
             return
