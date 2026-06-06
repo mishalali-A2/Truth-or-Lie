@@ -21,8 +21,8 @@ class BillingRepository private constructor(private val billingManager: BillingM
         billingManager.initialize()
     }
 
-    fun getProducts(): List<ProductDetails> {
-        return emptyList()
+    fun getProductPrice(productId: String): String? {
+        return billingManager.getProductPrice(productId)
     }
 
     fun purchaseProduct(activity: Activity, productId: String, category: String? = null) {

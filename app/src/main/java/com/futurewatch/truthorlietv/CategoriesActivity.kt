@@ -242,7 +242,6 @@ class CategoriesActivity : AppCompatActivity() {
         prefs.edit()
             .putBoolean("music_enabled", true)
             .putInt("timer_seconds", 20)
-            .putBoolean("network_sdk_enabled", false)
             .apply()
 
         Log.d("ResetDebug", "========== RESET COMPLETE (ALWAYS RUNS ON LAUNCH) ==========")

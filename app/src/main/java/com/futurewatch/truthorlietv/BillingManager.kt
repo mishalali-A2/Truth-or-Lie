@@ -6,6 +6,8 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import com.android.billingclient.api.*
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
 
 
 class BillingManager(
@@ -13,16 +15,7 @@ class BillingManager(
     private val listener: BillingListener
 
 ) : PurchasesUpdatedListener, BillingClientStateListener {
-    // Set to false to use real Google Play billing. Set to true for local testing.
-    private val isFakeBilling = false
-
-    private fun isDebugBuild(): Boolean {
-        return try {
-            context.applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE != 0
-        } catch (e: Exception) {
-            true
-        }
-    }
+    private val isFakeBilling get() = false
     interface BillingListener {
         fun onBillingSetupFinished()
         fun onBillingDisconnected()
@@ -66,7 +59,24 @@ class BillingManager(
 
         // Premium product IDs (anything that gives premium access)
         val PREMIUM_PRODUCT_IDS = setOf(
-            "premium.access",              // Remove ads + unlock all categories ($5.99)
+            "premium.access",
+        )
+
+        // Maps each category product ID directly to its category key — no SharedPrefs needed
+        val PRODUCT_TO_CATEGORY = mapOf(
+            "buy.history"           to "history",
+            "buy.space"             to "space",
+            "buy.technology"        to "technology",
+            "buy.humanbodycategory" to "human_body",
+            "buy.crazyfacts"        to "crazy_facts",
+            "buy.partymode"         to "random_chaos",
+            "buy.relationships"     to "relations_social",
+            "buy.adventure"         to "travel",
+            "buy.money"             to "money_luxury",
+            "buy.movies"            to "movie",
+            "buy.survival"          to "survival",
+            "buy.familymode"        to "family_mode",
+            "premium.unlock_category" to null
         )
     }
 
@@ -82,7 +92,10 @@ class BillingManager(
 
     private var isServiceConnected = false
     private val productDetailsMap = mutableMapOf<String, ProductDetails>()
-    private val purchaseAttemptIds = mutableMapOf<String, String>()
+
+    // Used to safely merge results from concurrent INAPP + SUBS purchase queries
+    private val pendingQueryCount = AtomicInteger(0)
+    private val resolvedPremiumAccess = AtomicBoolean(false)
     fun initialize() {
         Log.d(TAG, "Initializing BillingClient")
         if (billingClient.isReady) {
@@ -237,9 +250,7 @@ class BillingManager(
     fun queryPurchases() {
         if (isFakeBilling) {
             Log.d(TAG, "⚡ Fake restore")
-
-            val hasPremium = getHasPremiumAccess()
-            listener.onRestoreCompleted(hasPremium)
+            listener.onRestoreCompleted(getHasPremiumAccess())
             return
         }
         if (!isServiceConnected) {
@@ -249,88 +260,75 @@ class BillingManager(
 
         Log.d(TAG, "Querying existing purchases...")
 
-        // QUERY 1: INAPP PURCHASES
-        queryInAppPurchases()
+        // Reset merge state before firing both queries
+        pendingQueryCount.set(2)
+        resolvedPremiumAccess.set(false)
 
-        // QUERY 2: SUBS PURCHASES
+        queryInAppPurchases()
         querySubsPurchases()
     }
 
     private fun queryInAppPurchases() {
-        Log.d(TAG, "Querying INAPP purchases...")
-
         val params = QueryPurchasesParams.newBuilder()
             .setProductType(BillingClient.ProductType.INAPP)
             .build()
 
         billingClient.queryPurchasesAsync(params) { billingResult, purchases ->
             if (billingResult.responseCode != BillingClient.BillingResponseCode.OK) {
-                Log.w(
-                    TAG,
-                    "Query INAPP purchases failed (code=${billingResult.responseCode}): ${billingResult.debugMessage}"
-                )
+                Log.w(TAG, "Query INAPP purchases failed (code=${billingResult.responseCode}): ${billingResult.debugMessage}")
+                onQueryComplete(false, purchases)
                 return@queryPurchasesAsync
             }
-
             Log.d(TAG, "INAPP purchases query returned ${purchases.size} purchases")
-            handlePurchases(purchases)
+            onQueryComplete(processRawPurchases(purchases), purchases)
         }
     }
 
     private fun querySubsPurchases() {
-        Log.d(TAG, "Querying SUBS purchases...")
-
         val params = QueryPurchasesParams.newBuilder()
             .setProductType(BillingClient.ProductType.SUBS)
             .build()
 
         billingClient.queryPurchasesAsync(params) { billingResult, purchases ->
             if (billingResult.responseCode != BillingClient.BillingResponseCode.OK) {
-                Log.w(
-                    TAG,
-                    "Query SUBS purchases failed (code=${billingResult.responseCode}): ${billingResult.debugMessage}"
-                )
+                Log.w(TAG, "Query SUBS purchases failed (code=${billingResult.responseCode}): ${billingResult.debugMessage}")
+                onQueryComplete(false, purchases)
                 return@queryPurchasesAsync
             }
-
             Log.d(TAG, "SUBS purchases query returned ${purchases.size} purchases")
-            handlePurchases(purchases)
+            onQueryComplete(processRawPurchases(purchases), purchases)
         }
     }
-    private fun handlePurchases(purchases: List<Purchase>) {
-        var hasPremiumAccess = false
+
+    // Processes one batch of purchases and returns whether any grant premium access.
+    // Does NOT call the listener — that only happens once both queries are done.
+    private fun processRawPurchases(purchases: List<Purchase>): Boolean {
+        var hasPremium = false
+        val prefs = context.getSharedPreferences("app_settings", Context.MODE_PRIVATE)
 
         for (purchase in purchases) {
-            if (purchase.purchaseState != Purchase.PurchaseState.PURCHASED) {
-                Log.d(TAG, "Skipping purchase with state=${purchase.purchaseState}")
-                continue
-            }
+            if (purchase.purchaseState != Purchase.PurchaseState.PURCHASED) continue
 
             purchase.products.forEach { productId ->
-                val prefs = context.getSharedPreferences("app_settings", Context.MODE_PRIVATE)
-                val billingPrefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-
                 when {
                     productId == "premium.access" -> {
-                        // $5.99 product that removes ads and unlocks all categories
                         prefs.edit()
                             .putBoolean("ads_removed", true)
                             .putBoolean("all_categories_unlocked", true)
                             .apply()
-                        hasPremiumAccess = true
+                        hasPremium = true
                     }
                     productId in setOf("premium_monthly", "premium_yearly") -> {
-                        // Subscription products
                         prefs.edit()
                             .putBoolean("ads_removed", true)
                             .putBoolean("all_categories_unlocked", true)
                             .putBoolean("premium_access", true)
                             .apply()
-                        hasPremiumAccess = true
+                        hasPremium = true
                     }
                     productId in INAPP_PRODUCT_IDS && productId != "premium.access" -> {
-                        // Individual category purchase (buy.history, buy.technology, etc.)
-                        val category = billingPrefs.getString("pending_purchase_category", null)
+                        // Resolve category directly from the product ID — no SharedPrefs dependency
+                        val category = PRODUCT_TO_CATEGORY[productId]
                         if (category != null) {
                             prefs.edit()
                                 .putBoolean("category_${category}_unlocked_24h", true)
@@ -338,22 +336,33 @@ class BillingManager(
                                 .apply()
                             Log.d(TAG, "Category unlocked for 24h: $category (productId: $productId)")
                         }
-                        billingPrefs.edit().remove("pending_purchase_category").apply()
                     }
                 }
-                
                 Log.d(TAG, "✓ Purchase processed: $productId")
             }
 
-            // Acknowledge if not already done
-            if (!purchase.isAcknowledged) {
-                Log.d(TAG, "Acknowledging purchase...")
-                acknowledgePurchase(purchase)
-            }
+            if (!purchase.isAcknowledged) acknowledgePurchase(purchase)
         }
 
-        setHasPremiumAccess(hasPremiumAccess)
-        listener.onRestoreCompleted(hasPremiumAccess)
+        return hasPremium
+    }
+
+    // Called once per query (INAPP and SUBS). Only fires the listener after both complete.
+    private fun onQueryComplete(hasPremium: Boolean, purchases: List<Purchase>) {
+        if (hasPremium) resolvedPremiumAccess.set(true)
+
+        if (pendingQueryCount.decrementAndGet() == 0) {
+            val finalResult = resolvedPremiumAccess.get()
+            setHasPremiumAccess(finalResult)
+            listener.onRestoreCompleted(finalResult)
+        }
+    }
+
+    // Called for immediate new purchases (not restore queries) — single batch, no counting needed.
+    private fun handlePurchases(purchases: List<Purchase>) {
+        val hasPremium = processRawPurchases(purchases)
+        if (hasPremium) setHasPremiumAccess(true)
+        listener.onRestoreCompleted(hasPremium || getHasPremiumAccess())
     }
 
     private fun acknowledgePurchase(purchase: Purchase) {
@@ -374,13 +383,6 @@ class BillingManager(
     }
     fun launchPurchaseFlow(activity: Activity, productId: String, category: String? = null) {
         Log.d(TAG, "launchPurchaseFlow called for productId=$productId (category=$category)")
-
-        if (category != null) {
-            context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-                .edit()
-                .putString("pending_purchase_category", category)
-                .apply()
-        }
 
         if (isFakeBilling) {
             Log.d(TAG, "⚡ Using FAKE billing for $productId")
@@ -416,10 +418,15 @@ class BillingManager(
         val detailsBuilder = BillingFlowParams.ProductDetailsParams.newBuilder()
             .setProductDetails(productDetails)
 
+        // Prefer the offer with a free trial or intro price; fall back to the base plan
         productDetails.subscriptionOfferDetails
-            ?.firstOrNull()
-            ?.let { offer ->
-                detailsBuilder.setOfferToken(offer.offerToken)
+            ?.let { offers ->
+                val bestOffer = offers.firstOrNull { offer ->
+                    offer.pricingPhases.pricingPhaseList.any { phase ->
+                        phase.priceAmountMicros == 0L || phase.billingCycleCount > 0
+                    }
+                } ?: offers.firstOrNull()
+                bestOffer?.let { detailsBuilder.setOfferToken(it.offerToken) }
             }
 
         val billingFlowParams = BillingFlowParams.newBuilder()
@@ -427,6 +434,15 @@ class BillingManager(
             .build()
 
         billingClient.launchBillingFlow(activity, billingFlowParams)
+    }
+
+    fun getProductPrice(productId: String): String? {
+        val details = productDetailsMap[productId] ?: return null
+        return details.oneTimePurchaseOfferDetails?.formattedPrice
+            ?: details.subscriptionOfferDetails
+                ?.firstOrNull()
+                ?.pricingPhases?.pricingPhaseList?.firstOrNull()
+                ?.formattedPrice
     }
 
     fun clearPurchaseCache() {
@@ -447,35 +463,19 @@ class BillingManager(
     private fun handleFakePurchase(productId: String) {
         Log.d(TAG, "✅ FAKE purchase success: $productId")
 
-        val isPremium = productId in PREMIUM_PRODUCT_IDS
-        if (isPremium) {
-            setHasPremiumAccess(true)
-        }
-
         val prefs = context.getSharedPreferences("app_settings", Context.MODE_PRIVATE)
-        val billingPrefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
         when (productId) {
             "premium.access" -> {
-                // $5.99 product: remove ads + unlock all categories
                 prefs.edit()
                     .putBoolean("ads_removed", true)
                     .putBoolean("all_categories_unlocked", true)
                     .apply()
-            }
-            "premium.unlock_category" -> {
-                val category = billingPrefs.getString("pending_purchase_category", null)
-                if (category != null) {
-                    prefs.edit()
-                        .putBoolean("category_${category}_unlocked_24h", true)
-                        .putLong("category_${category}_unlock_time", System.currentTimeMillis())
-                        .apply()
-                    Log.d(TAG, "Single category unlocked for 24h: $category")
-                }
-                billingPrefs.edit().remove("pending_purchase_category").apply()
+                setHasPremiumAccess(true)
             }
             in INAPP_PRODUCT_IDS -> {
-                val category = billingPrefs.getString("pending_purchase_category", null)
+                // Resolve category directly from product ID — same as real purchase flow
+                val category = PRODUCT_TO_CATEGORY[productId]
                 if (category != null) {
                     prefs.edit()
                         .putBoolean("category_${category}_unlocked_24h", true)
@@ -483,7 +483,6 @@ class BillingManager(
                         .apply()
                     Log.d(TAG, "Category unlocked for 24h: $category (productId: $productId)")
                 }
-                billingPrefs.edit().remove("pending_purchase_category").apply()
             }
             "premium_monthly", "premium_yearly" -> {
                 prefs.edit()
@@ -491,10 +490,10 @@ class BillingManager(
                     .putBoolean("all_categories_unlocked", true)
                     .putBoolean("premium_access", true)
                     .apply()
+                setHasPremiumAccess(true)
             }
         }
 
-        // Notify UI
         listener.onPurchaseSuccess(productId)
         listener.onRestoreCompleted(true)
     }
