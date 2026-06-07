@@ -25,7 +25,7 @@ class PurchaseActivity : AppCompatActivity() {
 
         btnPurchase = findViewById(R.id.btnPurchase)
         btnCancel = findViewById(R.id.btnCancel)
-        //txtRestore = findViewById(R.id.txtRestore)
+        txtRestore = findViewById(R.id.txtRestore)
         titlePremium = findViewById(R.id.titlePremium)
         description = findViewById(R.id.description)
 
@@ -40,18 +40,21 @@ class PurchaseActivity : AppCompatActivity() {
         // Update UI based on purchase type
         when (purchaseType) {
             "unlock_single_category" -> {
-                val friendlyName = selectedCategory?.replace("_", " ")?.split(" ")?.joinToString(" ") { 
-                    it.replaceFirstChar { char -> char.uppercase() } 
+                val friendlyName = selectedCategory?.replace("_", " ")?.split(" ")?.joinToString(" ") {
+                    it.replaceFirstChar { char -> char.uppercase() }
                 } ?: "Category"
-                
+
                 titlePremium.text = "Unlock $friendlyName"
                 description.text = "Get 24-hour access to all $friendlyName statements!"
-                btnPurchase.text = "Buy for $2.99"
+
+                val categoryProductId = BillingManager.PRODUCT_TO_CATEGORY.entries
+                    .firstOrNull { it.value == selectedCategory }?.key ?: "premium.unlock_category"
+                val livePrice = TruthOrLieApplication.billingRepository
+                    .getProductPrice(categoryProductId) ?: "$2.99"
+                btnPurchase.text = "Buy for $livePrice"
             }
             else -> {
-                // All categories unlock
                 if (allCategoriesUnlocked) {
-                    // Show already purchased state
                     titlePremium.text = "ALREADY UNLOCKED!"
                     description.text = "You already have full access to all categories!"
                     btnPurchase.text = "Unlocked ✓"
@@ -60,7 +63,9 @@ class PurchaseActivity : AppCompatActivity() {
                 } else {
                     titlePremium.text = "All Categories"
                     description.text = "Unlock all categories and get permanent access!"
-                    btnPurchase.text = "Buy for $5.99"
+                    val livePrice = TruthOrLieApplication.billingRepository
+                        .getProductPrice("premium.access") ?: "$5.99"
+                    btnPurchase.text = "Unlock All Categories for $livePrice"
                 }
             }
         }
@@ -84,10 +89,10 @@ class PurchaseActivity : AppCompatActivity() {
             finish()
         }
 
-//        // Restore purchases
-//        txtRestore.setOnClickListener {
-//            restorePurchases()
-//        }
+        // Restore purchases
+        txtRestore.setOnClickListener {
+            restorePurchases()
+        }
 
         // Handle back press - close overlay
         btnCancel.requestFocus()
