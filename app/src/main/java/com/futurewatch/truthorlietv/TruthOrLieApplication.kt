@@ -2,11 +2,12 @@ package com.futurewatch.truthorlietv
 
 import android.app.Application
 import android.content.SharedPreferences
-import com.unity3d.ads.UnityAds
 import android.util.Log
-import com.unity3d.ads.IUnityAdsInitializationListener
 import android.app.ActivityManager
 import android.os.Process
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ProcessLifecycleOwner
 class TruthOrLieApplication : Application() {
 
     companion object {
@@ -28,18 +29,6 @@ class TruthOrLieApplication : Application() {
 
         initializeDefaultSettings()
 
-        UnityAds.initialize(this, "6069840", true, object : IUnityAdsInitializationListener {
-            override fun onInitializationComplete() {
-                Log.d("UnityAds", "SDK Initialized Successfully")
-            }
-
-            override fun onInitializationFailed(
-                error: UnityAds.UnityAdsInitializationError,
-                message: String
-            ) {
-                Log.e("UnityAds", "SDK Initialization Failed: $error - $message")
-            }
-        })
         MusicManager.init(this)
 
         TimerManager.init(this)
@@ -48,8 +37,12 @@ class TruthOrLieApplication : Application() {
 
         initializeBilling()
 
-        initializeInfaticaSafely()
-
+        // Re-verify subscription status every time the app comes to the foreground
+        ProcessLifecycleOwner.get().lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onStart(owner: LifecycleOwner) {
+                billingRepository.restorePurchases()
+            }
+        })
     }
 
     private fun isMainProcess(): Boolean {
@@ -81,42 +74,11 @@ class TruthOrLieApplication : Application() {
                 // Gameplay Defaults
                 putInt("timer_seconds", 20)
 
-                // App State
-                putBoolean("network_sdk_enabled", false)
                 // Mark as initialized so this doesn't run again
                 putBoolean("first_run_initialized", true)
 
                 apply()
             }
-        }
-    }
-
-    private fun initializeInfaticaSafely() {
-        try {
-            // Check storage permissions + availability
-            val storageAvailable = isStorageAvailable()
-            if (!storageAvailable) {
-                Log.w("TruthOrLieApp", "Storage not available, Infatica SDK may not work properly")
-                return
-            }
-
-            // Check if Infatica previously enabled
-            val infaticaEnabled = prefs.getBoolean("network_sdk_enabled", false)
-            if (infaticaEnabled) {
-                Log.d("TruthOrLieApp", "Infatica was previously enabled, but will start from Settings")
-                // Don't auto-start -> user controlled
-            }
-        } catch (e: Exception) {
-            Log.e("TruthOrLieApp", "Failed to initialize Infatica: ${e.message}", e)
-        }
-    }
-
-    private fun isStorageAvailable(): Boolean {
-        return try {
-            val cacheDir = cacheDir
-            cacheDir.exists() && cacheDir.canWrite()
-        } catch (e: Exception) {
-            false
         }
     }
 
