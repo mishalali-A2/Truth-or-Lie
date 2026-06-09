@@ -38,11 +38,9 @@ class WebViewDialog(private val url: String, private val title: String) {
             domStorageEnabled = true
             loadWithOverviewMode = true
             useWideViewPort = true
-            allowFileAccess = true
-            allowContentAccess = true
+            allowFileAccess = false
+            allowContentAccess = false
         }
-        webView.settings.loadWithOverviewMode = true
-        webView.settings.useWideViewPort = true
         webView.webViewClient = object : WebViewClient() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 progressBar.visibility = android.view.View.VISIBLE

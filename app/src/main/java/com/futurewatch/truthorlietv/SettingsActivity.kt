@@ -202,7 +202,6 @@ class SettingsActivity : AppCompatActivity() {
     private fun setupOtherSettings() {
         setupTimerSelection()
 
-       // val switchNetwork = findViewById<SwitchCompat>(R.id.switchNetwork)
         val prefs = getSharedPreferences("app_settings", MODE_PRIVATE)
 
         // Remove Ads
@@ -270,6 +269,10 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun openUrl(url: String) {
+        if (!url.startsWith("https://")) {
+            Toast.makeText(this, "Unable to open link", Toast.LENGTH_SHORT).show()
+            return
+        }
         try {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             startActivity(intent)
