@@ -10,8 +10,8 @@ android {
         applicationId = "com.futurewatch.truthorlietv"
         minSdk = 24
         targetSdk = 35
-        versionCode = 7
-        versionName = "1.7"
+        versionCode = 6
+        versionName = "3.0.2"
 
     }
 
