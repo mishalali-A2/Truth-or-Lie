@@ -9,7 +9,7 @@ android {
     defaultConfig {
         applicationId = "com.futurewatch.truthorlietv"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 8
         versionName = "1.8"
 
