@@ -190,7 +190,7 @@ class BillingManager(
             )
             .build()
 
-        billingClient.queryProductDetailsAsync(params) { billingResult, productDetailsList ->
+        billingClient.queryProductDetailsAsync(params) { billingResult, queryResult ->
             if (billingResult.responseCode != BillingClient.BillingResponseCode.OK) {
                 Log.e(
                     TAG,
@@ -199,7 +199,7 @@ class BillingManager(
                 return@queryProductDetailsAsync
             }
 
-            productDetailsList.forEach { details ->
+            queryResult.productDetailsList.forEach { details ->
                 productDetailsMap[details.productId] = details
                 val price = details.oneTimePurchaseOfferDetails?.formattedPrice ?: "N/A"
                 Log.d(TAG, "✓ INAPP Product loaded: ${details.productId} - ${details.title} - $price")
@@ -221,7 +221,7 @@ class BillingManager(
             )
             .build()
 
-        billingClient.queryProductDetailsAsync(params) { billingResult, productDetailsList ->
+        billingClient.queryProductDetailsAsync(params) { billingResult, queryResult ->
             if (billingResult.responseCode != BillingClient.BillingResponseCode.OK) {
                 Log.e(
                     TAG,
@@ -230,7 +230,7 @@ class BillingManager(
                 return@queryProductDetailsAsync
             }
 
-            productDetailsList.forEach { details ->
+            queryResult.productDetailsList.forEach { details ->
                 productDetailsMap[details.productId] = details
                 val price = details.subscriptionOfferDetails
                     ?.firstOrNull()
@@ -241,7 +241,7 @@ class BillingManager(
                 Log.d(TAG, "✓ SUBS Product loaded: ${details.productId} - ${details.title} - $price")
             }
 
-            listener.onProductsUpdated(productDetailsList)
+            listener.onProductsUpdated(queryResult.productDetailsList)
         }
     }
 
