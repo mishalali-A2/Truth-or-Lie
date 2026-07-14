@@ -26,3 +26,9 @@ imgs/
 # Reports and temp files
 reports/
 issues.txt
+
+# Firebase client configs (contain API keys; supply locally / via CI secrets)
+google-services.json
+GoogleService-Info.plist
+firebase-adminsdk*.json
+serviceAccount*.json
