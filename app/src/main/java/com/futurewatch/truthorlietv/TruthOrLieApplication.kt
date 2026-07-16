@@ -8,6 +8,9 @@ import android.os.Process
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
+import com.futurewatch.truthorlietv.analytics.AnalyticsParams
+import com.futurewatch.truthorlietv.analytics.AnalyticsService
+import com.futurewatch.truthorlietv.analytics.SessionTracker
 class TruthOrLieApplication : Application() {
 
     companion object {
@@ -29,10 +32,15 @@ class TruthOrLieApplication : Application() {
 
         initializeDefaultSettings()
 
+        // Analytics init happens early so every downstream manager/activity can safely log events.
+        AnalyticsService.init(this)
+        SessionTracker.init()
+        setAnalyticsUserProperties()
+
         MusicManager.init(this)
 
         TimerManager.init(this)
-        
+
         CategoryManager.initialize(this)
 
         initializeBilling()
@@ -43,6 +51,23 @@ class TruthOrLieApplication : Application() {
                 billingRepository.restorePurchases()
             }
         })
+    }
+
+    private fun setAnalyticsUserProperties() {
+        AnalyticsService.setUserProperty(AnalyticsParams.DEVICE_CATEGORY, "android_tv")
+        AnalyticsService.setUserProperty(AnalyticsParams.APP_VERSION, BuildConfig.VERSION_NAME)
+        updatePremiumStatusUserProperty()
+    }
+
+    /** Coarse boolean-ish premium status only — never the specific product purchased. */
+    fun updatePremiumStatusUserProperty() {
+        val hasPremium = prefs.getBoolean("all_categories_unlocked", false) ||
+            prefs.getBoolean("ads_removed", false) ||
+            prefs.getBoolean("premium_access", false)
+        AnalyticsService.setUserProperty(
+            AnalyticsParams.PREMIUM_STATUS,
+            if (hasPremium) "has_premium" else "free"
+        )
     }
 
     private fun isMainProcess(): Boolean {
@@ -86,10 +111,12 @@ class TruthOrLieApplication : Application() {
         billingRepository = BillingRepository.getInstance(this, object : BillingManager.BillingListener {
             override fun onBillingSetupFinished() {
                 Log.d("Billing", "Billing setup finished")
+                AnalyticsService.logEvent(com.futurewatch.truthorlietv.analytics.AnalyticsEvents.BILLING_SETUP_FINISHED)
             }
 
             override fun onBillingDisconnected() {
                 Log.d("Billing", "Billing disconnected")
+                AnalyticsService.logEvent(com.futurewatch.truthorlietv.analytics.AnalyticsEvents.BILLING_DISCONNECTED)
             }
 
             override fun onProductsUpdated(products: List<com.android.billingclient.api.ProductDetails>) {
@@ -101,6 +128,16 @@ class TruthOrLieApplication : Application() {
 
             override fun onPurchaseSuccess(productId: String) {
                 Log.d("Billing", "Purchase success: $productId")
+                AnalyticsService.logEvent(
+                    com.futurewatch.truthorlietv.analytics.AnalyticsEvents.PURCHASE_SUCCEEDED,
+                    mapOf(AnalyticsParams.PRODUCT_ID to productId)
+                )
+                if (productId in BillingManager.PRODUCT_TO_CATEGORY.keys) {
+                    AnalyticsService.logEvent(
+                        com.futurewatch.truthorlietv.analytics.AnalyticsEvents.CATEGORY_UNLOCK_PURCHASED,
+                        mapOf(AnalyticsParams.PRODUCT_ID to productId)
+                    )
+                }
                 when {
                     productId == "premium.access" -> {
                         prefs.edit().putBoolean("all_categories_unlocked", true).apply()
@@ -121,18 +158,33 @@ class TruthOrLieApplication : Application() {
                         Log.d("Billing", "All categories unlocked!")
                     }
                 }
+                updatePremiumStatusUserProperty()
             }
 
             override fun onPurchaseError(responseCode: Int, message: String?) {
                 Log.e("Billing", "Purchase error: $responseCode - $message")
+                AnalyticsService.logEvent(
+                    com.futurewatch.truthorlietv.analytics.AnalyticsEvents.PURCHASE_FAILED,
+                    mapOf(AnalyticsParams.ERROR_CATEGORY to "billing_code_$responseCode")
+                )
+                AnalyticsService.logEvent(
+                    com.futurewatch.truthorlietv.analytics.AnalyticsEvents.ERROR_BILLING,
+                    mapOf(AnalyticsParams.ERROR_CATEGORY to "response_code_$responseCode")
+                )
             }
 
             override fun onPurchaseCanceled() {
                 Log.d("Billing", "Purchase canceled")
+                AnalyticsService.logEvent(com.futurewatch.truthorlietv.analytics.AnalyticsEvents.PURCHASE_CANCELED)
             }
 
             override fun onRestoreCompleted(hasPremium: Boolean) {
                 Log.d("Billing", "Restore completed - Premium: $hasPremium")
+                AnalyticsService.logEvent(
+                    com.futurewatch.truthorlietv.analytics.AnalyticsEvents.RESTORE_PURCHASES_COMPLETED,
+                    mapOf(AnalyticsParams.FEATURE_OUTCOME to if (hasPremium) "has_premium" else "no_premium")
+                )
+                updatePremiumStatusUserProperty()
                 if (hasPremium) {
 
                 }
