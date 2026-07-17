@@ -10,6 +10,8 @@ import android.view.View
 import android.view.animation.OvershootInterpolator
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.futurewatch.truthorlietv.analytics.AnalyticsScreens
+import com.futurewatch.truthorlietv.analytics.ScreenTracker
 
 class SplashActivity : AppCompatActivity() {
 
@@ -38,6 +40,8 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.splash)
+
+        ScreenTracker.attach(this, AnalyticsScreens.SPLASH)
 
         val tvTruth = findViewById<View>(R.id.tvTruth)
         val tvLie = findViewById<View>(R.id.tvLie)

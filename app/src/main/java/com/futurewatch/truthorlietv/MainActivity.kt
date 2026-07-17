@@ -12,6 +12,12 @@ import android.os.Handler
 import android.util.Log
 import android.view.animation.LinearInterpolator
 import android.widget.Button
+import com.futurewatch.truthorlietv.analytics.AnalyticsEvents
+import com.futurewatch.truthorlietv.analytics.AnalyticsParams
+import com.futurewatch.truthorlietv.analytics.AnalyticsScreens
+import com.futurewatch.truthorlietv.analytics.AnalyticsService
+import com.futurewatch.truthorlietv.analytics.InputTracker
+import com.futurewatch.truthorlietv.analytics.ScreenTracker
 
 
 class MainActivity : AppCompatActivity() {
@@ -21,6 +27,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        ScreenTracker.attach(this, AnalyticsScreens.MAIN, previousScreen = AnalyticsScreens.SPLASH)
 
         AdManager.initialize(this, testMode = false) {
             Log.d("MainActivity", "Unity Ads ready - Rewarded: ${AdManager.isRewardedReady()}, Interstitial: ${AdManager.isInterstitialReady()}")
@@ -73,6 +81,7 @@ class MainActivity : AppCompatActivity() {
                     .start()
                 v.translationZ = 0f
             }
+            InputTracker.logFocusChanged(AnalyticsScreens.MAIN, (v.tag as? String) ?: v.id.toString(), hasFocus)
         }
 
         val startBtn = findViewById<Button>(R.id.btnStart)
@@ -80,23 +89,32 @@ class MainActivity : AppCompatActivity() {
         val leaderboardBtn = findViewById<Button>(R.id.btnLeaderboard)
         val settingsBtn = findViewById<Button>(R.id.btnSettings)
 
+        startBtn.tag = "main_start"
+        howToPlayBtn.tag = "main_how_to_play"
+        leaderboardBtn.tag = "main_leaderboard"
+        settingsBtn.tag = "main_settings"
+
         startBtn.onFocusChangeListener = focusListener
         howToPlayBtn.onFocusChangeListener = focusListener
         leaderboardBtn.onFocusChangeListener = focusListener
         settingsBtn.onFocusChangeListener = focusListener
 
         startBtn.setOnClickListener {
+            AnalyticsService.logEvent(AnalyticsEvents.CONTROL_CLICK, mapOf(AnalyticsParams.SCREEN_NAME to AnalyticsScreens.MAIN, AnalyticsParams.CONTROL_ID to "main_start"))
             startActivity(Intent(this, CategoriesActivity::class.java))
         }
 
         howToPlayBtn.setOnClickListener {
+            AnalyticsService.logEvent(AnalyticsEvents.CONTROL_CLICK, mapOf(AnalyticsParams.SCREEN_NAME to AnalyticsScreens.MAIN, AnalyticsParams.CONTROL_ID to "main_how_to_play"))
             startActivity(Intent(this, HowToPlayActivity::class.java))
         }
         leaderboardBtn.setOnClickListener {
+            AnalyticsService.logEvent(AnalyticsEvents.CONTROL_CLICK, mapOf(AnalyticsParams.SCREEN_NAME to AnalyticsScreens.MAIN, AnalyticsParams.CONTROL_ID to "main_leaderboard"))
             startActivity(Intent(this, LeaderboardActivity::class.java))
         }
 
         settingsBtn.setOnClickListener {
+            AnalyticsService.logEvent(AnalyticsEvents.CONTROL_CLICK, mapOf(AnalyticsParams.SCREEN_NAME to AnalyticsScreens.MAIN, AnalyticsParams.CONTROL_ID to "main_settings"))
             startActivity(Intent(this, SettingsActivity::class.java))
         }
 
