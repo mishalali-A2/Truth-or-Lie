@@ -9,8 +9,19 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
+import com.futurewatch.truthorlietv.analytics.AnalyticsEvents
+import com.futurewatch.truthorlietv.analytics.AnalyticsParams
+import com.futurewatch.truthorlietv.analytics.AnalyticsScreens
+import com.futurewatch.truthorlietv.analytics.AnalyticsService
+import com.futurewatch.truthorlietv.analytics.InputTracker
+import com.futurewatch.truthorlietv.analytics.ScreenTracker
 
 class CategoriesActivity : AppCompatActivity() {
+
+    // Idle-gap aggregator for the 15-card grid — avoids flooding analytics with a step-by-step
+    // event for every transient D-pad focus move; emits one focus_settled ~500ms after the user
+    // stops moving (see InputTracker.FocusIdleAggregator).
+    private val gridFocusAggregator = InputTracker.FocusIdleAggregator(AnalyticsScreens.CATEGORIES)
 
     private lateinit var unlockOverlay: View
     private lateinit var unlockTitle: TextView
@@ -41,6 +52,8 @@ class CategoriesActivity : AppCompatActivity() {
         // resetAllPurchasesOnLaunch()
         MusicManager.resumeMusic()
 
+        ScreenTracker.attach(this, AnalyticsScreens.CATEGORIES, previousScreen = AnalyticsScreens.MAIN)
+
 
         unlockOverlay = findViewById(R.id.unlockOverlay)
         unlockTitle = findViewById(R.id.unlockTitle)
@@ -68,8 +81,14 @@ class CategoriesActivity : AppCompatActivity() {
         }
 
         // Setup Overlay Button Animations
-        btnBuyCategory.onFocusChangeListener = focusListener
-        btnWatchAd.onFocusChangeListener = focusListener
+        btnBuyCategory.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
+            focusListener.onFocusChange(v, hasFocus)
+            InputTracker.logFocusChanged(AnalyticsScreens.CATEGORIES, "categories_buy_category", hasFocus)
+        }
+        btnWatchAd.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
+            focusListener.onFocusChange(v, hasFocus)
+            InputTracker.logFocusChanged(AnalyticsScreens.CATEGORIES, "categories_watch_ad", hasFocus)
+        }
 
         // Card -> Category
         val categoryMap = mapOf(
@@ -96,14 +115,27 @@ class CategoriesActivity : AppCompatActivity() {
             view?.apply {
                 isFocusable = true
                 isClickable = true
-                onFocusChangeListener = focusListener
+                onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
+                    focusListener.onFocusChange(v, hasFocus)
+                    // High-frequency grid: aggregate via idle-gap debounce rather than logging
+                    // every transient step (see InputTracker.FocusIdleAggregator, 500ms window).
+                    if (hasFocus) gridFocusAggregator.onFocusChanged("categories_card_$categoryName")
+                }
 
                 setOnClickListener {
                     if (CategoryManager.isUnlocked(categoryName)) {
+                        AnalyticsService.logEvent(
+                            AnalyticsEvents.CATEGORY_SELECTED,
+                            mapOf(AnalyticsParams.CATEGORY_ID to categoryName)
+                        )
                         GameSession.category = categoryName
                         val intent = Intent(this@CategoriesActivity, RoundsActivity::class.java)
                         startActivity(intent)
                     } else {
+                        AnalyticsService.logEvent(
+                            AnalyticsEvents.CATEGORY_LOCKED_VIEWED,
+                            mapOf(AnalyticsParams.CATEGORY_ID to categoryName)
+                        )
                         showUnlockOverlay(categoryName)
                     }
                 }
@@ -116,6 +148,10 @@ class CategoriesActivity : AppCompatActivity() {
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (unlockOverlay.visibility == View.VISIBLE) {
+                    AnalyticsService.logEvent(
+                        AnalyticsEvents.CONTROL_CLICK,
+                        mapOf(AnalyticsParams.SCREEN_NAME to AnalyticsScreens.CATEGORIES, AnalyticsParams.CONTROL_ID to "categories_overlay_back")
+                    )
                     hideUnlockOverlay()
                 } else {
                     isEnabled = false
@@ -192,10 +228,18 @@ class CategoriesActivity : AppCompatActivity() {
         unlockOverlay.animate().alpha(1f).setDuration(200).start()
         
         btnBuyCategory.setOnClickListener {
+            AnalyticsService.logEvent(
+                AnalyticsEvents.CONTROL_CLICK,
+                mapOf(AnalyticsParams.SCREEN_NAME to AnalyticsScreens.CATEGORIES, AnalyticsParams.CONTROL_ID to "categories_buy_category")
+            )
             purchaseSingleCategory(category)
         }
-        
+
         btnWatchAd.setOnClickListener {
+            AnalyticsService.logEvent(
+                AnalyticsEvents.CONTROL_CLICK,
+                mapOf(AnalyticsParams.SCREEN_NAME to AnalyticsScreens.CATEGORIES, AnalyticsParams.CONTROL_ID to "categories_watch_ad")
+            )
             if (!AdManager.isInitialized()) {
                 Toast.makeText(this, "Ads loading, please wait...", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -206,6 +250,10 @@ class CategoriesActivity : AppCompatActivity() {
                 activity = this,
                 onRewardEarned = {
                     runOnUiThread {
+                        AnalyticsService.logEvent(
+                            AnalyticsEvents.CATEGORY_UNLOCK_AD_WATCHED,
+                            mapOf(AnalyticsParams.CATEGORY_ID to category)
+                        )
                         CategoryManager.unlockTemporarily(category)
                         Toast.makeText(this, "Category Unlocked! ✓", Toast.LENGTH_SHORT).show()
                         updateCategoryUI()
@@ -255,10 +303,15 @@ class CategoriesActivity : AppCompatActivity() {
         }.start()
     }
 
+    override fun onPause() {
+        super.onPause()
+        gridFocusAggregator.cancel()
+    }
+
     override fun onResume() {
         super.onResume()
         MusicManager.resumeMusic()
-        
+
         val prefs = TruthOrLieApplication.prefs
         val allCategoriesUnlocked = prefs.getBoolean("all_categories_unlocked", false)
 
@@ -277,7 +330,7 @@ class CategoriesActivity : AppCompatActivity() {
 
     private fun purchaseSingleCategory(category: String) {
         Log.d("CategoriesActivity", "Initiating purchase for category: $category")
-        
+
         // Get the specific product ID for this category
         val productId = categoryProductMap[category]
         if (productId == null) {
@@ -285,12 +338,16 @@ class CategoriesActivity : AppCompatActivity() {
             Toast.makeText(this, "Error: Category not found", Toast.LENGTH_SHORT).show()
             return
         }
-        
+
         Toast.makeText(this, "Loading payment...", Toast.LENGTH_SHORT).show()
-        
+
         try {
             // Use category-specific product ID (e.g., buy.history, buy.technology)
             Log.d("CategoriesActivity", "Purchasing productId=$productId for category=$category")
+            AnalyticsService.logEvent(
+                AnalyticsEvents.PURCHASE_INITIATED,
+                mapOf(AnalyticsParams.PRODUCT_ID to productId, AnalyticsParams.CATEGORY_ID to category)
+            )
             TruthOrLieApplication.billingRepository.purchaseProduct(this, productId, category)
             // Hide overlay after purchase initiated
             hideUnlockOverlay()
