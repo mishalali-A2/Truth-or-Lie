@@ -9,6 +9,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.futurewatch.truthorlietv.analytics.AnalyticsEvents
+import com.futurewatch.truthorlietv.analytics.AnalyticsParams
+import com.futurewatch.truthorlietv.analytics.AnalyticsScreens
+import com.futurewatch.truthorlietv.analytics.AnalyticsService
+import com.futurewatch.truthorlietv.analytics.ScreenTracker
 
 class PlayerCountActivity : AppCompatActivity() {
 
@@ -23,6 +28,8 @@ class PlayerCountActivity : AppCompatActivity() {
         setContentView(R.layout.player_count)
 
         MusicManager.resumeMusic()
+
+        ScreenTracker.attach(this, AnalyticsScreens.PLAYER_COUNT, previousScreen = AnalyticsScreens.ROUNDS)
 
         val main = findViewById<android.view.View>(R.id.main)
 
@@ -44,6 +51,10 @@ class PlayerCountActivity : AppCompatActivity() {
             if (playerCount > MIN_PLAYERS) {
                 playerCount--
                 txtPlayerCount.text = playerCount.toString()
+                AnalyticsService.logEvent(
+                    AnalyticsEvents.CONTROL_CLICK,
+                    mapOf(AnalyticsParams.SCREEN_NAME to AnalyticsScreens.PLAYER_COUNT, AnalyticsParams.CONTROL_ID to "player_count_minus")
+                )
             }
         }
 
@@ -51,11 +62,23 @@ class PlayerCountActivity : AppCompatActivity() {
             if (playerCount < MAX_PLAYERS) {
                 playerCount++
                 txtPlayerCount.text = playerCount.toString()
+                AnalyticsService.logEvent(
+                    AnalyticsEvents.CONTROL_CLICK,
+                    mapOf(AnalyticsParams.SCREEN_NAME to AnalyticsScreens.PLAYER_COUNT, AnalyticsParams.CONTROL_ID to "player_count_plus")
+                )
             }
         }
 //set name screen
         btnPlayers.setOnClickListener {
             GameSession.playerCount = playerCount
+            AnalyticsService.logEvent(
+                AnalyticsEvents.CONTROL_CLICK,
+                mapOf(AnalyticsParams.SCREEN_NAME to AnalyticsScreens.PLAYER_COUNT, AnalyticsParams.CONTROL_ID to "player_count_continue")
+            )
+            AnalyticsService.logEvent(
+                AnalyticsEvents.PLAYER_COUNT_SELECTED,
+                mapOf(AnalyticsParams.PLAYER_COUNT to playerCount)
+            )
             val intent = Intent(this, PlayerNamesActivity::class.java)
             startActivity(intent)
         }
