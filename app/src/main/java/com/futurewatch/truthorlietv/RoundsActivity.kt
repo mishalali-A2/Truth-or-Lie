@@ -8,6 +8,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.futurewatch.truthorlietv.analytics.AnalyticsEvents
+import com.futurewatch.truthorlietv.analytics.AnalyticsParams
+import com.futurewatch.truthorlietv.analytics.AnalyticsScreens
+import com.futurewatch.truthorlietv.analytics.AnalyticsService
+import com.futurewatch.truthorlietv.analytics.InputTracker
+import com.futurewatch.truthorlietv.analytics.ScreenTracker
 
 class RoundsActivity : AppCompatActivity() {
 
@@ -19,6 +25,8 @@ class RoundsActivity : AppCompatActivity() {
         setContentView(R.layout.rounds)
 
         MusicManager.resumeMusic()
+
+        ScreenTracker.attach(this, AnalyticsScreens.ROUNDS, previousScreen = AnalyticsScreens.CATEGORIES)
 
         val main = findViewById<View>(R.id.main)
 
@@ -58,7 +66,10 @@ class RoundsActivity : AppCompatActivity() {
 
         buttons.forEach { button ->
 
-            button.onFocusChangeListener = focusListener
+            button.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
+                focusListener.onFocusChange(v, hasFocus)
+                InputTracker.logFocusChanged(AnalyticsScreens.ROUNDS, "rounds_btn_${button.text}", hasFocus)
+            }
 
             button.setOnClickListener {
 
@@ -68,6 +79,15 @@ class RoundsActivity : AppCompatActivity() {
                 button.isSelected = true
 
                GameSession.totalRounds = selectedRounds
+
+                AnalyticsService.logEvent(
+                    AnalyticsEvents.CONTROL_CLICK,
+                    mapOf(AnalyticsParams.SCREEN_NAME to AnalyticsScreens.ROUNDS, AnalyticsParams.CONTROL_ID to "rounds_btn_$selectedRounds")
+                )
+                AnalyticsService.logEvent(
+                    AnalyticsEvents.ROUNDS_SELECTED,
+                    mapOf(AnalyticsParams.ROUND_COUNT to selectedRounds)
+                )
 
                 val intent = Intent(this, PlayerCountActivity::class.java)
                 startActivity(intent)
