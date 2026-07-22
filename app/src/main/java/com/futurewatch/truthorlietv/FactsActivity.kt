@@ -8,6 +8,11 @@ import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import android.content.Intent
+import com.futurewatch.truthorlietv.analytics.AnalyticsEvents
+import com.futurewatch.truthorlietv.analytics.AnalyticsParams
+import com.futurewatch.truthorlietv.analytics.AnalyticsScreens
+import com.futurewatch.truthorlietv.analytics.AnalyticsService
+import com.futurewatch.truthorlietv.analytics.ScreenTracker
 
 class FactsActivity : AppCompatActivity() {
     private lateinit var factsList: MutableList<Facts>
@@ -40,6 +45,8 @@ class FactsActivity : AppCompatActivity() {
         setContentView(R.layout.display_facts)
 
         MusicManager.resumeMusic()
+
+        ScreenTracker.attach(this, AnalyticsScreens.FACTS, previousScreen = AnalyticsScreens.PLAYER_NAMES)
 
         // Reset used facts only at the start of the first round
         if (GameSession.currRound == 1) {
@@ -85,6 +92,14 @@ class FactsActivity : AppCompatActivity() {
 
         android.util.Log.d("FactsActivity", "Fact ${GameSession.currRound}: Answer = ${if(currentFact.answer) "TRUTH" else "LIE"}, Statement: ${currentFact.statement}")
 
+        AnalyticsService.logEvent(
+            AnalyticsEvents.ROUND_STARTED,
+            mapOf(
+                AnalyticsParams.CATEGORY_ID to GameSession.category,
+                AnalyticsParams.ROUND_NUMBER to GameSession.currRound
+            )
+        )
+
         btnStartVoting.setOnFocusChangeListener { v, hasFocus ->
             v.animate()
                 .scaleX(if (hasFocus) 1.05f else 1f)
@@ -95,6 +110,10 @@ class FactsActivity : AppCompatActivity() {
 
         // Go to Voting Screen
         btnStartVoting.setOnClickListener {
+            AnalyticsService.logEvent(
+                AnalyticsEvents.CONTROL_CLICK,
+                mapOf(AnalyticsParams.SCREEN_NAME to AnalyticsScreens.FACTS, AnalyticsParams.CONTROL_ID to "facts_start_voting")
+            )
             val intent = Intent(this, VotingActivity::class.java)
             intent.putExtra("ROUND", GameSession.currRound)
             intent.putExtra("TOTAL_ROUNDS", GameSession.totalRounds)
