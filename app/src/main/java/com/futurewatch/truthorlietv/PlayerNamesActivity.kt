@@ -12,6 +12,12 @@ import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.futurewatch.truthorlietv.analytics.AnalyticsEvents
+import com.futurewatch.truthorlietv.analytics.AnalyticsParams
+import com.futurewatch.truthorlietv.analytics.AnalyticsScreens
+import com.futurewatch.truthorlietv.analytics.AnalyticsService
+import com.futurewatch.truthorlietv.analytics.InputTracker
+import com.futurewatch.truthorlietv.analytics.ScreenTracker
 
 class PlayerNamesActivity : AppCompatActivity() {
 
@@ -24,6 +30,8 @@ class PlayerNamesActivity : AppCompatActivity() {
         setContentView(R.layout.player_names)
 
         MusicManager.resumeMusic()
+
+        ScreenTracker.attach(this, AnalyticsScreens.PLAYER_NAMES, previousScreen = AnalyticsScreens.PLAYER_COUNT)
 
         val container = findViewById<LinearLayout>(R.id.containerPlayers)
         val playerCount = GameSession.playerCount
@@ -87,6 +95,9 @@ class PlayerNamesActivity : AppCompatActivity() {
                     } else {
                         v.animate().scaleX(1f).scaleY(1f).translationZ(0f).setDuration(150).start()
                     }
+                    // Bounded to <=6 inputs — safe to log individually, no throttling needed.
+                    // control_id uses the player's ordinal position, never the typed name.
+                    InputTracker.logFocusChanged(AnalyticsScreens.PLAYER_NAMES, "player_names_input_$i", hasFocus)
                 }
 
                 addTextChangedListener(object : android.text.TextWatcher {
@@ -123,6 +134,10 @@ class PlayerNamesActivity : AppCompatActivity() {
         }
 
         startBtn.setOnClickListener {
+            AnalyticsService.logEvent(
+                AnalyticsEvents.CONTROL_CLICK,
+                mapOf(AnalyticsParams.SCREEN_NAME to AnalyticsScreens.PLAYER_NAMES, AnalyticsParams.CONTROL_ID to "player_names_start")
+            )
             var hasError = false
 
             playerInputs.forEachIndexed { index, editText ->
@@ -160,6 +175,16 @@ class PlayerNamesActivity : AppCompatActivity() {
             }
 
             GameSession.reset()
+
+            // NEVER include player names — category/round_count/player_count only, per privacy rules.
+            AnalyticsService.logEvent(
+                AnalyticsEvents.GAME_STARTED,
+                mapOf(
+                    AnalyticsParams.CATEGORY_ID to GameSession.category,
+                    AnalyticsParams.ROUND_COUNT to GameSession.totalRounds,
+                    AnalyticsParams.PLAYER_COUNT to GameSession.playerCount
+                )
+            )
 
             val intent = Intent(this, FactsActivity::class.java)
             startActivity(intent)
