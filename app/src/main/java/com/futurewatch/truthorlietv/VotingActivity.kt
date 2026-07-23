@@ -17,6 +17,12 @@ import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.doOnEnd
+import com.futurewatch.truthorlietv.analytics.AnalyticsEvents
+import com.futurewatch.truthorlietv.analytics.AnalyticsParams
+import com.futurewatch.truthorlietv.analytics.AnalyticsScreens
+import com.futurewatch.truthorlietv.analytics.AnalyticsService
+import com.futurewatch.truthorlietv.analytics.InputTracker
+import com.futurewatch.truthorlietv.analytics.ScreenTracker
 
 class VotingActivity : AppCompatActivity() {
 
@@ -47,6 +53,7 @@ class VotingActivity : AppCompatActivity() {
 
     private var currentStatement: String = ""
     private var correctAnswer = false
+    private var wasTimeout = false
 
     // Dynamic timer values - read from settings
     private var totalTime: Long = 20000L
@@ -58,6 +65,8 @@ class VotingActivity : AppCompatActivity() {
         setContentView(R.layout.voting)
 
         MusicManager.resumeMusic()
+
+        ScreenTracker.attach(this, AnalyticsScreens.VOTING, previousScreen = AnalyticsScreens.FACTS)
 
         // Get timer duration from settings
         totalTime = TimerManager.getTimerMillis()
@@ -127,8 +136,29 @@ class VotingActivity : AppCompatActivity() {
         tvRound.text = "ROUND ${GameSession.currRound}/${GameSession.totalRounds}"
         tvPlayer.text = "${currentPlayer.name}, what do you think?"
 
-        btnResume.setOnClickListener { resumeGame() }
-        btnEndGame.setOnClickListener { endGame() }
+        btnResume.setOnClickListener {
+            AnalyticsService.logEvent(
+                AnalyticsEvents.CONTROL_CLICK,
+                mapOf(AnalyticsParams.SCREEN_NAME to AnalyticsScreens.VOTING, AnalyticsParams.CONTROL_ID to "voting_resume")
+            )
+            resumeGame()
+        }
+        btnEndGame.setOnClickListener {
+            AnalyticsService.logEvent(
+                AnalyticsEvents.CONTROL_CLICK,
+                mapOf(AnalyticsParams.SCREEN_NAME to AnalyticsScreens.VOTING, AnalyticsParams.CONTROL_ID to "voting_end_game")
+            )
+            AnalyticsService.logEvent(
+                AnalyticsEvents.GAME_ABANDONED,
+                mapOf(
+                    AnalyticsParams.CATEGORY_ID to GameSession.category,
+                    AnalyticsParams.ROUND_NUMBER to GameSession.currRound,
+                    AnalyticsParams.ROUND_COUNT to GameSession.totalRounds,
+                    AnalyticsParams.PLAYER_COUNT to GameSession.players.size
+                )
+            )
+            endGame()
+        }
 
         focusAnchor.requestFocus()
 
@@ -165,6 +195,7 @@ class VotingActivity : AppCompatActivity() {
             override fun onFinish() {
                 if (isLocked || isPaused) return
                 if (selectedAnswer == null) {
+                    wasTimeout = true
                     selectAnswer(false)
                 }
                 lockAnswer()
@@ -198,8 +229,14 @@ class VotingActivity : AppCompatActivity() {
                 KeyEvent.KEYCODE_BUTTON_A -> {
                     val focused = currentFocus
                     when (focused?.id) {
-                        R.id.btnResume -> resumeGame()
-                        R.id.btnEndGame -> endGame()
+                        R.id.btnResume -> {
+                            InputTracker.logVotingKeyAction("voting_pause_resume", "select")
+                            resumeGame()
+                        }
+                        R.id.btnEndGame -> {
+                            InputTracker.logVotingKeyAction("voting_pause_end_game", "select")
+                            endGame()
+                        }
                     }
                     true
                 }
@@ -212,17 +249,20 @@ class VotingActivity : AppCompatActivity() {
         return when (keyCode) {
             KeyEvent.KEYCODE_DPAD_LEFT -> {
                 if (focusAnchor.hasFocus() && !isLocked && !isSelectionAnimating) {
+                    InputTracker.logVotingKeyAction("voting_answer_truth", "dpad_left")
                     selectAnswer(true)  // Truth on LEFT
                 }
                 true
             }
             KeyEvent.KEYCODE_DPAD_RIGHT -> {
                 if (focusAnchor.hasFocus() && !isLocked && !isSelectionAnimating) {
+                    InputTracker.logVotingKeyAction("voting_answer_lie", "dpad_right")
                     selectAnswer(false)  // Lie on RIGHT
                 }
                 true
             }
             KeyEvent.KEYCODE_DPAD_UP -> {
+                if (!isPaused) InputTracker.logVotingKeyAction("voting_pause", "pause")
                 pauseGame()
                 true
             }
@@ -230,6 +270,7 @@ class VotingActivity : AppCompatActivity() {
             KeyEvent.KEYCODE_BUTTON_A -> {
                 // When OK/Enter is pressed, submit the selected answer
                 if (selectedAnswer != null && !isLocked && !isSelectionAnimating) {
+                    InputTracker.logVotingKeyAction("voting_lock_answer", "lock")
                     lockAnswer()
                 }
                 true
@@ -323,11 +364,25 @@ class VotingActivity : AppCompatActivity() {
         if (isCorrect) player.score += 100
 
         val totalPlayers = GameSession.players.size
+        val currentTurnIndex = GameSession.currPlayerTurn
         val nextTurn = GameSession.currPlayerTurn + 1
         val isLast = nextTurn % totalPlayers == 0
         GameSession.currPlayerTurn = nextTurn
 
         android.util.Log.d("VotingActivity", "Answer: ${selectedAnswer}, Correct: $correctAnswer, Score: ${player.score}")
+
+        // player_turn_index only — NEVER the player's name.
+        AnalyticsService.logEvent(
+            AnalyticsEvents.ANSWER_SUBMITTED,
+            mapOf(
+                AnalyticsParams.CATEGORY_ID to GameSession.category,
+                AnalyticsParams.ROUND_NUMBER to GameSession.currRound,
+                AnalyticsParams.IS_CORRECT to isCorrect,
+                AnalyticsParams.IS_TIMEOUT to wasTimeout,
+                AnalyticsParams.PLAYER_INDEX to (currentTurnIndex % totalPlayers)
+            )
+        )
+        wasTimeout = false
 
         if (isLast) {
             // Last player, go to results
