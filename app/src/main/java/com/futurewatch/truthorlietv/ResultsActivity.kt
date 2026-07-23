@@ -10,6 +10,11 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import com.futurewatch.truthorlietv.analytics.AnalyticsEvents
+import com.futurewatch.truthorlietv.analytics.AnalyticsParams
+import com.futurewatch.truthorlietv.analytics.AnalyticsScreens
+import com.futurewatch.truthorlietv.analytics.AnalyticsService
+import com.futurewatch.truthorlietv.analytics.ScreenTracker
 
 class ResultsActivity : AppCompatActivity() {
 
@@ -19,6 +24,17 @@ class ResultsActivity : AppCompatActivity() {
         setContentView(R.layout.results)
 
         MusicManager.resumeMusic()
+
+        ScreenTracker.attach(this, AnalyticsScreens.RESULTS, previousScreen = AnalyticsScreens.VOTING)
+
+        AnalyticsService.logEvent(
+            AnalyticsEvents.ROUND_COMPLETED,
+            mapOf(
+                AnalyticsParams.CATEGORY_ID to GameSession.category,
+                AnalyticsParams.ROUND_NUMBER to GameSession.currRound,
+                AnalyticsParams.ROUND_COUNT to GameSession.totalRounds
+            )
+        )
 
         val tvResult = findViewById<TextView>(R.id.tvResult)
         val tvResultGlow1 = findViewById<TextView>(R.id.tvResultGlow1)
@@ -138,6 +154,10 @@ class ResultsActivity : AppCompatActivity() {
 
         // next round/ finish
         btnNext.setOnClickListener {
+            AnalyticsService.logEvent(
+                AnalyticsEvents.CONTROL_CLICK,
+                mapOf(AnalyticsParams.SCREEN_NAME to AnalyticsScreens.RESULTS, AnalyticsParams.CONTROL_ID to "results_next")
+            )
             if (isFinal) {
                 startActivity(Intent(this, FinalResultsActivity::class.java))
                 finish()
