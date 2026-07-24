@@ -19,6 +19,12 @@ import nl.dionsegijn.konfetti.core.Party
 import nl.dionsegijn.konfetti.core.emitter.Emitter
 import nl.dionsegijn.konfetti.core.Position
 import nl.dionsegijn.konfetti.core.models.Size
+import com.futurewatch.truthorlietv.analytics.AdAnalyticsTracker
+import com.futurewatch.truthorlietv.analytics.AnalyticsEvents
+import com.futurewatch.truthorlietv.analytics.AnalyticsParams
+import com.futurewatch.truthorlietv.analytics.AnalyticsScreens
+import com.futurewatch.truthorlietv.analytics.AnalyticsService
+import com.futurewatch.truthorlietv.analytics.ScreenTracker
 
 class FinalResultsActivity : AppCompatActivity() {
 
@@ -34,11 +40,39 @@ class FinalResultsActivity : AppCompatActivity() {
         setContentView(R.layout.final_results)
 
         MusicManager.resumeMusic()
+
+        ScreenTracker.attach(this, AnalyticsScreens.FINAL_RESULTS, previousScreen = AnalyticsScreens.RESULTS)
+        logGameCompleted()
+
+        // AdManager preloads/shows are unconditional here per existing behavior; we only wrap
+        // with analytics (requested/started/completed/failed), never alter control flow.
+        AnalyticsService.logEvent(
+            AnalyticsEvents.AD_SHOW_REQUESTED,
+            mapOf(
+                AnalyticsParams.AD_PLACEMENT to AdAnalyticsTracker.PLACEMENT_RESULTS_INTERSTITIAL,
+                AnalyticsParams.AD_FORMAT to AdAnalyticsTracker.FORMAT_INTERSTITIAL
+            )
+        )
         if (AdManager.isInterstitialReady()) {
             AdManager.showInterstitial(
                 activity = this,
-                onComplete = { Log.d("FinalResults", "Interstitial completed") },
-                onFailed = { Log.d("FinalResults", "Interstitial not available") }
+                onComplete = {
+                    Log.d("FinalResults", "Interstitial completed")
+                    AdAnalyticsTracker.logShowCompleted(AdAnalyticsTracker.PLACEMENT_RESULTS_INTERSTITIAL, AdAnalyticsTracker.FORMAT_INTERSTITIAL, "COMPLETED")
+                },
+                onFailed = {
+                    Log.d("FinalResults", "Interstitial not available")
+                    AdAnalyticsTracker.logShowFailed(AdAnalyticsTracker.PLACEMENT_RESULTS_INTERSTITIAL, AdAnalyticsTracker.FORMAT_INTERSTITIAL, null, "not_available")
+                }
+            )
+        } else {
+            AnalyticsService.logEvent(
+                AnalyticsEvents.AD_SHOW_SKIPPED_COOLDOWN,
+                mapOf(
+                    AnalyticsParams.AD_PLACEMENT to AdAnalyticsTracker.PLACEMENT_RESULTS_INTERSTITIAL,
+                    AnalyticsParams.AD_FORMAT to AdAnalyticsTracker.FORMAT_INTERSTITIAL,
+                    AnalyticsParams.AD_PRELOADED to false
+                )
             )
         }
 
@@ -54,6 +88,10 @@ class FinalResultsActivity : AppCompatActivity() {
         startContinuousConfetti()
 
         btnPlayAgain.setOnClickListener {
+            AnalyticsService.logEvent(
+                AnalyticsEvents.CONTROL_CLICK,
+                mapOf(AnalyticsParams.SCREEN_NAME to AnalyticsScreens.FINAL_RESULTS, AnalyticsParams.CONTROL_ID to "final_results_play_again")
+            )
             //konfettiView.stop(party = Party())
             val intent = Intent(this, SplashActivity::class.java)
             startActivity(intent)
@@ -61,6 +99,34 @@ class FinalResultsActivity : AppCompatActivity() {
         }
 
         btnPlayAgain.requestFocus()
+    }
+
+    /** category/round_count/player_count/is_tie/winner_score_bucket only — NEVER player names. */
+    private fun logGameCompleted() {
+        if (GameSession.players.isEmpty()) return
+        val sortedPlayers = GameSession.players.sortedByDescending { it.score }
+        val topScore = sortedPlayers.first().score
+        val isTie = sortedPlayers.count { it.score == topScore } > 1
+
+        AnalyticsService.logEvent(
+            AnalyticsEvents.GAME_COMPLETED,
+            mapOf(
+                AnalyticsParams.CATEGORY_ID to GameSession.category,
+                AnalyticsParams.ROUND_COUNT to GameSession.totalRounds,
+                AnalyticsParams.PLAYER_COUNT to GameSession.players.size,
+                AnalyticsParams.IS_TIE to isTie,
+                AnalyticsParams.SCORE_BUCKET to scoreBucket(topScore)
+            )
+        )
+    }
+
+    /** Buckets the raw numeric score into a low-cardinality range string for BigQuery-friendly grouping. */
+    private fun scoreBucket(score: Int): String = when {
+        score <= 0 -> "0"
+        score <= 200 -> "1-200"
+        score <= 500 -> "201-500"
+        score <= 1000 -> "501-1000"
+        else -> "1000+"
     }
 
     private fun showResults() {
@@ -135,6 +201,14 @@ class FinalResultsActivity : AppCompatActivity() {
             } catch (e: Exception) {
                 Log.e("FinalResultsActivity", "✗ Error saving scores to database", e)
                 e.printStackTrace()
+                // Sanitized category only — never the raw exception message.
+                AnalyticsService.logEvent(
+                    AnalyticsEvents.ERROR_DATA_LOAD,
+                    mapOf(
+                        AnalyticsParams.ERROR_CATEGORY to "data_write_failed",
+                        AnalyticsParams.ERROR_SOURCE to "final_results_save_scores"
+                    )
+                )
             }
         }.join()
     }
