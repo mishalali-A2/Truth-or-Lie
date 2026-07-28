@@ -15,8 +15,18 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.futurewatch.truthorlietv.database.PlayerEntity
 import com.futurewatch.truthorlietv.database.PlayerRepository
+import com.futurewatch.truthorlietv.analytics.AnalyticsEvents
+import com.futurewatch.truthorlietv.analytics.AnalyticsParams
+import com.futurewatch.truthorlietv.analytics.AnalyticsScreens
+import com.futurewatch.truthorlietv.analytics.AnalyticsService
+import com.futurewatch.truthorlietv.analytics.InputTracker
+import com.futurewatch.truthorlietv.analytics.ScreenTracker
 
 class LeaderboardActivity : AppCompatActivity() {
+
+    // Unbounded row list (grows every game played) — aggregate focus via idle-gap debounce
+    // rather than one event per row stepped through, matching the CategoriesActivity strategy.
+    private val rowFocusAggregator = InputTracker.FocusIdleAggregator(AnalyticsScreens.LEADERBOARD)
 
     private lateinit var backBtn: Button
     private lateinit var messageContainer: LinearLayout
@@ -32,6 +42,8 @@ class LeaderboardActivity : AppCompatActivity() {
 
         MusicManager.resumeMusic()
 
+        ScreenTracker.attach(this, AnalyticsScreens.LEADERBOARD, previousScreen = AnalyticsScreens.MAIN)
+
         backBtn = findViewById(R.id.btnBack)
         messageContainer = findViewById(R.id.messageContainer)
         leaderboardContainer = findViewById(R.id.leaderboardContainer)
@@ -39,6 +51,10 @@ class LeaderboardActivity : AppCompatActivity() {
         playerRepository = PlayerRepository(this)
 
         backBtn.setOnClickListener {
+            AnalyticsService.logEvent(
+                AnalyticsEvents.CONTROL_CLICK,
+                mapOf(AnalyticsParams.SCREEN_NAME to AnalyticsScreens.LEADERBOARD, AnalyticsParams.CONTROL_ID to "leaderboard_back")
+            )
             finish()
         }
 
@@ -93,6 +109,8 @@ class LeaderboardActivity : AppCompatActivity() {
         row.setOnFocusChangeListener { view, hasFocus ->
             if (hasFocus) {
                 currentFocusIndex = position
+                // Unbounded list: aggregate via idle-gap debounce (500ms), not one event per row.
+                rowFocusAggregator.onFocusChanged("leaderboard_row_$position")
 
                 view.animate()
                     .scaleX(1.02f)
@@ -180,6 +198,13 @@ class LeaderboardActivity : AppCompatActivity() {
                 }
             } catch (e: Exception) {
                 Log.e("LeaderboardActivity", "Error loading leaderboard", e)
+                AnalyticsService.logEvent(
+                    AnalyticsEvents.ERROR_DATA_LOAD,
+                    mapOf(
+                        AnalyticsParams.ERROR_CATEGORY to "leaderboard_load_failed",
+                        AnalyticsParams.ERROR_SOURCE to "leaderboard_load"
+                    )
+                )
                 withContext(Dispatchers.Main) {
                     leaderboardContainer.visibility = View.GONE
                     messageContainer.visibility = View.VISIBLE
@@ -260,5 +285,6 @@ class LeaderboardActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         MusicManager.pauseMusic()
+        rowFocusAggregator.cancel()
     }
 }
