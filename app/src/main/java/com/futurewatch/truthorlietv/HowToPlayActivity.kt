@@ -4,6 +4,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import com.futurewatch.truthorlietv.analytics.AnalyticsEvents
+import com.futurewatch.truthorlietv.analytics.AnalyticsParams
+import com.futurewatch.truthorlietv.analytics.AnalyticsScreens
+import com.futurewatch.truthorlietv.analytics.AnalyticsService
+import com.futurewatch.truthorlietv.analytics.ScreenTracker
 
 class HowToPlayActivity : AppCompatActivity() {
 
@@ -12,6 +17,8 @@ class HowToPlayActivity : AppCompatActivity() {
         setContentView(R.layout.how_to_play)
 
         MusicManager.resumeMusic()
+
+        ScreenTracker.attach(this, AnalyticsScreens.HOW_TO_PLAY, previousScreen = AnalyticsScreens.MAIN)
 
         // Back to Menu Button
         val backBtn = findViewById<Button>(R.id.btnBacktoMenu)
@@ -39,6 +46,10 @@ class HowToPlayActivity : AppCompatActivity() {
         }
 
         backBtn.setOnClickListener {
+            AnalyticsService.logEvent(
+                AnalyticsEvents.CONTROL_CLICK,
+                mapOf(AnalyticsParams.SCREEN_NAME to AnalyticsScreens.HOW_TO_PLAY, AnalyticsParams.CONTROL_ID to "how_to_play_back")
+            )
             val intent = Intent(this, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
             startActivity(intent)
