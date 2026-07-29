@@ -7,6 +7,11 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
+import com.futurewatch.truthorlietv.analytics.AnalyticsEvents
+import com.futurewatch.truthorlietv.analytics.AnalyticsParams
+import com.futurewatch.truthorlietv.analytics.AnalyticsScreens
+import com.futurewatch.truthorlietv.analytics.AnalyticsService
+import com.futurewatch.truthorlietv.analytics.ScreenTracker
 
 class PurchaseActivity : AppCompatActivity() {
 
@@ -22,6 +27,8 @@ class PurchaseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.purchase)
+
+        ScreenTracker.attach(this, AnalyticsScreens.PURCHASE)
 
         btnPurchase = findViewById(R.id.btnPurchase)
         btnCancel = findViewById(R.id.btnCancel)
@@ -72,6 +79,10 @@ class PurchaseActivity : AppCompatActivity() {
 
         // Purchase button click
         btnPurchase.setOnClickListener {
+            AnalyticsService.logEvent(
+                AnalyticsEvents.CONTROL_CLICK,
+                mapOf(AnalyticsParams.SCREEN_NAME to AnalyticsScreens.PURCHASE, AnalyticsParams.CONTROL_ID to "purchase_buy")
+            )
             if (purchaseType == "unlock_single_category") {
                 purchaseProduct("premium.unlock_category")
             } else {
@@ -86,11 +97,19 @@ class PurchaseActivity : AppCompatActivity() {
 
         // Cancel button
         btnCancel.setOnClickListener {
+            AnalyticsService.logEvent(
+                AnalyticsEvents.CONTROL_CLICK,
+                mapOf(AnalyticsParams.SCREEN_NAME to AnalyticsScreens.PURCHASE, AnalyticsParams.CONTROL_ID to "purchase_cancel")
+            )
             finish()
         }
 
         // Restore purchases
         txtRestore.setOnClickListener {
+            AnalyticsService.logEvent(
+                AnalyticsEvents.CONTROL_CLICK,
+                mapOf(AnalyticsParams.SCREEN_NAME to AnalyticsScreens.PURCHASE, AnalyticsParams.CONTROL_ID to "purchase_restore")
+            )
             restorePurchases()
         }
 
@@ -112,15 +131,24 @@ class PurchaseActivity : AppCompatActivity() {
 
         Log.d("PurchaseActivity", "Initiating purchase for: $productId (category: $selectedCategory)")
         try {
+            AnalyticsService.logEvent(
+                AnalyticsEvents.PURCHASE_INITIATED,
+                mapOf(AnalyticsParams.PRODUCT_ID to productId)
+            )
             TruthOrLieApplication.billingRepository.purchaseProduct(this, productId, selectedCategory)
         } catch (e: Exception) {
             Log.e("PurchaseActivity", "Error launching purchase flow", e)
+            AnalyticsService.logEvent(
+                AnalyticsEvents.ERROR_BILLING,
+                mapOf(AnalyticsParams.ERROR_CATEGORY to "purchase_flow_launch_failed")
+            )
             Toast.makeText(this, "Billing error: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun restorePurchases() {
         Log.d("PurchaseActivity", "Restoring purchases...")
+        AnalyticsService.logEvent(AnalyticsEvents.RESTORE_PURCHASES_REQUESTED)
         Toast.makeText(this, "Checking for previous purchases...", Toast.LENGTH_SHORT).show()
         TruthOrLieApplication.billingRepository.restorePurchases()
 
