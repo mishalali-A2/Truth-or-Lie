@@ -14,6 +14,11 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import com.futurewatch.truthorlietv.CategoryManager.resetSession
+import com.futurewatch.truthorlietv.analytics.AnalyticsEvents
+import com.futurewatch.truthorlietv.analytics.AnalyticsParams
+import com.futurewatch.truthorlietv.analytics.AnalyticsScreens
+import com.futurewatch.truthorlietv.analytics.AnalyticsService
+import com.futurewatch.truthorlietv.analytics.ScreenTracker
 
 
 class SettingsActivity : AppCompatActivity() {
@@ -29,6 +34,8 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(R.layout.settings)
 
         MusicManager.resumeMusic()
+
+        ScreenTracker.attach(this, AnalyticsScreens.SETTINGS, previousScreen = AnalyticsScreens.MAIN)
 
         switchMusic = findViewById(R.id.switchMusic)
         backBtn = findViewById(R.id.btnBack)
@@ -49,6 +56,10 @@ class SettingsActivity : AppCompatActivity() {
         switchMusic.isChecked = MusicManager.isEnabled()
         switchMusic.setOnCheckedChangeListener { _, isChecked ->
             MusicManager.setEnabled(isChecked)
+            AnalyticsService.logEvent(
+                AnalyticsEvents.MUSIC_TOGGLED,
+                mapOf(AnalyticsParams.SETTING_VALUE to isChecked)
+            )
 
             if (isChecked) {
                 musicContainer.visibility = View.VISIBLE
@@ -79,6 +90,10 @@ class SettingsActivity : AppCompatActivity() {
         resetSession()
 
         backBtn.setOnClickListener {
+            AnalyticsService.logEvent(
+                AnalyticsEvents.CONTROL_CLICK,
+                mapOf(AnalyticsParams.SCREEN_NAME to AnalyticsScreens.SETTINGS, AnalyticsParams.CONTROL_ID to "settings_back")
+            )
             finish()
         }
 
@@ -124,6 +139,10 @@ class SettingsActivity : AppCompatActivity() {
                     button.setOnClickListener {
                         MusicManager.changeGenre(buttonText)
                         updateGenreSelection(buttonText)
+                        AnalyticsService.logEvent(
+                            AnalyticsEvents.MUSIC_GENRE_CHANGED,
+                            mapOf(AnalyticsParams.SETTING_VALUE to buttonText)
+                        )
                         Toast.makeText(this, "Music changed to: $buttonText", Toast.LENGTH_SHORT).show()
                     }
 
@@ -247,20 +266,32 @@ class SettingsActivity : AppCompatActivity() {
             setOnClickListener {
                 when (itemId) {
                     R.id.removeAds -> {
+                        AnalyticsService.logEvent(
+                            AnalyticsEvents.CONTROL_CLICK,
+                            mapOf(AnalyticsParams.SCREEN_NAME to AnalyticsScreens.SETTINGS, AnalyticsParams.CONTROL_ID to "settings_remove_ads")
+                        )
                         val intent = Intent(this@SettingsActivity, PurchaseActivity::class.java)
                         startActivity(intent)
                     }
                     R.id.restorePurchases -> {
+                        AnalyticsService.logEvent(AnalyticsEvents.RESTORE_PURCHASES_REQUESTED)
                         Toast.makeText(this@SettingsActivity, "Restoring all purchases...", Toast.LENGTH_SHORT).show()
                         TruthOrLieApplication.billingRepository.restorePurchases()
                     }
                     R.id.rateApp -> {
+                        // Note: rate-app is currently a no-op stub in the app itself (Toast only,
+                        // no Play Store deep link wired) — tracked here as the tap intent regardless.
+                        AnalyticsService.logEvent(AnalyticsEvents.RATE_APP_TAPPED)
                         Toast.makeText(this@SettingsActivity, "Rating will be available once live!", Toast.LENGTH_SHORT).show()
                     }
                     R.id.privacyPolicy -> {
+                        // Opens an EXTERNAL browser — only the tap itself is observable, not any in-app view.
+                        AnalyticsService.logEvent(AnalyticsEvents.PRIVACY_POLICY_TAPPED)
                         openUrl("https://boiling-laundry-978.notion.site/Privacy-Policy-Truth-or-Lie-TV-35d45d80e4fb809680cae0e906a63a52?source=copy_link")
                     }
                     R.id.termsOfService -> {
+                        // Opens an EXTERNAL browser — only the tap itself is observable, not any in-app view.
+                        AnalyticsService.logEvent(AnalyticsEvents.TERMS_OF_SERVICE_TAPPED)
                         openUrl("https://futurewatch.co/terms")
                     }
                 }
@@ -347,6 +378,11 @@ class SettingsActivity : AppCompatActivity() {
                     setOnClickListener {
                         selectedAppPackage = packageName
                         updateOtherAppsSelection(otherAppsContainer, packageName)
+                        // app_id (package name) only — never the display name.
+                        AnalyticsService.logEvent(
+                            AnalyticsEvents.OTHER_APP_CROSS_PROMO_TAPPED,
+                            mapOf(AnalyticsParams.APP_ID to packageName)
+                        )
                         openAppOrPlayStore(packageName)
                     }
                 }
@@ -436,6 +472,10 @@ class SettingsActivity : AppCompatActivity() {
                 button.setOnClickListener {
                     prefs.edit().putInt("timer_seconds", seconds).apply()
                     updateTimerSelection(seconds, timerButtons)
+                    AnalyticsService.logEvent(
+                        AnalyticsEvents.TIMER_DURATION_CHANGED,
+                        mapOf(AnalyticsParams.SETTING_VALUE to seconds)
+                    )
                     Toast.makeText(this, "Timer set to $seconds seconds", Toast.LENGTH_SHORT).show()
                 }
 
