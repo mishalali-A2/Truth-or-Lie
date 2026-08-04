@@ -9,6 +9,7 @@ import com.unity3d.ads.IUnityAdsLoadListener
 import android.os.Handler
 import android.os.Looper
 import android.content.Context
+import com.futurewatch.truthorlietv.analytics.AdAnalyticsTracker
 
 object AdManager {
     private const val REWARDED_ID = "Rewarded_Android"
@@ -34,6 +35,7 @@ object AdManager {
             override fun onInitializationComplete() {
                 Log.d("AdManager", "✅ Unity Ads initialized successfully")
                 isInitialized = true
+                AdAnalyticsTracker.logInitSucceeded()
                 preloadInterstitial()
                 preloadRewarded()
                 onComplete()
@@ -45,6 +47,7 @@ object AdManager {
             ) {
                 Log.e("AdManager", "❌ Unity Ads init failed: $error - $message")
                 isInitialized = false
+                AdAnalyticsTracker.logInitFailed(error.name, message)
             }
         })
     }
@@ -63,11 +66,13 @@ object AdManager {
 
         isLoadingRewarded = true
         Log.d("AdManager", "Preloading rewarded ad...")
+        AdAnalyticsTracker.logLoadRequested(AdAnalyticsTracker.PLACEMENT_CATEGORY_UNLOCK_REWARDED, AdAnalyticsTracker.FORMAT_REWARDED)
 
         UnityAds.load(REWARDED_ID, object : IUnityAdsLoadListener {
             override fun onUnityAdsAdLoaded(placementId: String) {
                 Log.d("AdManager", "✅ Rewarded ad preloaded successfully")
                 isLoadingRewarded = false
+                AdAnalyticsTracker.logLoadSucceeded(AdAnalyticsTracker.PLACEMENT_CATEGORY_UNLOCK_REWARDED, AdAnalyticsTracker.FORMAT_REWARDED)
             }
 
             override fun onUnityAdsFailedToLoad(
@@ -77,6 +82,7 @@ object AdManager {
             ) {
                 Log.e("AdManager", "❌ Failed to preload rewarded: $error - $message")
                 isLoadingRewarded = false
+                AdAnalyticsTracker.logLoadFailed(AdAnalyticsTracker.PLACEMENT_CATEGORY_UNLOCK_REWARDED, AdAnalyticsTracker.FORMAT_REWARDED, error.name, message)
             }
         })
     }
@@ -87,12 +93,14 @@ object AdManager {
 
         isLoadingInterstitial = true
         Log.d("AdManager", "Preloading interstitial ad...")
+        AdAnalyticsTracker.logLoadRequested(AdAnalyticsTracker.PLACEMENT_RESULTS_INTERSTITIAL, AdAnalyticsTracker.FORMAT_INTERSTITIAL)
 
         UnityAds.load(INTERSTITIAL_ID, object : IUnityAdsLoadListener {
             override fun onUnityAdsAdLoaded(placementId: String) {
                 Log.d("AdManager", "✅ Interstitial preloaded successfully")
                 isInterstitialPreloaded = true
                 isLoadingInterstitial = false
+                AdAnalyticsTracker.logLoadSucceeded(AdAnalyticsTracker.PLACEMENT_RESULTS_INTERSTITIAL, AdAnalyticsTracker.FORMAT_INTERSTITIAL)
             }
 
             override fun onUnityAdsFailedToLoad(
@@ -103,6 +111,7 @@ object AdManager {
                 Log.e("AdManager", "❌ Failed to preload interstitial: $error - $message")
                 isLoadingInterstitial = false
                 isInterstitialPreloaded = false
+                AdAnalyticsTracker.logLoadFailed(AdAnalyticsTracker.PLACEMENT_RESULTS_INTERSTITIAL, AdAnalyticsTracker.FORMAT_INTERSTITIAL, error.name, message)
             }
         })
     }
@@ -138,6 +147,7 @@ object AdManager {
 
         if (!canShowInterstitial()) {
             Log.d("AdManager", "Interstitial on cooldown")
+            AdAnalyticsTracker.logShowSkippedCooldown(AdAnalyticsTracker.PLACEMENT_RESULTS_INTERSTITIAL, AdAnalyticsTracker.FORMAT_INTERSTITIAL)
             onFailed()
             return
         }
@@ -156,6 +166,7 @@ object AdManager {
             Log.d("AdManager", "Preloaded interstitial available, showing now")
             isInterstitialPreloaded = false
             isShowingInterstitial = true
+            AdAnalyticsTracker.logShowRequested(AdAnalyticsTracker.PLACEMENT_RESULTS_INTERSTITIAL, AdAnalyticsTracker.FORMAT_INTERSTITIAL)
 
             UnityAds.show(activity, INTERSTITIAL_ID, object : IUnityAdsShowListener {
                 override fun onUnityAdsShowComplete(
@@ -166,6 +177,7 @@ object AdManager {
                     lastInterstitialTime = System.currentTimeMillis()
                     isShowingInterstitial = false
                     MusicManager.resumeMusic()
+                    AdAnalyticsTracker.logShowCompleted(AdAnalyticsTracker.PLACEMENT_RESULTS_INTERSTITIAL, AdAnalyticsTracker.FORMAT_INTERSTITIAL, state.name)
 
                     // Preload next one
                     mainHandler.postDelayed({
@@ -183,6 +195,7 @@ object AdManager {
                     Log.e("AdManager", "Interstitial show failed: $error - $message")
                     isShowingInterstitial = false
                     MusicManager.resumeMusic()
+                    AdAnalyticsTracker.logShowFailed(AdAnalyticsTracker.PLACEMENT_RESULTS_INTERSTITIAL, AdAnalyticsTracker.FORMAT_INTERSTITIAL, error.name, message)
 
                     // Try to preload again
                     mainHandler.postDelayed({
@@ -194,10 +207,12 @@ object AdManager {
 
                 override fun onUnityAdsShowStart(placementId: String) {
                     Log.d("AdManager", "Interstitial started playing")
+                    AdAnalyticsTracker.logShowStarted(AdAnalyticsTracker.PLACEMENT_RESULTS_INTERSTITIAL, AdAnalyticsTracker.FORMAT_INTERSTITIAL)
                 }
 
                 override fun onUnityAdsShowClick(placementId: String) {
                     Log.d("AdManager", "Interstitial clicked")
+                    AdAnalyticsTracker.logShowClicked(AdAnalyticsTracker.PLACEMENT_RESULTS_INTERSTITIAL, AdAnalyticsTracker.FORMAT_INTERSTITIAL)
                 }
             })
             return
@@ -205,6 +220,7 @@ object AdManager {
 
         // Not preloaded, load then show
         Log.d("AdManager", "No preloaded interstitial, loading on demand...")
+        AdAnalyticsTracker.logShowFallbackOnDemand(AdAnalyticsTracker.PLACEMENT_RESULTS_INTERSTITIAL, AdAnalyticsTracker.FORMAT_INTERSTITIAL)
 
         if (isLoadingInterstitial) {
             Log.d("AdManager", "Interstitial already loading, waiting...")
@@ -221,6 +237,7 @@ object AdManager {
         }
 
         isLoadingInterstitial = true
+        AdAnalyticsTracker.logLoadRequested(AdAnalyticsTracker.PLACEMENT_RESULTS_INTERSTITIAL, AdAnalyticsTracker.FORMAT_INTERSTITIAL)
 
         UnityAds.load(INTERSTITIAL_ID, object : IUnityAdsLoadListener {
             override fun onUnityAdsAdLoaded(placementId: String) {
@@ -228,6 +245,8 @@ object AdManager {
                 isLoadingInterstitial = false
                 isInterstitialPreloaded = false
                 isShowingInterstitial = true
+                AdAnalyticsTracker.logLoadSucceeded(AdAnalyticsTracker.PLACEMENT_RESULTS_INTERSTITIAL, AdAnalyticsTracker.FORMAT_INTERSTITIAL)
+                AdAnalyticsTracker.logShowRequested(AdAnalyticsTracker.PLACEMENT_RESULTS_INTERSTITIAL, AdAnalyticsTracker.FORMAT_INTERSTITIAL)
 
                 UnityAds.show(activity, INTERSTITIAL_ID, object : IUnityAdsShowListener {
                     override fun onUnityAdsShowComplete(
@@ -238,6 +257,7 @@ object AdManager {
                         lastInterstitialTime = System.currentTimeMillis()
                         isShowingInterstitial = false
                         MusicManager.resumeMusic()
+                        AdAnalyticsTracker.logShowCompleted(AdAnalyticsTracker.PLACEMENT_RESULTS_INTERSTITIAL, AdAnalyticsTracker.FORMAT_INTERSTITIAL, state.name)
                         onComplete()
                     }
 
@@ -249,15 +269,18 @@ object AdManager {
                         Log.e("AdManager", "Interstitial show failed: $error - $message")
                         isShowingInterstitial = false
                         MusicManager.resumeMusic()
+                        AdAnalyticsTracker.logShowFailed(AdAnalyticsTracker.PLACEMENT_RESULTS_INTERSTITIAL, AdAnalyticsTracker.FORMAT_INTERSTITIAL, error.name, message)
                         onFailed()
                     }
 
                     override fun onUnityAdsShowStart(placementId: String) {
                         Log.d("AdManager", "Interstitial started playing")
+                        AdAnalyticsTracker.logShowStarted(AdAnalyticsTracker.PLACEMENT_RESULTS_INTERSTITIAL, AdAnalyticsTracker.FORMAT_INTERSTITIAL)
                     }
 
                     override fun onUnityAdsShowClick(placementId: String) {
                         Log.d("AdManager", "Interstitial clicked")
+                        AdAnalyticsTracker.logShowClicked(AdAnalyticsTracker.PLACEMENT_RESULTS_INTERSTITIAL, AdAnalyticsTracker.FORMAT_INTERSTITIAL)
                     }
                 })
             }
@@ -270,6 +293,7 @@ object AdManager {
                 Log.e("AdManager", "❌ Failed to load interstitial: $error - $message")
                 isLoadingInterstitial = false
                 MusicManager.resumeMusic()
+                AdAnalyticsTracker.logLoadFailed(AdAnalyticsTracker.PLACEMENT_RESULTS_INTERSTITIAL, AdAnalyticsTracker.FORMAT_INTERSTITIAL, error.name, message)
                 onFailed()
             }
         })
@@ -303,11 +327,14 @@ object AdManager {
 
         isLoadingRewarded = true
         Log.d("AdManager", "Loading rewarded ad...")
+        AdAnalyticsTracker.logLoadRequested(AdAnalyticsTracker.PLACEMENT_CATEGORY_UNLOCK_REWARDED, AdAnalyticsTracker.FORMAT_REWARDED)
 
         UnityAds.load(REWARDED_ID, object : IUnityAdsLoadListener {
             override fun onUnityAdsAdLoaded(placementId: String) {
                 Log.d("AdManager", "✅ Rewarded ad loaded, showing...")
                 isLoadingRewarded = false
+                AdAnalyticsTracker.logLoadSucceeded(AdAnalyticsTracker.PLACEMENT_CATEGORY_UNLOCK_REWARDED, AdAnalyticsTracker.FORMAT_REWARDED)
+                AdAnalyticsTracker.logShowRequested(AdAnalyticsTracker.PLACEMENT_CATEGORY_UNLOCK_REWARDED, AdAnalyticsTracker.FORMAT_REWARDED)
 
                 UnityAds.show(activity, REWARDED_ID, object : IUnityAdsShowListener {
                     override fun onUnityAdsShowComplete(
@@ -316,12 +343,15 @@ object AdManager {
                     ) {
                         Log.d("AdManager", "Rewarded ad complete: $state")
                         MusicManager.resumeMusic()
+                        AdAnalyticsTracker.logShowCompleted(AdAnalyticsTracker.PLACEMENT_CATEGORY_UNLOCK_REWARDED, AdAnalyticsTracker.FORMAT_REWARDED, state.name)
 
                         if (state == UnityAds.UnityAdsShowCompletionState.COMPLETED) {
                             Log.d("AdManager", "✅ Reward earned!")
+                            AdAnalyticsTracker.logRewardEarned(AdAnalyticsTracker.PLACEMENT_CATEGORY_UNLOCK_REWARDED)
                             onRewardEarned()
                         } else {
                             Log.d("AdManager", "❌ Reward NOT earned")
+                            AdAnalyticsTracker.logRewardSkipped(AdAnalyticsTracker.PLACEMENT_CATEGORY_UNLOCK_REWARDED, state.name)
                         }
                     }
 
@@ -333,15 +363,18 @@ object AdManager {
                         Log.e("AdManager", "Rewarded ad show failed: $error - $message")
                         isLoadingRewarded = false
                         MusicManager.resumeMusic()
+                        AdAnalyticsTracker.logShowFailed(AdAnalyticsTracker.PLACEMENT_CATEGORY_UNLOCK_REWARDED, AdAnalyticsTracker.FORMAT_REWARDED, error.name, message)
                         onFailed()
                     }
 
                     override fun onUnityAdsShowStart(placementId: String) {
                         Log.d("AdManager", "Rewarded ad started")
+                        AdAnalyticsTracker.logShowStarted(AdAnalyticsTracker.PLACEMENT_CATEGORY_UNLOCK_REWARDED, AdAnalyticsTracker.FORMAT_REWARDED)
                     }
 
                     override fun onUnityAdsShowClick(placementId: String) {
                         Log.d("AdManager", "Rewarded ad clicked")
+                        AdAnalyticsTracker.logShowClicked(AdAnalyticsTracker.PLACEMENT_CATEGORY_UNLOCK_REWARDED, AdAnalyticsTracker.FORMAT_REWARDED)
                     }
                 })
             }
@@ -354,6 +387,7 @@ object AdManager {
                 Log.e("AdManager", "❌ Failed to load rewarded ad: $error - $message")
                 isLoadingRewarded = false
                 MusicManager.resumeMusic()
+                AdAnalyticsTracker.logLoadFailed(AdAnalyticsTracker.PLACEMENT_CATEGORY_UNLOCK_REWARDED, AdAnalyticsTracker.FORMAT_REWARDED, error.name, message)
                 onFailed()
             }
         })
