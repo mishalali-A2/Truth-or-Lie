@@ -49,6 +49,10 @@ android {
         viewBinding = true
         buildConfig = true
     }
+
+    testOptions {
+        unitTests.isReturnDefaultValues = true
+    }
 }
 
 dependencies {
@@ -65,9 +69,11 @@ dependencies {
     implementation("com.unity3d.ads:unity-ads:4.9.2")
     implementation("nl.dionsegijn:konfetti-xml:2.0.2")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
-}
 
     // Firebase Analytics (GA4) — requires app/google-services.json, supplied separately
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
+
+    // Unit testing
+    testImplementation(libs.junit)
 }
