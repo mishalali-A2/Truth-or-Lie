@@ -117,6 +117,28 @@ object AdAnalyticsTracker {
         )
     }
 
+    /** Distinct outcome: ad correctly suppressed because the user holds a no-ads entitlement. */
+    fun logShowSkippedNoAdsEntitlement(placement: String, format: String) {
+        AnalyticsService.logEvent(
+            AnalyticsEvents.AD_SHOW_SKIPPED_NO_ADS_ENTITLEMENT,
+            mapOf(
+                AnalyticsParams.AD_PLACEMENT to placement,
+                AnalyticsParams.AD_FORMAT to format
+            )
+        )
+    }
+
+    /** Distinct outcome: ad show requested before the Unity Ads SDK finished initializing. */
+    fun logShowSkippedNotInitialized(placement: String, format: String) {
+        AnalyticsService.logEvent(
+            AnalyticsEvents.AD_SHOW_SKIPPED_NOT_INITIALIZED,
+            mapOf(
+                AnalyticsParams.AD_PLACEMENT to placement,
+                AnalyticsParams.AD_FORMAT to format
+            )
+        )
+    }
+
     fun logShowStarted(placement: String, format: String) {
         AnalyticsService.logEvent(
             AnalyticsEvents.AD_SHOW_STARTED,
