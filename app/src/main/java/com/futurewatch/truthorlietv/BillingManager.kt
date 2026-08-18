@@ -23,6 +23,9 @@ class BillingManager(
         fun onPurchaseSuccess(productId: String)
         fun onPurchaseError(responseCode: Int, message: String?)
         fun onPurchaseCanceled()
+        fun onPurchaseAlreadyOwned() {}
+        fun onPurchasePending(productId: String) {}
+        fun onAcknowledgeFailed(debugMessage: String?) {}
         fun onRestoreCompleted(hasPremium: Boolean)
     }
 
@@ -307,6 +310,10 @@ class BillingManager(
         val prefs = context.getSharedPreferences("app_settings", Context.MODE_PRIVATE)
 
         for (purchase in purchases) {
+            if (purchase.purchaseState == Purchase.PurchaseState.PENDING) {
+                purchase.products.forEach { productId -> listener.onPurchasePending(productId) }
+                continue
+            }
             if (purchase.purchaseState != Purchase.PurchaseState.PURCHASED) continue
 
             purchase.products.forEach { productId ->
@@ -378,6 +385,7 @@ class BillingManager(
                     TAG,
                     "✗ Failed to acknowledge purchase: ${billingResult.debugMessage}"
                 )
+                listener.onAcknowledgeFailed(billingResult.debugMessage)
             }
         }
     }
@@ -518,6 +526,7 @@ class BillingManager(
             }
             BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED -> {
                 Log.d(TAG, "Item already owned, restoring purchases")
+                listener.onPurchaseAlreadyOwned()
                 queryPurchases()
             }
             BillingClient.BillingResponseCode.USER_CANCELED -> {
