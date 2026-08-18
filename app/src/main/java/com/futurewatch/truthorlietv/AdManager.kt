@@ -129,6 +129,7 @@ object AdManager {
     ) {
         if (hasNoAds(activity)) {
             Log.d("AdManager", "🚫 Ads disabled (user purchased remove_ads)")
+            AdAnalyticsTracker.logShowSkippedNoAdsEntitlement(AdAnalyticsTracker.PLACEMENT_RESULTS_INTERSTITIAL, AdAnalyticsTracker.FORMAT_INTERSTITIAL)
             onComplete()
             return
         }
@@ -141,6 +142,7 @@ object AdManager {
 
         if (!isInitialized) {
             Log.e("AdManager", "Unity Ads not initialized")
+            AdAnalyticsTracker.logShowSkippedNotInitialized(AdAnalyticsTracker.PLACEMENT_RESULTS_INTERSTITIAL, AdAnalyticsTracker.FORMAT_INTERSTITIAL)
             onFailed()
             return
         }
@@ -305,6 +307,7 @@ object AdManager {
         onFailed: () -> Unit = {}
     ) {
         if (hasNoAds(activity)) {
+            AdAnalyticsTracker.logShowSkippedNoAdsEntitlement(AdAnalyticsTracker.PLACEMENT_CATEGORY_UNLOCK_REWARDED, AdAnalyticsTracker.FORMAT_REWARDED)
             onFailed()
             return
         }
@@ -313,6 +316,7 @@ object AdManager {
 
         if (!isInitialized) {
             Log.e("AdManager", "Unity Ads not initialized")
+            AdAnalyticsTracker.logShowSkippedNotInitialized(AdAnalyticsTracker.PLACEMENT_CATEGORY_UNLOCK_REWARDED, AdAnalyticsTracker.FORMAT_REWARDED)
             onFailed()
             return
         }
@@ -321,6 +325,7 @@ object AdManager {
 
         if (isLoadingRewarded) {
             Log.d("AdManager", "Rewarded ad already loading")
+            AdAnalyticsTracker.logShowFailed(AdAnalyticsTracker.PLACEMENT_CATEGORY_UNLOCK_REWARDED, AdAnalyticsTracker.FORMAT_REWARDED, "not_ready", "already_loading")
             onFailed()
             return
         }
