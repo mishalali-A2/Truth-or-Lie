@@ -28,7 +28,7 @@ class PurchaseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.purchase)
 
-        ScreenTracker.attach(this, AnalyticsScreens.PURCHASE)
+        ScreenTracker.attach(this, AnalyticsScreens.PURCHASE, previousScreen = AnalyticsScreens.SETTINGS)
 
         btnPurchase = findViewById(R.id.btnPurchase)
         btnCancel = findViewById(R.id.btnCancel)
