@@ -23,6 +23,12 @@ class CategoriesActivity : AppCompatActivity() {
     // stops moving (see InputTracker.FocusIdleAggregator).
     private val gridFocusAggregator = InputTracker.FocusIdleAggregator(AnalyticsScreens.CATEGORIES)
 
+    // Tracks which categories were seen unlocked on the previous UI refresh, purely so a
+    // silent unlocked -> locked transition (the 24h temporary unlock expiring between visits,
+    // detected via CategoryManager.isUnlocked()'s own read-time expiry check) can be surfaced as
+    // CATEGORY_UNLOCK_EXPIRED without modifying CategoryManager itself.
+    private var previouslyUnlockedCategories: Set<String>? = null
+
     private lateinit var unlockOverlay: View
     private lateinit var unlockTitle: TextView
     private lateinit var unlockDescription: TextView
@@ -176,6 +182,8 @@ class CategoriesActivity : AppCompatActivity() {
             R.id.card_family_mode
         )
 
+        val currentlyUnlockedCategories = mutableSetOf<String>()
+
         lockedCategoryIds.forEach { id ->
             val frameLayout = findViewById<View>(id) ?: return@forEach
 
@@ -196,6 +204,7 @@ class CategoriesActivity : AppCompatActivity() {
             }
 
             val isUnlocked = allCategoriesUnlocked || CategoryManager.isUnlocked(categoryName)
+            if (isUnlocked) currentlyUnlockedCategories.add(categoryName)
 
             if (isUnlocked) {
                 if (frameLayout is android.view.ViewGroup && frameLayout.childCount >= 3) {
@@ -215,6 +224,20 @@ class CategoriesActivity : AppCompatActivity() {
                 }
             }
         }
+
+        // A category that was unlocked on a prior refresh but is no longer unlocked now (without
+        // all_categories_unlocked ever being toggled off) means its 24h temporary unlock expired.
+        previouslyUnlockedCategories?.let { previous ->
+            if (!allCategoriesUnlocked) {
+                (previous - currentlyUnlockedCategories).forEach { expiredCategory ->
+                    AnalyticsService.logEvent(
+                        AnalyticsEvents.CATEGORY_UNLOCK_EXPIRED,
+                        mapOf(AnalyticsParams.CATEGORY_ID to expiredCategory)
+                    )
+                }
+            }
+        }
+        previouslyUnlockedCategories = currentlyUnlockedCategories
     }
 
     private fun showUnlockOverlay(category: String) {
@@ -241,6 +264,10 @@ class CategoriesActivity : AppCompatActivity() {
                 mapOf(AnalyticsParams.SCREEN_NAME to AnalyticsScreens.CATEGORIES, AnalyticsParams.CONTROL_ID to "categories_watch_ad")
             )
             if (!AdManager.isInitialized()) {
+                com.futurewatch.truthorlietv.analytics.AdAnalyticsTracker.logShowSkippedNotInitialized(
+                    com.futurewatch.truthorlietv.analytics.AdAnalyticsTracker.PLACEMENT_CATEGORY_UNLOCK_REWARDED,
+                    com.futurewatch.truthorlietv.analytics.AdAnalyticsTracker.FORMAT_REWARDED
+                )
                 Toast.makeText(this, "Ads loading, please wait...", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
@@ -353,6 +380,10 @@ class CategoriesActivity : AppCompatActivity() {
             hideUnlockOverlay()
         } catch (e: Exception) {
             Log.e("CategoriesActivity", "Error initiating purchase", e)
+            AnalyticsService.logEvent(
+                AnalyticsEvents.ERROR_BILLING,
+                mapOf(AnalyticsParams.ERROR_CATEGORY to "purchase_flow_launch_failed")
+            )
             Toast.makeText(this, "Purchase error: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
