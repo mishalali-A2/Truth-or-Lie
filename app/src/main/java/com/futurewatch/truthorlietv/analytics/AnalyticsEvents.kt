@@ -46,6 +46,8 @@ object AnalyticsEvents {
     const val PLAYER_COUNT_SELECTED = "player_count_selected"
     const val GAME_STARTED = "game_started"
     const val ROUND_STARTED = "round_started"
+    const val PLAYER_TURN_STARTED = "player_turn_started"
+    const val VOTING_TIMER_STARTED = "voting_timer_started"
     const val ANSWER_SUBMITTED = "answer_submitted"
     const val ROUND_COMPLETED = "round_completed"
     const val GAME_COMPLETED = "game_completed"
@@ -62,6 +64,8 @@ object AnalyticsEvents {
     const val PURCHASE_SUCCEEDED = "purchase_succeeded"
     const val PURCHASE_FAILED = "purchase_failed"
     const val PURCHASE_CANCELED = "purchase_canceled"
+    const val PURCHASE_ALREADY_OWNED = "purchase_already_owned"
+    const val PURCHASE_PENDING = "purchase_pending"
     const val RESTORE_PURCHASES_REQUESTED = "restore_purchases_requested"
     const val RESTORE_PURCHASES_COMPLETED = "restore_purchases_completed"
     const val BILLING_SETUP_FINISHED = "billing_setup_finished"
@@ -91,9 +95,15 @@ object AnalyticsEvents {
     const val AD_REWARD_SKIPPED = "ad_reward_skipped"
     const val AD_SHOW_SKIPPED_COOLDOWN = "ad_show_skipped_cooldown"
     const val AD_SHOW_FALLBACK_ON_DEMAND = "ad_show_fallback_on_demand"
+    const val AD_SHOW_SKIPPED_NO_ADS_ENTITLEMENT = "ad_show_skipped_no_ads"
+    const val AD_SHOW_SKIPPED_NOT_INITIALIZED = "ad_show_skipped_not_init"
+
+    // ---- Feature views (empty/populated state visibility) ----
+    const val LEADERBOARD_VIEWED = "leaderboard_viewed"
 
     // ---- Errors (sanitized, safe categories only) ----
     const val ERROR_AD = "error_ad"
     const val ERROR_BILLING = "error_billing"
     const val ERROR_DATA_LOAD = "error_data_load"
+    const val ERROR_LINK_OPEN = "error_link_open"
 }
