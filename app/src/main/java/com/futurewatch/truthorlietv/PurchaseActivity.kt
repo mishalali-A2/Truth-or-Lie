@@ -87,6 +87,10 @@ class PurchaseActivity : AppCompatActivity() {
                 purchaseProduct("premium.unlock_category")
             } else {
                 if (allCategoriesUnlocked) {
+                    AnalyticsService.logEvent(
+                        AnalyticsEvents.PURCHASE_ALREADY_OWNED,
+                        mapOf(AnalyticsParams.PRODUCT_ID to "premium.access")
+                    )
                     Toast.makeText(this, "Already unlocked!", Toast.LENGTH_SHORT).show()
                     finish()
                     return@setOnClickListener
@@ -124,6 +128,10 @@ class PurchaseActivity : AppCompatActivity() {
 
         // Check if already owned for all categories
         if (productId == "premium.access" && prefs.getBoolean("all_categories_unlocked", false)) {
+            AnalyticsService.logEvent(
+                AnalyticsEvents.PURCHASE_ALREADY_OWNED,
+                mapOf(AnalyticsParams.PRODUCT_ID to productId)
+            )
             Toast.makeText(this, "Already unlocked!", Toast.LENGTH_SHORT).show()
             finish()
             return
