@@ -180,6 +180,10 @@ class LeaderboardActivity : AppCompatActivity() {
                 Log.d("LeaderboardActivity", "Loaded ${players.size} players from database")
 
                 withContext(Dispatchers.Main) {
+                    AnalyticsService.logEvent(
+                        AnalyticsEvents.LEADERBOARD_VIEWED,
+                        mapOf(AnalyticsParams.FEATURE_OUTCOME to if (players.isEmpty()) "empty" else "populated")
+                    )
                     if (players.isEmpty()) {
                         leaderboardContainer.visibility = View.GONE
                         messageContainer.visibility = View.VISIBLE
