@@ -178,6 +178,27 @@ class TruthOrLieApplication : Application() {
                 AnalyticsService.logEvent(com.futurewatch.truthorlietv.analytics.AnalyticsEvents.PURCHASE_CANCELED)
             }
 
+            override fun onPurchaseAlreadyOwned() {
+                Log.d("Billing", "Purchase already owned")
+                AnalyticsService.logEvent(com.futurewatch.truthorlietv.analytics.AnalyticsEvents.PURCHASE_ALREADY_OWNED)
+            }
+
+            override fun onPurchasePending(productId: String) {
+                Log.d("Billing", "Purchase pending: $productId")
+                AnalyticsService.logEvent(
+                    com.futurewatch.truthorlietv.analytics.AnalyticsEvents.PURCHASE_PENDING,
+                    mapOf(AnalyticsParams.PRODUCT_ID to productId)
+                )
+            }
+
+            override fun onAcknowledgeFailed(debugMessage: String?) {
+                Log.e("Billing", "Acknowledge failed: $debugMessage")
+                AnalyticsService.logEvent(
+                    com.futurewatch.truthorlietv.analytics.AnalyticsEvents.ERROR_BILLING,
+                    mapOf(AnalyticsParams.ERROR_CATEGORY to "acknowledge_failed")
+                )
+            }
+
             override fun onRestoreCompleted(hasPremium: Boolean) {
                 Log.d("Billing", "Restore completed - Premium: $hasPremium")
                 AnalyticsService.logEvent(
