@@ -6,6 +6,9 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import android.content.Context
+import com.futurewatch.truthorlietv.analytics.AnalyticsEvents
+import com.futurewatch.truthorlietv.analytics.AnalyticsParams
+import com.futurewatch.truthorlietv.analytics.AnalyticsService
 
 object MusicManager {
     private var mediaPlayer: MediaPlayer? = null
@@ -65,12 +68,14 @@ object MusicManager {
         val context = appContext
         if (context == null) {
             Log.e("MusicManager", "Context is null, cannot start music")
+            logMusicStartError("null_context")
             return
         }
 
         val musicResId = musicResources[currentGenre]
         if (musicResId == null) {
             Log.e("MusicManager", "No music resource found for genre: $currentGenre")
+            logMusicStartError("unknown_genre_resource")
             return
         }
 
@@ -102,7 +107,18 @@ object MusicManager {
             }
         } catch (e: Exception) {
             Log.e("MusicManager", "Failed to start music", e)
+            logMusicStartError("media_player_exception")
         }
+    }
+
+    private fun logMusicStartError(errorCategory: String) {
+        AnalyticsService.logEvent(
+            AnalyticsEvents.ERROR_DATA_LOAD,
+            mapOf(
+                AnalyticsParams.ERROR_CATEGORY to errorCategory,
+                AnalyticsParams.ERROR_SOURCE to "music_manager_start"
+            )
+        )
     }
 
     fun stopMusic() {

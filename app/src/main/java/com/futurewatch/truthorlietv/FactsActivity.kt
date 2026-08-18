@@ -230,6 +230,16 @@ class FactsActivity : AppCompatActivity() {
             }
         }
 
+        if (list.isEmpty()) {
+            AnalyticsService.logEvent(
+                AnalyticsEvents.ERROR_DATA_LOAD,
+                mapOf(
+                    AnalyticsParams.ERROR_CATEGORY to "facts_json_load_failed",
+                    AnalyticsParams.ERROR_SOURCE to "facts_load_facts"
+                )
+            )
+        }
+
         return list
     }
 
