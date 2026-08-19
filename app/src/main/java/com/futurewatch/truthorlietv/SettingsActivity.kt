@@ -287,20 +287,24 @@ class SettingsActivity : AppCompatActivity() {
                     R.id.privacyPolicy -> {
                         // Opens an EXTERNAL browser — only the tap itself is observable, not any in-app view.
                         AnalyticsService.logEvent(AnalyticsEvents.PRIVACY_POLICY_TAPPED)
-                        openUrl("https://boiling-laundry-978.notion.site/Privacy-Policy-Truth-or-Lie-TV-35d45d80e4fb809680cae0e906a63a52?source=copy_link")
+                        openUrl("https://boiling-laundry-978.notion.site/Privacy-Policy-Truth-or-Lie-TV-35d45d80e4fb809680cae0e906a63a52?source=copy_link", "settings_privacy_policy")
                     }
                     R.id.termsOfService -> {
                         // Opens an EXTERNAL browser — only the tap itself is observable, not any in-app view.
                         AnalyticsService.logEvent(AnalyticsEvents.TERMS_OF_SERVICE_TAPPED)
-                        openUrl("https://futurewatch.co/terms")
+                        openUrl("https://futurewatch.co/terms", "settings_terms_of_service")
                     }
                 }
             }
         }
     }
 
-    private fun openUrl(url: String) {
+    private fun openUrl(url: String, source: String) {
         if (!url.startsWith("https://")) {
+            AnalyticsService.logEvent(
+                AnalyticsEvents.ERROR_LINK_OPEN,
+                mapOf(AnalyticsParams.ERROR_CATEGORY to "malformed_url", AnalyticsParams.ERROR_SOURCE to source)
+            )
             Toast.makeText(this, "Unable to open link", Toast.LENGTH_SHORT).show()
             return
         }
@@ -308,6 +312,10 @@ class SettingsActivity : AppCompatActivity() {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             startActivity(intent)
         } catch (e: Exception) {
+            AnalyticsService.logEvent(
+                AnalyticsEvents.ERROR_LINK_OPEN,
+                mapOf(AnalyticsParams.ERROR_CATEGORY to "no_handler_activity", AnalyticsParams.ERROR_SOURCE to source)
+            )
             Toast.makeText(this, "Unable to open link", Toast.LENGTH_SHORT).show()
         }
     }
@@ -421,6 +429,10 @@ class SettingsActivity : AppCompatActivity() {
                 }
                 startActivity(intent)
             } catch (ex: Exception) {
+                AnalyticsService.logEvent(
+                    AnalyticsEvents.ERROR_LINK_OPEN,
+                    mapOf(AnalyticsParams.ERROR_CATEGORY to "no_handler_activity", AnalyticsParams.ERROR_SOURCE to "settings_cross_promo")
+                )
                 Toast.makeText(this, "Unable to open link", Toast.LENGTH_SHORT).show()
             }
         }
