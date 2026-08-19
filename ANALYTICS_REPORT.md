@@ -97,11 +97,20 @@ Screens instrumented (all 14 activities): `splash`, `main`, `categories`, `round
 | `restore_purchases_completed` | `onRestoreCompleted` | `feature_outcome` (`has_premium`\|`no_premium`) |
 | `billing_setup_finished` / `billing_disconnected` | Billing lifecycle callbacks | — |
 
-`category_unlock_expired` is defined in the catalogue for the 24h-purchase-expiry gate in
-`CategoryManager.isUnlocked()`; the expiry check there is a pure read-time computation with no
-natural callback/event hook in the existing code (it silently clears the SharedPreferences flag
-inline), so wiring it would require adding a new code path rather than an additive one-liner —
-left as a documented gap, see §9.
+`category_unlock_expired` fires from `CategoriesActivity.updateCategoryUI()`, which diffs the set
+of unlocked categories against the previous refresh — a category present in the previous unlocked
+set but absent now (with `all_categories_unlocked` still false) means its 24h temporary unlock
+expired. `CategoryManager.isUnlocked()` itself was not modified.
+
+`player_turn_started` (params: `category_id`, `round_number`, `player_index`) fires in
+`VotingActivity.onCreate()` right before the "whose turn" text is set — lets a per-turn funnel
+distinguish mid-turn abandonment from completed turns, without ever sending a player name.
+
+`voting_timer_started` (params: `category_id`, `round_number`) fires each time `startTimer()` runs
+(initial turn start and resume-from-pause restart).
+
+`leaderboard_viewed` (param: `feature_outcome` = `empty`|`populated`) fires once per
+`LeaderboardActivity` load, distinguishing the first-run empty state from a populated leaderboard.
 
 ### Settings
 | Event | Trigger | Params |
@@ -115,11 +124,23 @@ left as a documented gap, see §9.
 
 ### Ads — see §7 for the full catalogue and funnels.
 
+Two additional ad outcomes added in the coverage gap-closure pass: `ad_show_skipped_no_ads`
+(placement suppressed because the user holds a no-ads entitlement — both placements) and
+`ad_show_skipped_not_init` (show requested before the Unity Ads SDK finished initializing, or a
+duplicate rewarded-load-in-progress collision).
+
+### Purchases (billing edge cases added in the coverage gap-closure pass)
+| Event | Trigger | Params |
+|---|---|---|
+| `purchase_already_owned` | Billing returns `ITEM_ALREADY_OWNED`, or a client-side pre-check in `PurchaseActivity` catches it first | `product_id` (when known) |
+| `purchase_pending` | A queried purchase is in `PurchaseState.PENDING` (e.g. carrier/cash billing) | `product_id` |
+
 ### Errors (sanitized categories only, never raw messages)
 | Event | Source |
 |---|---|
-| `error_billing` | `BillingManager` purchase errors, `PurchaseActivity` launch-flow exceptions |
-| `error_data_load` | `LeaderboardActivity` DB load failure, `FinalResultsActivity` score-save failure |
+| `error_billing` | `BillingManager` purchase errors, acknowledge failures, `PurchaseActivity`/`CategoriesActivity` launch-flow exceptions |
+| `error_data_load` | `LeaderboardActivity` DB load failure, `FinalResultsActivity` score-save failure, `FactsActivity` facts-JSON load failure, `VotingActivity` empty-players guard, `MusicManager` start failures |
+| `error_link_open` | External link failures (Privacy Policy, Terms, cross-promo) — `error_category` = `malformed_url`\|`no_handler_activity`, `error_source` identifies which link |
 | `error_ad` | Defined for ad error paths; ad failures are logged via the dedicated `ad_load_failed`/`ad_show_failed` events instead (richer `ad_placement`/`ad_format` context), so this generic bucket is currently unused — kept for future non-ad-specific error routing. |
 
 ## 4. Parameter catalogue
@@ -260,21 +281,59 @@ should not be inferred from any other event** — documented here explicitly rat
 ## 9. Gaps / not implemented, with reasons
 
 - **Ad revenue analytics**: not possible without adding a new Unity Ads callback type — see §8.
-- **`category_unlock_expired`**: event constant exists but has no wired call site. The 24h-unlock
-  expiry check in `CategoryManager.isUnlocked()` is a pure read-time computation (checks elapsed
-  hours, clears SharedPreferences inline) with no existing callback/observer pattern to hook
-  additively — wiring it cleanly would mean adding a new code path, which conflicts with the
-  "additive 1-3 line hooks only, no refactoring" constraint. Left unwired; flagged here rather than
-  silently dropped.
 - **Firebase Crashlytics**: intentionally not added, per the task's explicit scope (Analytics only).
-- **`google-services.json`**: does not exist in this repo and was not fabricated. See §11.
+- **`google-services.json`**: now present at `app/google-services.json` (added after initial
+  implementation), pulled fresh via `firebase apps:sdkconfig` and verified to build successfully.
+  Its `oauth_client` array is empty by design — that field is only populated when Google Sign-In /
+  Firebase Auth is configured for the app, which this project does not use. Does not affect
+  Analytics, which only needs `api_key`/`mobilesdk_app_id`/`package_name` (all present).
 - One minor imprecision in ad "not ready" attribution is documented inline in §8
   (`ad_show_skipped_cooldown` reused as a general "not ready" bucket at one call site).
 - A few `AnalyticsEvents`/`AnalyticsParams` constants are defined but not currently wired to any
   call site (`DIALOG_SHOWN`, `DIALOG_DISMISSED`, `NAVIGATION`, `BACK_PRESSED`, and a handful of
-  parameter constants such as `NAVIGATION_SOURCE`, `FEATURE_ID`, `LOAD_DURATION_MS`). They exist as
+  parameter constants such as `NAVIGATION_SOURCE`, `LOAD_DURATION_MS`). They exist as
   reserved, validator-safe names for future use and are harmless unused constants, not dead code
   paths — flagged here for completeness.
+- **Music auto pause/resume on app background/foreground** (`MusicManager`'s own
+  `ProcessLifecycleOwner` observer, independent of `SessionTracker`'s) is not tracked as a separate
+  event. Adding a dedicated event per transition would risk double-counting alongside the existing
+  `app_foreground`/`app_background` events without adding much product value; left as a documented
+  gap rather than forced in.
+
+### Coverage gap-closure pass (18 gaps found and fixed)
+
+A follow-up full-coverage audit (every click listener, Toast, error branch, and state transition
+cross-referenced against what's actually instrumented) found 18 additional real gaps beyond the
+review-pass fixes above. All 18 were fixed:
+
+**Funnel/monetization** — `AdManager.hasNoAds()` premium-user ad suppression now logs
+`ad_show_skipped_no_ads` (both placements); `ITEM_ALREADY_OWNED`/`PENDING` billing states now log
+`purchase_already_owned`/`purchase_pending` (new `BillingListener` callbacks, default no-op bodies
+so the interface change is non-breaking); `VotingActivity`'s back-button pause path now logs
+`dpad_key_action` (previously only the D-pad-UP path did); the next-player-turn overlay's only
+dismiss button now logs `control_click`.
+
+**Error visibility** — `FactsActivity.loadFacts()`'s silent exception swallow (which could lead to
+a downstream `IndexOutOfBoundsException` with zero trace) now logs `error_data_load`; the
+`GameSession.players.isEmpty()` safety guard in `VotingActivity` now logs `error_data_load`; a
+billing-acknowledge failure (real revenue risk — unacknowledged purchases get refunded after 3
+days by Google Play) now logs `error_billing` via a new `onAcknowledgeFailed` callback;
+`MusicManager`'s three silent start-failure branches now log `error_data_load`;
+`CategoriesActivity`'s purchase-exception handler now logs `error_billing`, matching the parity
+`PurchaseActivity` already had.
+
+**UX/blocked-action visibility** — `LeaderboardActivity` now logs `leaderboard_viewed` with
+`feature_outcome=empty|populated`; the "ads loading, please wait" and "not initialized" rewarded-ad
+pre-checks in `CategoriesActivity` now log `ad_show_skipped_not_init`; both "Already unlocked!"
+pre-check Toasts in `PurchaseActivity` now log `purchase_already_owned`; three external-link
+failure Toasts (Privacy Policy, Terms, cross-promo) now log the new `error_link_open` event with a
+distinguishing `error_source`.
+
+**Minor polish** — `VotingActivity` now logs `voting_timer_started` and `player_turn_started`
+(both use `player_index`, never a name); `CategoriesActivity` now detects a category silently
+re-locking between visits (the 24h temporary unlock expiring) by diffing the unlocked-category set
+across `updateCategoryUI()` calls, and logs the previously-unwired `category_unlock_expired` —
+`CategoryManager.isUnlocked()` itself was not modified, per the "additive only" constraint.
 
 ### Post-implementation review fixes
 
