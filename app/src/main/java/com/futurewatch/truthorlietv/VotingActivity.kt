@@ -93,6 +93,10 @@ class VotingActivity : AppCompatActivity() {
         btnNextPlayerContinue = findViewById(R.id.btnNextPlayerContinue)
         nextPlayerOverlay.visibility = View.GONE
         btnNextPlayerContinue.setOnClickListener {
+            AnalyticsService.logEvent(
+                AnalyticsEvents.CONTROL_CLICK,
+                mapOf(AnalyticsParams.SCREEN_NAME to AnalyticsScreens.VOTING, AnalyticsParams.CONTROL_ID to "voting_next_player_continue")
+            )
             nextPlayerOverlay.visibility = View.GONE
             startNextPlayerTurn()
         }
@@ -126,6 +130,13 @@ class VotingActivity : AppCompatActivity() {
         // safety check -> for logging
         if (GameSession.players.isEmpty()) {
             android.util.Log.e("VotingActivity", "ERROR: GameSession.players is empty!")
+            AnalyticsService.logEvent(
+                AnalyticsEvents.ERROR_DATA_LOAD,
+                mapOf(
+                    AnalyticsParams.ERROR_CATEGORY to "game_session_players_empty",
+                    AnalyticsParams.ERROR_SOURCE to "voting_activity_oncreate"
+                )
+            )
             finish()
             return
         }
@@ -135,6 +146,15 @@ class VotingActivity : AppCompatActivity() {
         tvStatement.text = currentStatement
         tvRound.text = "ROUND ${GameSession.currRound}/${GameSession.totalRounds}"
         tvPlayer.text = "${currentPlayer.name}, what do you think?"
+
+        AnalyticsService.logEvent(
+            AnalyticsEvents.PLAYER_TURN_STARTED,
+            mapOf(
+                AnalyticsParams.CATEGORY_ID to GameSession.category,
+                AnalyticsParams.ROUND_NUMBER to GameSession.currRound,
+                AnalyticsParams.PLAYER_INDEX to (GameSession.currPlayerTurn % GameSession.players.size)
+            )
+        )
 
         btnResume.setOnClickListener {
             AnalyticsService.logEvent(
@@ -167,6 +187,7 @@ class VotingActivity : AppCompatActivity() {
         //callback
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
+                if (!isPaused) InputTracker.logVotingKeyAction("voting_pause", "back")
                 pauseGame()
             }
         })
@@ -174,6 +195,14 @@ class VotingActivity : AppCompatActivity() {
 
     private fun startTimer(duration: Long) {
         if (duration <= 0L) return
+
+        AnalyticsService.logEvent(
+            AnalyticsEvents.VOTING_TIMER_STARTED,
+            mapOf(
+                AnalyticsParams.CATEGORY_ID to GameSession.category,
+                AnalyticsParams.ROUND_NUMBER to GameSession.currRound
+            )
+        )
 
         timer = object : CountDownTimer(duration, 100) {
             override fun onTick(millisUntilFinished: Long) {
